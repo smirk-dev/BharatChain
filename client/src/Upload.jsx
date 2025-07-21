@@ -73,13 +73,11 @@ function Upload() {
           >
             {ipfsHash}
           </a>
-          <br />
           <button
             onClick={registerDocumentOnChain}
-            disabled={registering}
-            className="bg-blue-600 text-white px-4 py-2 rounded mt-2 hover:bg-blue-700"
+            className="mt-4 bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
           >
-            {registering ? "Registering..." : "Register on Blockchain"}
+            Register on Blockchain
           </button>
         </div>
       )}
