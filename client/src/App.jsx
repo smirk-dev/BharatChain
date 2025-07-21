@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Home from "./pages/Home";
 import Upload from "./pages/Upload";
 import Dashboard from "./pages/Dashboard";
+import Analysis from "./pages/Analysis";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
             <Link to="/" className="hover:underline">Home</Link>
             <Link to="/upload" className="hover:underline">Upload</Link>
             <Link to="/dashboard" className="hover:underline">Dashboard</Link>
+            <Link to="/analysis" className="hover:underline">Analysis</Link>
           </div>
         </nav>
         <main className="p-6">
@@ -22,6 +24,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/upload" element={<Upload />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/analysis" element={<Analysis />} />
           </Routes>
         </main>
       </div>
