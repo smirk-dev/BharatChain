@@ -14,4 +14,9 @@ contract DocumentRegistry {
         documents[documentCount] = Document(ipfsHash, msg.sender);
         documentCount++;
     }
+
+    function getDocument(uint id) public view returns (string memory, address) {
+        Document memory doc = documents[id];
+        return (doc.ipfsHash, doc.owner);
+    }
 }
