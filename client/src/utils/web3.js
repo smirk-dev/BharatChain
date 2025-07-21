@@ -1,8 +1,7 @@
 // File: client/src/utils/web3.js
 import { ethers } from "ethers";
 
-// Replace with deployed contract address and ABI later
-export const CONTRACT_ADDRESS = "0xYourContractAddressHere";
+export const CONTRACT_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3"; // Update with your deployed address
 export const CONTRACT_ABI = [
   {
     "inputs": [
@@ -14,18 +13,67 @@ export const CONTRACT_ABI = [
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "name": "documents",
+    "inputs": [],
+    "name": "documentCount",
     "outputs": [
-      { "internalType": "string", "name": "ipfsHash", "type": "string" },
-      { "internalType": "address", "name": "owner", "type": "address" }
+      { "internalType": "uint256", "name": "", "type": "uint256" }
     ],
     "stateMutability": "view",
     "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "", "type": "uint256" }
+    ],
+    "name": "documents",
+    "outputs": [
+      { "internalType": "string", "name": "ipfsHash", "type": "string" },
+      { "internalType": "address", "name": "owner", "type": "address" },
+      { "internalType": "uint256", "name": "timestamp", "type": "uint256" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "index", "type": "uint256" }
+    ],
+    "name": "getDocument",
+    "outputs": [
+      { "internalType": "string", "name": "", "type": "string" },
+      { "internalType": "address", "name": "", "type": "address" },
+      { "internalType": "uint256", "name": "", "type": "uint256" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "id",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "ipfsHash",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      }
+    ],
+    "name": "DocumentRegistered",
+    "type": "event"
   }
 ];
 
-// Connect to MetaMask and get signer
 export const getSigner = async () => {
   if (!window.ethereum) {
     alert("MetaMask not found.");
@@ -37,7 +85,6 @@ export const getSigner = async () => {
   return provider.getSigner();
 };
 
-// Get contract instance
 export const getContract = async () => {
   const signer = await getSigner();
   if (!signer) return null;
