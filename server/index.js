@@ -3,6 +3,8 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const uploadRoute = require("./routes/upload");
+const processRoute = require("./routes/process");
+const fraudRoute = require("./routes/fraud");
 
 dotenv.config();
 const app = express();
@@ -10,6 +12,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use("/api/upload", uploadRoute);
+app.use("/api/process", processRoute);
+app.use("/api/fraud", fraudRoute);
 
 app.get("/", (req, res) => {
   res.send("BharatChain Backend Running");
