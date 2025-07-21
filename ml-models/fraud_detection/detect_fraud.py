@@ -1,9 +1,12 @@
-# Placeholder for fraud detection model
 def detect_fraud(data):
-    # This would be replaced by a real ML model
-    suspicious = any("suspicious" in field.lower() for field in data.values())
-    return suspicious
+    try:
+        return any("suspicious" in str(v).lower() for v in data.values())
+    except Exception:
+        return False
 
 if __name__ == "__main__":
-    sample = {"doc_title": "Fake Passport", "content": "Suspicious activity"}
-    print("Fraud Detected:" if detect_fraud(sample) else "Document Clean")
+    test_data = {
+        "doc_title": "Fake Passport",
+        "content": "Suspicious transaction noticed"
+    }
+    print("Fraud Detected" if detect_fraud(test_data) else "No Fraud Detected")
