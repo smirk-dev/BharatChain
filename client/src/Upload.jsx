@@ -1,11 +1,13 @@
 // File: client/src/pages/Upload.jsx
 import React, { useState } from "react";
 import axios from "axios";
+import { getContract } from "../utils/web3"; // <-- Import here
 
 function Upload() {
   const [file, setFile] = useState(null);
   const [ipfsHash, setIpfsHash] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [registering, setRegistering] = useState(false); // <-- New state
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -26,6 +28,24 @@ function Upload() {
     } catch (err) {
       console.error("Upload failed:", err);
       setLoading(false);
+    }
+  };
+
+  // --- Add this function ---
+  const registerDocumentOnChain = async () => {
+    if (!ipfsHash) return alert("No IPFS hash to register.");
+
+    try {
+      setRegistering(true);
+      const contract = await getContract();
+      const tx = await contract.registerDocument(ipfsHash);
+      await tx.wait();
+      alert("✅ Document registered on blockchain.");
+      setRegistering(false);
+    } catch (err) {
+      console.error("Blockchain registration failed:", err);
+      alert("❌ Failed to register on blockchain.");
+      setRegistering(false);
     }
   };
 
@@ -53,6 +73,14 @@ function Upload() {
           >
             {ipfsHash}
           </a>
+          <br />
+          <button
+            onClick={registerDocumentOnChain}
+            disabled={registering}
+            className="bg-blue-600 text-white px-4 py-2 rounded mt-2 hover:bg-blue-700"
+          >
+            {registering ? "Registering..." : "Register on Blockchain"}
+          </button>
         </div>
       )}
     </div>
