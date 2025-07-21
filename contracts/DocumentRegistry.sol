@@ -8,10 +8,13 @@ contract DocumentRegistry {
     }
 
     mapping(uint => Document) public documents;
-    uint public documentCount = 0;
+    uint public documentCount;
+
+    event DocumentRegistered(uint indexed id, string ipfsHash, address indexed owner);
 
     function registerDocument(string memory ipfsHash) public {
         documents[documentCount] = Document(ipfsHash, msg.sender);
+        emit DocumentRegistered(documentCount, ipfsHash, msg.sender);
         documentCount++;
     }
 
