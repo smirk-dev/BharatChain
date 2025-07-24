@@ -1,0 +1,57 @@
+{
+  "name": "bharatchain",
+  "version": "1.0.0",
+  "description": "Decentralized Governance & Citizen Record System for India",
+  "main": "server/server.js",
+  "scripts": {
+    "install:all": "npm install && cd client && npm install && cd ../server && npm install",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd server && npm run dev",
+    "client": "cd client && npm start",
+    "build": "cd client && npm run build",
+    "test": "concurrently \"npm run test:contracts\" \"npm run test:server\" \"npm run test:client\"",
+    "test:contracts": "npx hardhat test",
+    "test:server": "cd server && npm test",
+    "test:client": "cd client && npm test -- --watchAll=false",
+    "test:ai": "cd ml-models && python -m pytest tests/",
+    "deploy:contracts": "npx hardhat run scripts/deploy.js --network localhost",
+    "deploy:production": "npx hardhat run scripts/deploy.js --network mainnet",
+    "start": "cd server && npm start",
+    "migrate": "cd server && npm run migrate",
+    "seed": "cd server && npm run seed",
+    "compile": "npx hardhat compile",
+    "node": "npx hardhat node",
+    "docker:build": "docker-compose build",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f",
+    "setup": "npm run install:all && npm run compile && npm run migrate && npm run deploy:contracts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/smirk-dev/WHCL-Hackathon.git"
+  },
+  "keywords": [
+    "blockchain",
+    "governance",
+    "india",
+    "decentralized",
+    "citizens",
+    "documents",
+    "grievances",
+    "ai",
+    "smart-contracts"
+  ],
+  "author": "BharatChain Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^3.0.0",
+    "@nomicfoundation/hardhat-chai-matchers": "^2.0.0",
+    "hardhat": "^2.17.0",
+    "concurrently": "^8.0.1",
+    "chai": "^4.3.7"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.9.0"
+  }
+}
