@@ -1,418 +1,189 @@
-# BharatChain Documentation
+# BharatChain
 
-## Overview
-
-BharatChain is a comprehensive blockchain-based platform designed to revolutionize governance and citizen services in India. This documentation provides detailed information about the system architecture, API endpoints, deployment procedures, and usage guidelines.
+A comprehensive **blockchain-based platform** to revolutionize governance and citizen services in India.
 
 ## Table of Contents
 
-1. [Getting Started](./getting-started.md)
-2. [System Architecture](./architecture.md)
-3. [API Documentation](./api/README.md)
-4. [Smart Contracts](./contracts/README.md)
-5. [Frontend Guide](./frontend/README.md)
-6. [AI/ML Services](./ai-ml/README.md)
-7. [Deployment Guide](./deployment/README.md)
-8. [Security Guidelines](./security/README.md)
-9. [Contributing](./contributing.md)
-10. [FAQ](./faq.md)
+- [Overview](#overview)
+- [Key Features](#key-features)
+- [System Architecture](#system-architecture)
+- [Getting Started](#getting-started)
+- [API Usage](#api-usage)
+- [Smart Contracts](#smart-contracts)
+- [Frontend Guide](#frontend-guide)
+- [AI/ML Services](#aiml-services)
+- [Deployment Guide](#deployment-guide)
+- [Security Guidelines](#security-guidelines)
+- [SDKs and Libraries](#sdks-and-libraries)
+- [License](#license)
+- [Support](#support)
 
-## Quick Links
+## Overview
 
-- **Live Demo**: [https://bharatchain.example.com](https://bharatchain.example.com)
-- **API Base URL**: `https://api.bharatchain.example.com`
-- **GitHub Repository**: [https://github.com/smirk-dev/WHCL-Hackathon](https://github.com/smirk-dev/WHCL-Hackathon)
-- **Issue Tracker**: [GitHub Issues](https://github.com/smirk-dev/WHCL-Hackathon/issues)
-
-## System Requirements
-
-### Minimum Requirements
-- **Node.js**: v16.0.0 or higher
-- **Python**: v3.8 or higher
-- **PostgreSQL**: v12 or higher
-- **Redis**: v6 or higher
-- **Memory**: 4GB RAM
-- **Storage**: 10GB available space
-
-### Recommended Requirements
-- **Node.js**: v18.0.0 or higher
-- **Python**: v3.10 or higher
-- **PostgreSQL**: v14 or higher
-- **Redis**: v7 or higher
-- **Memory**: 8GB RAM
-- **Storage**: 50GB available space (for IPFS and document storage)
+**BharatChain** provides a secure, decentralized digital governance platform for citizen services, digital identity, document management, and real-time benefit delivery. The platform leverages blockchain, AI, and modern web technologies to ensure transparency, efficiency, and security for citizens and government agencies alike[1].
 
 ## Key Features
 
-### 🏛️ **Citizen Services**
-- **Digital Identity Management**: Blockchain-based citizen registration and verification
-- **Document Storage**: Secure, decentralized document storage using IPFS
-- **Service Access**: Streamlined access to government services
-- **Real-time Updates**: Live notifications for document status and service updates
+- **Citizen Services**
+  - Blockchain-based digital identity management
+  - Secure, decentralized document storage with IPFS
+  - Real-time notifications for document and service updates
 
-### 📋 **Document Management**
-- **AI-Powered Verification**: Automated document classification and fraud detection
-- **Multi-format Support**: Support for images (JPEG, PNG) and PDFs
-- **Blockchain Integrity**: Immutable document records on blockchain
-- **Version Control**: Track document updates and revisions
+- **Document Management**
+  - AI-powered document verification and fraud detection
+  - Supports images (JPEG, PNG) and PDFs
+  - Immutable blockchain records and full version control
 
-### 🗳️ **Grievance System**
-- **Smart Routing**: AI-powered grievance categorization and routing
-- **Sentiment Analysis**: Automatic sentiment analysis of citizen feedback
-- **Progress Tracking**: Real-time grievance status updates
-- **Performance Analytics**: Dashboard for government officials
+- **Grievance Redressal**
+  - AI-driven grievance categorization and smart routing
+  - Real-time progress tracking and sentiment analysis
+  - Officer dashboards with performance analytics
 
-### 🔐 **Security Features**
-- **Multi-layer Authentication**: Wallet-based authentication with 2FA
-- **Data Encryption**: End-to-end encryption for sensitive data
-- **Audit Trails**: Comprehensive logging of all system activities
-- **Role-based Access**: Granular permission system for different user types
+- **Security**
+  - Wallet-based authentication and 2FA
+  - End-to-end encryption
+  - Full audit trails and granular, role-based access control
 
-## Architecture Overview
+## System Architecture
 
-┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐
-│ React Frontend │ │ Node.js API │ │ Smart Contracts│
-│ │◄──►│ │◄──►│ │
-│ - Dashboard │ │ - RESTful API │ │ - Citizen Reg. │
-│ - Document UI │ │ - WebSocket │ │ - Documents │
-│ - Grievances │ │ - Auth Service │ │ - Grievances │
-└─────────────────┘ └─────────────────┘ └─────────────────┘
-│ │
-┌─────────────────┐ ┌─────────────────┐
-│ PostgreSQL │ │ Blockchain │
-│ │ │ │
-│ - User Data │ │ - Ethereum │
-│ - Documents │ │ - IPFS │
-│ - Grievances │ │ - Web3 │
-└─────────────────┘ └─────────────────┘
-│
-┌─────────────────┐
-│ AI/ML Services│
-│ │
-│ - OCR │
-│ - Classification│
-│ - Fraud Detection│
-└─────────────────┘
+| Layer              | Technologies                        | Role                                        |
+|--------------------|-------------------------------------|---------------------------------------------|
+| Frontend           | React                               | Dashboard, Document UI, Grievances          |
+| API                | Node.js, REST, WebSocket            | Auth, Document, Grievance services          |
+| Blockchain         | Ethereum, Web3, IPFS                | Registration, Document notarization         |
+| Database           | PostgreSQL, Redis                   | User/Doc/Grievance data, caching            |
+| AI/ML Services     | Python (OCR, Classification, Fraud) | Document analysis, sentiment, smart routing |
 
-text
+## Getting Started
 
-## Quick Start
+### Prerequisites
 
-### 1. Clone Repository
+- **Node.js** v16+ (recommended v18+)
+- **Python** v3.8+ (recommended v3.10+)
+- **PostgreSQL** v12+ (recommended v14+)
+- **Redis** v6+ (recommended v7+)
+- **4GB RAM, 10GB disk** (recommended 8GB RAM, 50GB disk for IPFS)
+
+### Setup
+
+```bash
 git clone https://github.com/smirk-dev/WHCL-Hackathon.git
 cd WHCL-Hackathon
-
-text
-
-### 2. Install Dependencies
 chmod +x scripts/setup.sh
 ./scripts/setup.sh
-
-text
-
-### 3. Configure Environment
 cp .env.example .env
-
-Edit .env with your configuration
-text
-
-### 4. Start Development Server
+# Edit .env as needed
 npm run dev
+```
 
-text
+- **Frontend:** http://localhost:3000
+- **API:** http://localhost:5000
+- **Blockchain (local/dev):** http://localhost:8545
 
-### 5. Access Application
-- **Frontend**: http://localhost:3000
-- **API**: http://localhost:5000
-- **Blockchain**: http://localhost:8545
+## API Usage
 
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](../LICENSE) file for details.
-
-## Support
-
-For support and questions:
-- **Email**: support@bharatchain.example.com
-- **Discord**: [BharatChain Community](https://discord.gg/bharatchain)
-- **Documentation**: [docs.bharatchain.example.com](https://docs.bharatchain.example.com)
-
----
-
-**Built with ❤️ for Digital India 🇮🇳**
-docs/api/README.md
-text
-# BharatChain API Documentation
-
-## Base URL
-https://api.bharatchain.example.com/api
-
-text
-
-## Authentication
-
-All API endpoints require authentication via JWT tokens obtained through wallet connection.
-
-### Headers
-Authorization: Bearer <jwt_token>
-Content-Type: application/json
-
-text
-
-## Endpoints
+**Base URL:** `https://api.bharatchain.example.com/api`
 
 ### Authentication
 
-#### POST /auth/connect
-Connect wallet and obtain JWT token.
+POST `/auth/connect`  
+Authenticate with wallet signature for JWT token access.
 
-**Request Body:**
-{
-"address": "0x742d35Cc...",
-"signature": "0x1234...",
-"message": "Sign this message to authenticate"
-}
+### Citizen Profile
 
-text
+- **GET /citizens/profile:** Retrieve profile  
+- **PUT /citizens/profile:** Update profile
 
-**Response:**
-{
-"success": true,
-"data": {
-"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-"user": {
-"address": "0x742d35Cc...",
-"name": "John Doe",
-"isVerified": true
-}
-}
-}
+### Document Management
 
-text
+- **POST /documents/upload:**  
+  Upload JPEG, PNG, or PDF. Can specify `documentType`.
 
-### Citizens
+- **GET /documents:**  
+  List uploaded/verified documents (with status, IPFS hash).
 
-#### GET /citizens/profile
-Get current citizen profile.
+### Grievance System
 
-**Response:**
-{
-"success": true,
-"data": {
-"address": "0x742d35Cc...",
-"name": "John Doe",
-"email": "john@example.com",
-"phone": "+91-9876543210",
-"isVerified": true,
-"registrationDate": "2024-01-15T10:30:00Z"
-}
-}
+- **POST /grievances:**  
+  Submit a new grievance (`title`, `description`, `category`, `priority`).
 
-text
+- **GET /grievances:**  
+  View all grievances, with filtering and pagination.
 
-#### PUT /citizens/profile
-Update citizen profile.
+### WebSocket Events
 
-**Request Body:**
-{
-"name": "Updated Name",
-"email": "updated@example.com",
-"phone": "+91-9876543210"
-}
+- Real-time document verification
+- Grievance status updates
 
-text
+### Error Responses
 
-### Documents
+Standardized JSON error format with codes like `INVALID_TOKEN`, `ACCESS_DENIED`, `RESOURCE_NOT_FOUND`.
 
-#### POST /documents/upload
-Upload a new document.
+### Rate Limits
 
-**Request:**
-- **Content-Type**: `multipart/form-data`
-- **Fields**:
-  - `document`: File (image or PDF)
-  - `documentType`: String (aadhar, pan, voter_id, etc.)
-  - `expiryDate`: ISO date string (optional)
+- **General API:** 100 requests/15min per IP
+- **File Upload:** 10/hour per user
+- **Grievance Submission:** 5/day per user
 
-**Response:**
-{
-"success": true,
-"message": "Document uploaded successfully",
-"data": {
-"documentId": "0x1234...",
-"ipfsHash": "QmX7Y8Z...",
-"aiAnalysis": {
-"confidence": 0.92,
-"documentType": "aadhar",
-"isValid": true
-}
-}
-}
+## Smart Contracts
 
-text
+- Blockchain-based citizen registration and document notarization
+- Interfaces with Ethereum (testnet/mainnet configurable)
+- Ensures immutable, auditable records for identity and documents
 
-#### GET /documents
-Get all documents for current citizen.
+## Frontend Guide
 
-**Response:**
-{
-"success": true,
-"data": [
-{
-"id": "0x1234...",
-"documentType": "aadhar",
-"status": "verified",
-"uploadDate": "2024-01-15T10:30:00Z",
-"ipfsHash": "QmX7Y8Z..."
-}
-]
-}
+- Built with React
+- Dashboard for citizens and officials
+- Document UI for upload, status tracking, and version history
+- Grievance management and analytics
 
-text
+## AI/ML Services
 
-### Grievances
+- OCR and intelligent document processing
+- Automated classification (Aadhaar, PAN, Voter ID, etc.)
+- Fraud detection and sentiment analysis for grievances
 
-#### POST /grievances
-Submit a new grievance.
+## Deployment Guide
 
-**Request Body:**
-{
-"title": "Road Repair Request",
-"description": "Multiple potholes on Main Street need repair",
-"category": "Infrastructure",
-"priority": "medium"
-}
+- See `scripts/setup.sh` and `docs/deployment.md`
+- Supports containerized and cloud deployment
+- .env-based configuration for environment variables
 
-text
+## Security Guidelines
 
-**Response:**
-{
-"success": true,
-"data": {
-"grievanceId": 12345,
-"title": "Road Repair Request",
-"status": "open",
-"createdDate": "2024-01-15T10:30:00Z"
-}
-}
-
-text
-
-#### GET /grievances
-Get all grievances for current citizen.
-
-**Query Parameters:**
-- `status`: Filter by status (open, in_progress, resolved, closed)
-- `page`: Page number (default: 1)
-- `limit`: Items per page (default: 10)
-
-**Response:**
-{
-"success": true,
-"data": {
-"grievances": [
-{
-"grievanceId": 12345,
-"title": "Road Repair Request",
-"status": "in_progress",
-"priority": "medium",
-"createdDate": "2024-01-15T10:30:00Z",
-"updatedDate": "2024-01-16T14:20:00Z"
-}
-],
-"pagination": {
-"currentPage": 1,
-"totalPages": 3,
-"totalItems": 25
-}
-}
-}
-
-text
-
-## Error Responses
-
-All endpoints return errors in the following format:
-
-{
-"success": false,
-"message": "Error description",
-"error": "Detailed error information",
-"code": "ERROR_CODE"
-}
-
-text
-
-### Common Error Codes
-
-- `INVALID_TOKEN`: Authentication token is invalid or expired
-- `ACCESS_DENIED`: Insufficient permissions for requested action
-- `VALIDATION_ERROR`: Request data validation failed
-- `RESOURCE_NOT_FOUND`: Requested resource doesn't exist
-- `RATE_LIMIT_EXCEEDED`: Too many requests in time window
-- `INTERNAL_ERROR`: Server-side error occurred
-
-## Rate Limits
-
-- **General API**: 100 requests per 15 minutes per IP
-- **File Upload**: 10 uploads per hour per user
-- **Grievance Submission**: 5 submissions per day per user
-
-## WebSocket Events
-
-Connect to `/socket.io` for real-time updates.
-
-### Events
-
-#### document-verified
-Emitted when a document is verified.
-{
-"documentId": "0x1234...",
-"status": "verified",
-"verifiedBy": "0x5678...",
-"timestamp": "2024-01-15T10:30:00Z"
-}
-
-text
-
-#### grievance-updated
-Emitted when grievance status changes.
-{
-"grievanceId": 12345,
-"status": "in_progress",
-"assignedTo": "0x9abc...",
-"timestamp": "2024-01-15T10:30:00Z"
-}
-
-text
+- End-to-end encryption and wallet authentication
+- Multi-layer authentication flows and audit trails
+- Per-role access restrictions
 
 ## SDKs and Libraries
 
-### JavaScript/TypeScript
-npm install @bharatchain/js-sdk
+- **JavaScript/TypeScript:**  
+  `npm install @bharatchain/js-sdk`
+- **Python:**  
+  `pip install bharatchain-python`
 
-text
+#### Example (JS)
 
-### Python
-pip install bharatchain-python
-
-text
-
-### Example Usage (JavaScript)
+```js
 import BharatChain from '@bharatchain/js-sdk';
 
-const bc = new BharatChain({
-apiUrl: 'https://api.bharatchain.example.com',
-apiKey: 'your-api-key'
-});
-
-// Upload document
-const result = await bc.documents.upload({
-file: documentFile,
-type: 'aadhar'
-});
-
+const bc = new BharatChain({ apiUrl: 'https://api.bharatchain.example.com', apiKey: 'your-api-key' });
+const result = await bc.documents.upload({ file: documentFile, type: 'aadhar' });
 console.log('Document uploaded:', result.documentId);
+```
 
-text
-undefined
+## License
+
+MIT License. See [LICENSE](LICENSE) file for details.
+
+## Support
+
+- **Discord:** BharatChain Community
+- **Live Demo:** https://bharatchain.example.com
+- **API Docs:** docs.bharatchain.example.com
+- **Issues:** Use GitHub issues to report bugs and feature requests
+
+**Built with ❤️ for Digital India 🇮🇳**[1]
+
+[1] https://github.com/smirk-dev/WHCL-Hackathon
