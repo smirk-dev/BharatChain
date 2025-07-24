@@ -1,143 +1,124 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { CssBaseline, Box } from '@mui/material';
-import { Toaster } from 'react-hot-toast';
-
-// Components
-import Navbar from './components/Navbar/Navbar';
-import Footer from './components/Footer/Footer';
-import LoadingSpinner from './components/Common/LoadingSpinner';
-
-// Pages
-import Home from './pages/Home/Home';
-import Dashboard from './pages/Dashboard/Dashboard';
-import Documents from './pages/Documents/Documents';
-import Grievances from './pages/Grievances/Grievances';
-import Profile from './pages/Profile/Profile';
-import Login from './pages/Auth/Login';
-import Register from './pages/Auth/Register';
-
-// Context
-import { Web3Provider } from './context/Web3Context';
-import { AuthProvider } from './context/AuthContext';
-
-// Theme
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#FF9933', // Saffron
-      dark: '#FF6600',
-    },
-    secondary: {
-      main: '#138808', // Green
-      dark: '#0F6B06',
-    },
-    background: {
-      default: '#FFFFFF',
-      paper: '#F8F9FA',
-    },
-    text: {
-      primary: '#000080', // Navy Blue
-    },
-  },
-  typography: {
-    fontFamily: '"Roboto", "Noto Sans Devanagari", sans-serif',
-    h1: {
-      fontWeight: 700,
-    },
-    h2: {
-      fontWeight: 600,
-    },
-  },
-  components: {
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          textTransform: 'none',
-          borderRadius: 8,
-        },
-      },
-    },
-    MuiCard: {
-      styleOverrides: {
-        root: {
-          borderRadius: 12,
-          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-        },
-      },
-    },
-  },
-});
+import './App.css';
 
 function App() {
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
-    // Initialize app
-    const initApp = async () => {
-      try {
-        // Any initialization logic here
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate loading
-        setLoading(false);
-      } catch (error) {
-        console.error('App initialization error:', error);
-        setLoading(false);
-      }
-    };
+    // Simulate loading
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
 
-    initApp();
+    // Check for MetaMask
+    if (typeof window.ethereum !== 'undefined') {
+      console.log('MetaMask is available!');
+    }
   }, []);
 
-  if (loading) {
-    return <LoadingSpinner />;
+  const connectWallet = async () => {
+    if (typeof window.ethereum !== 'undefined') {
+      try {
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
+        setIsConnected(true);
+        console.log('Wallet connected!');
+      } catch (error) {
+        console.error('Error connecting wallet:', error);
+      }
+    } else {
+      alert('Please install MetaMask to use this application');
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="loading-container">
+        <div className="loading-content">
+          <div className="loading-spinner"></div>
+          <h2>Loading BharatChain...</h2>
+          <p>Decentralized Governance Platform</p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <AuthProvider>
-        <Web3Provider>
-          <Router>
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                minHeight: '100vh',
-              }}
-            >
-              <Navbar />
-              
-              <Box component="main" sx={{ flexGrow: 1, py: 3 }}>
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/register" element={<Register />} />
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/documents" element={<Documents />} />
-                  <Route path="/grievances" element={<Grievances />} />
-                  <Route path="/profile" element={<Profile />} />
-                  <Route path="*" element={<Navigate to="/" replace />} />
-                </Routes>
-              </Box>
-              
-              <Footer />
-            </Box>
-          </Router>
+    <div className="App">
+      <header className="App-header">
+        <div className="header-content">
+          <h1>🇮🇳 BharatChain</h1>
+          <p>Decentralized Governance & Citizen Record System</p>
           
-          <Toaster
-            position="top-right"
-            toastOptions={{
-              duration: 4000,
-              style: {
-                background: '#363636',
-                color: '#fff',
-              },
-            }}
-          />
-        </Web3Provider>
-      </AuthProvider>
-    </ThemeProvider>
+          {!isConnected ? (
+            <button className="connect-button" onClick={connectWallet}>
+              Connect Wallet
+            </button>
+          ) : (
+            <div className="connected-status">
+              <span className="status-indicator">🟢</span>
+              Wallet Connected
+            </div>
+          )}
+        </div>
+      </header>
+
+      <main className="App-main">
+        <div className="bharatchain-container">
+          <section className="hero-section">
+            <h2>Welcome to Digital India 2.0</h2>
+            <p>
+              Experience transparent, secure, and efficient government services 
+              powered by blockchain technology.
+            </p>
+            
+            <div className="features-grid">
+              <div className="feature-card">
+                <h3>📄 Digital Documents</h3>
+                <p>Secure, verifiable document storage on blockchain</p>
+              </div>
+              
+              <div className="feature-card">
+                <h3>🗳️ Citizen Grievances</h3>
+                <p>Transparent grievance management system</p>
+              </div>
+              
+              <div className="feature-card">
+                <h3>🔐 Identity Verification</h3>
+                <p>Blockchain-based citizen identity management</p>
+              </div>
+              
+              <div className="feature-card">
+                <h3>🤖 AI-Powered</h3>
+                <p>Intelligent document processing and fraud detection</p>
+              </div>
+            </div>
+          </section>
+          
+          <section className="status-section">
+            <h3>System Status</h3>
+            <div className="status-grid">
+              <div className="status-item">
+                <span>Blockchain Network:</span>
+                <span className="status-active">🟢 Active</span>
+              </div>
+              <div className="status-item">
+                <span>IPFS Storage:</span>
+                <span className="status-active">🟢 Online</span>
+              </div>
+              <div className="status-item">
+                <span>AI Services:</span>
+                <span className="status-active">🟢 Running</span>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+
+      <footer className="App-footer">
+        <p>Built with ❤️ for Digital India | BharatChain v1.0.0</p>
+      </footer>
+    </div>
   );
 }
 

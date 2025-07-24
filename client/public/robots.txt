@@ -1,0 +1,6 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Disallow:
+
+# Sitemap
+Sitemap: https://bharatchain.example.com/sitemap.xml
