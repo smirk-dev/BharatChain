@@ -14,7 +14,7 @@ describe('CitizenRegistry', function () {
     
     CitizenRegistry = await ethers.getContractFactory('CitizenRegistry');
     citizenRegistry = await CitizenRegistry.deploy();
-    await citizenRegistry.deployed();
+    await citizenRegistry.waitForDeployment(); // Updated for newer ethers versions
   });
 
   describe('Deployment', function () {
