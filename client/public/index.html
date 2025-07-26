@@ -4,78 +4,393 @@
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="BharatChain - Decentralized Governance & Citizen Record System for India"
-    />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <meta name="theme-color" content="#FF6B35" />
     
-    <!-- Google Fonts for better typography -->
+    <!-- Enhanced Meta Tags for BharatChain -->
+    <meta name="description" content="BharatChain - India's Sovereign Blockchain Network for Decentralized Governance, Digital Identity, and Secure Citizen Record Management" />
+    <meta name="keywords" content="BharatChain, Blockchain India, Digital India, Decentralized Governance, Web3, Cryptocurrency, NFT, Smart Contracts, Citizen Records" />
+    <meta name="author" content="BharatChain Development Team" />
+    <meta name="robots" content="index, follow" />
+    
+    <!-- Open Graph Meta Tags for Social Sharing -->
+    <meta property="og:title" content="BharatChain - Digital India Governance Platform" />
+    <meta property="og:description" content="India's first sovereign blockchain network for secure governance and citizen services" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://bharatchain.gov.in" />
+    <meta property="og:image" content="%PUBLIC_URL%/bharatchain-og-image.png" />
+    <meta property="og:site_name" content="BharatChain" />
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="BharatChain - Digital India Governance Platform" />
+    <meta name="twitter:description" content="India's first sovereign blockchain network for secure governance and citizen services" />
+    <meta name="twitter:image" content="%PUBLIC_URL%/bharatchain-twitter-card.png" />
+    
+    <!-- App Icons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="%PUBLIC_URL%/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="%PUBLIC_URL%/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="%PUBLIC_URL%/favicon-16x16.png" />
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <link rel="mask-icon" href="%PUBLIC_URL%/safari-pinned-tab.svg" color="#FF6B35" />
+    
+    <!-- Enhanced Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     
-    <!-- Favicon -->
-    <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
-    <title>BharatChain - Digital India Governance Platform</title>
+    <!-- Preload Critical Resources -->
+    <link rel="preload" href="%PUBLIC_URL%/bharatchain-logo.svg" as="image" type="image/svg+xml">
+    
+    <!-- Security Headers -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src 'self' fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https:;">
+    
+    <title>BharatChain - India's Sovereign Blockchain Network | Digital Governance Platform</title>
     
     <style>
+      /* CSS Custom Properties for BharatChain Theme */
+      :root {
+        --primary-saffron: #FF6B35;
+        --primary-green: #138808;
+        --primary-white: #FFFFFF;
+        --secondary-blue: #000080;
+        --text-dark: #2C3E50;
+        --text-light: #6C757D;
+        --background-light: #F8F9FA;
+        --shadow-light: rgba(0, 0, 0, 0.1);
+        --gradient-india: linear-gradient(135deg, #FF6B35 0%, #FFFFFF 50%, #138808 100%);
+        --gradient-primary: linear-gradient(135deg, #FF6B35 0%, #FF8A65 100%);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
       body {
         margin: 0;
-        font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Oxygen',
-          'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-          sans-serif;
+        padding: 0;
+        font-family: 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Oxygen',
+          'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
+        background: var(--background-light);
+        color: var(--text-dark);
+        line-height: 1.6;
       }
       
       code {
-        font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-          monospace;
+        font-family: 'Fira Code', source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+        background: rgba(255, 107, 53, 0.1);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 0.9em;
       }
       
-      /* Loading spinner styles */
+      /* Enhanced Loading Screen */
       .loading-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
         display: flex;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
-        height: 100vh;
-        background: linear-gradient(135deg, #FF9933 0%, #FFFFFF 50%, #138808 100%);
+        background: var(--gradient-india);
+        z-index: 9999;
+        transition: opacity 0.5s ease-out;
+      }
+      
+      .loading-logo {
+        width: 80px;
+        height: 80px;
+        margin-bottom: 20px;
+        background: var(--primary-white);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 10px 30px var(--shadow-light);
+        animation: pulse 2s ease-in-out infinite;
+      }
+      
+      .loading-logo::before {
+        content: "🇮🇳";
+        font-size: 40px;
       }
       
       .loading-spinner {
-        width: 50px;
-        height: 50px;
-        border: 5px solid #f3f3f3;
-        border-top: 5px solid #FF9933;
+        width: 60px;
+        height: 60px;
+        border: 4px solid rgba(255, 255, 255, 0.3);
+        border-top: 4px solid var(--primary-white);
         border-radius: 50%;
         animation: spin 1s linear infinite;
+        margin-bottom: 20px;
       }
       
+      .loading-text {
+        color: var(--primary-white);
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 10px;
+        text-align: center;
+        font-family: 'Poppins', sans-serif;
+      }
+      
+      .loading-subtext {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 16px;
+        font-weight: 400;
+        text-align: center;
+        max-width: 300px;
+        line-height: 1.5;
+      }
+      
+      .loading-progress {
+        width: 200px;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 2px;
+        margin-top: 20px;
+        overflow: hidden;
+      }
+      
+      .loading-progress-bar {
+        height: 100%;
+        background: var(--primary-white);
+        border-radius: 2px;
+        animation: progress 2s ease-in-out infinite;
+      }
+      
+      /* Animations */
       @keyframes spin {
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
       }
+      
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+      }
+      
+      @keyframes progress {
+        0% { width: 0%; }
+        50% { width: 70%; }
+        100% { width: 100%; }
+      }
+      
+      /* No Script Fallback */
+      .noscript-message {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: var(--primary-white);
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 20px 40px var(--shadow-light);
+        text-align: center;
+        max-width: 400px;
+        border-top: 4px solid var(--primary-saffron);
+      }
+      
+      .noscript-message h2 {
+        color: var(--primary-saffron);
+        margin-bottom: 20px;
+      }
+      
+      /* Hide loading when React loads */
+      .app-loaded .loading-container {
+        opacity: 0;
+        pointer-events: none;
+      }
+      
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .loading-text {
+          font-size: 20px;
+        }
+        
+        .loading-subtext {
+          font-size: 14px;
+          max-width: 250px;
+        }
+        
+        .loading-logo {
+          width: 60px;
+          height: 60px;
+        }
+        
+        .loading-logo::before {
+          font-size: 28px;
+        }
+      }
+      
+      /* Accessibility */
+      @media (prefers-reduced-motion: reduce) {
+        .loading-spinner,
+        .loading-logo,
+        .loading-progress-bar {
+          animation: none;
+        }
+      }
+      
+      /* Dark mode support */
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --background-light: #1a1a1a;
+          --text-dark: #ffffff;
+          --text-light: #cccccc;
+        }
+      }
     </style>
   </head>
   <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <noscript>
+      <div class="noscript-message">
+        <h2>⚠️ JavaScript Required</h2>
+        <p>BharatChain requires JavaScript to function properly. Please enable JavaScript in your browser settings and refresh this page.</p>
+        <p><strong>Why JavaScript is needed:</strong></p>
+        <ul style="text-align: left; margin-top: 15px;">
+          <li>Blockchain interactions</li>
+          <li>Wallet connectivity</li>
+          <li>Real-time data updates</li>
+          <li>Secure document processing</li>
+        </ul>
+      </div>
+    </noscript>
+    
     <div id="root">
-      <!-- Loading fallback -->
+      <!-- Enhanced Loading Screen -->
       <div class="loading-container">
+        <div class="loading-logo"></div>
         <div class="loading-spinner"></div>
+        <h1 class="loading-text">BharatChain</h1>
+        <p class="loading-subtext">Initializing India's Sovereign Blockchain Network...</p>
+        <div class="loading-progress">
+          <div class="loading-progress-bar"></div>
+        </div>
       </div>
     </div>
     
-    <!-- MetaMask detection script -->
+    <!-- Enhanced Web3 Detection & Initialization -->
     <script>
-      if (typeof window.ethereum !== 'undefined') {
-        console.log('MetaMask is installed!');
+      // Global app initialization
+      window.BharatChain = {
+        version: '1.0.0',
+        network: 'mainnet',
+        initialized: false
+      };
+      
+      // MetaMask and Web3 Detection
+      function initializeWeb3() {
+        if (typeof window.ethereum !== 'undefined') {
+          console.log('🦊 MetaMask detected!');
+          window.BharatChain.web3Available = true;
+          
+          // Check if connected to BharatChain network
+          window.ethereum.request({ method: 'eth_chainId' })
+            .then(chainId => {
+              console.log('Connected to chain:', chainId);
+              // Add your BharatChain network ID check here
+            })
+            .catch(err => console.error('Chain ID check failed:', err));
+            
+        } else if (typeof window.web3 !== 'undefined') {
+          console.log('🌐 Legacy Web3 detected!');
+          window.BharatChain.web3Available = true;
+        } else {
+          console.warn('🚫 No Web3 wallet detected. Some features may be limited.');
+          window.BharatChain.web3Available = false;
+          
+          // Show wallet installation prompt after React loads
+          setTimeout(() => {
+            if (!window.BharatChain.walletPromptShown) {
+              console.log('💡 Consider installing MetaMask for full BharatChain experience: https://metamask.io');
+              window.BharatChain.walletPromptShown = true;
+            }
+          }, 3000);
+        }
+      }
+      
+      // IPFS Detection
+      function checkIPFS() {
+        if (typeof window.IpfsHttpClient !== 'undefined') {
+          console.log('📁 IPFS client available');
+          window.BharatChain.ipfsAvailable = true;
+        }
+      }
+      
+      // Performance monitoring
+      window.BharatChain.loadStart = performance.now();
+      
+      // Initialize when DOM is ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+          initializeWeb3();
+          checkIPFS();
+        });
       } else {
-        console.log('MetaMask is not installed. Please install MetaMask to use this application.');
+        initializeWeb3();
+        checkIPFS();
+      }
+      
+      // Remove loading screen when React app loads
+      window.addEventListener('load', () => {
+        setTimeout(() => {
+          const loadingContainer = document.querySelector('.loading-container');
+          if (loadingContainer) {
+            loadingContainer.style.opacity = '0';
+            setTimeout(() => {
+              loadingContainer.style.display = 'none';
+            }, 500);
+          }
+          
+          // Log load time
+          const loadTime = performance.now() - window.BharatChain.loadStart;
+          console.log(`🚀 BharatChain loaded in ${Math.round(loadTime)}ms`);
+        }, 1000);
+      });
+      
+      // Handle network changes
+      if (window.ethereum) {
+        window.ethereum.on('chainChanged', (chainId) => {
+          console.log('🔄 Network changed to:', chainId);
+          // Handle network change in your React app
+        });
+        
+        window.ethereum.on('accountsChanged', (accounts) => {
+          console.log('👤 Account changed:', accounts[0]);
+          // Handle account change in your React app
+        });
+      }
+      
+      // Error handling
+      window.addEventListener('error', (event) => {
+        console.error('🚨 BharatChain Error:', event.error);
+      });
+      
+      window.addEventListener('unhandledrejection', (event) => {
+        console.error('🚨 Unhandled Promise Rejection:', event.reason);
+      });
+    </script>
+    
+    <!-- Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('%PUBLIC_URL%/sw.js')
+            .then((registration) => {
+              console.log('📱 SW registered: ', registration);
+            })
+            .catch((registrationError) => {
+              console.log('📱 SW registration failed: ', registrationError);
+            });
+        });
       }
     </script>
   </body>
