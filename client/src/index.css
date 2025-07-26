@@ -1,65 +1,566 @@
-body {
-  margin: 0;
-  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background-color: #f5f5f5;
+/* CSS Custom Properties for BharatChain Theme */
+:root {
+  /* Primary Colors - Indian Flag Inspired */
+  --primary-saffron: #FF6B35;
+  --primary-saffron-light: #FFA366;
+  --primary-saffron-dark: #CC4B1A;
+  --primary-green: #138808;
+  --primary-green-light: #4CAF50;
+  --primary-green-dark: #0D5D05;
+  --primary-white: #FFFFFF;
+  --primary-navy: #000080;
+  
+  /* Secondary Colors */
+  --secondary-blue: #1976D2;
+  --secondary-purple: #7B1FA2;
+  --secondary-orange: #F57C00;
+  
+  /* Text Colors */
+  --text-primary: #2C3E50;
+  --text-secondary: #6C757D;
+  --text-light: #ADB5BD;
+  --text-white: #FFFFFF;
+  --text-error: #DC3545;
+  --text-success: #28A745;
+  --text-warning: #FFC107;
+  --text-info: #17A2B8;
+  
+  /* Background Colors */
+  --bg-primary: #F8F9FA;
+  --bg-secondary: #E9ECEF;
+  --bg-dark: #343A40;
+  --bg-light: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --bg-overlay: rgba(0, 0, 0, 0.5);
+  
+  /* Gradients */
+  --gradient-india: linear-gradient(135deg, #FF6B35 0%, #FFFFFF 50%, #138808 100%);
+  --gradient-primary: linear-gradient(135deg, #FF6B35 0%, #FF8A65 100%);
+  --gradient-secondary: linear-gradient(135deg, #138808 0%, #4CAF50 100%);
+  --gradient-dark: linear-gradient(135deg, #2C3E50 0%, #34495E 100%);
+  
+  /* Shadows */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.15);
+  --shadow-xl: 0 12px 24px rgba(0, 0, 0, 0.18);
+  --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 8px 25px rgba(0, 0, 0, 0.15);
+  
+  /* Border Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 50%;
+  
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+  --spacing-3xl: 64px;
+  
+  /* Typography */
+  --font-primary: 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-secondary: 'Poppins', 'Roboto', sans-serif;
+  --font-mono: 'Fira Code', source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+  
+  /* Font Sizes */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+  --text-5xl: 3rem;
+  
+  /* Transitions */
+  --transition-fast: 0.15s ease-in-out;
+  --transition-normal: 0.3s ease-in-out;
+  --transition-slow: 0.5s ease-in-out;
+  
+  /* Z-Index */
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal: 1040;
+  --z-popover: 1050;
+  --z-tooltip: 1060;
+  --z-toast: 1070;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}
-
+/* Global Reset and Base Styles */
 * {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
-/* Global styles for BharatChain */
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-primary);
+  font-size: var(--text-base);
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  margin: 0 0 var(--spacing-md) 0;
+  font-family: var(--font-secondary);
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--text-primary);
+}
+
+h1 { font-size: var(--text-5xl); font-weight: 700; }
+h2 { font-size: var(--text-4xl); font-weight: 600; }
+h3 { font-size: var(--text-3xl); font-weight: 600; }
+h4 { font-size: var(--text-2xl); font-weight: 500; }
+h5 { font-size: var(--text-xl); font-weight: 500; }
+h6 { font-size: var(--text-lg); font-weight: 500; }
+
+p {
+  margin: 0 0 var(--spacing-md) 0;
+  line-height: 1.6;
+}
+
+a {
+  color: var(--primary-saffron);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+a:hover,
+a:focus {
+  color: var(--primary-saffron-dark);
+  text-decoration: underline;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: rgba(255, 107, 53, 0.1);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  color: var(--primary-saffron-dark);
+}
+
+pre {
+  background: var(--bg-secondary);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: 1.4;
+}
+
+/* BharatChain Specific Classes */
 .bharatchain-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 var(--spacing-lg);
+  width: 100%;
 }
 
-/* Loading states */
+.bharatchain-section {
+  padding: var(--spacing-3xl) 0;
+}
+
+.bharatchain-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-card);
+  transition: all var(--transition-normal);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.bharatchain-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+}
+
+.bharatchain-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  font-family: var(--font-secondary);
+  font-size: var(--text-base);
+  font-weight: 500;
+  text-decoration: none;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+  user-select: none;
+  min-height: 44px;
+}
+
+.bharatchain-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Button Variants */
+.bharatchain-button--primary {
+  background: var(--gradient-primary);
+  color: var(--text-white);
+  box-shadow: var(--shadow-sm);
+}
+
+.bharatchain-button--primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.bharatchain-button--secondary {
+  background: var(--gradient-secondary);
+  color: var(--text-white);
+  box-shadow: var(--shadow-sm);
+}
+
+.bharatchain-button--outline {
+  background: transparent;
+  color: var(--primary-saffron);
+  border: 2px solid var(--primary-saffron);
+}
+
+.bharatchain-button--outline:hover:not(:disabled) {
+  background: var(--primary-saffron);
+  color: var(--text-white);
+}
+
+/* Loading States */
 .loading {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 200px;
+  padding: var(--spacing-3xl) 0;
+  min-height: 200px;
 }
 
 .loading-spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #FF9933;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
+  width: 48px;
+  height: 48px;
+  border: 4px solid var(--bg-secondary);
+  border-top: 4px solid var(--primary-saffron);
+  border-radius: var(--radius-full);
+  animation: bharatchain-spin 1s linear infinite;
 }
 
-@keyframes spin {
+.loading-spinner--small {
+  width: 24px;
+  height: 24px;
+  border-width: 2px;
+}
+
+.loading-spinner--large {
+  width: 64px;
+  height: 64px;
+  border-width: 6px;
+}
+
+@keyframes bharatchain-spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
 
-/* Indian flag colors */
-.color-saffron { color: #FF9933; }
-.color-white { color: #FFFFFF; }
-.color-green { color: #138808; }
-.color-navy { color: #000080; }
+.loading-text {
+  margin-top: var(--spacing-md);
+  color: var(--text-secondary);
+  font-size: var(--text-lg);
+  font-weight: 500;
+}
 
-.bg-saffron { background-color: #FF9933; }
-.bg-white { background-color: #FFFFFF; }
-.bg-green { background-color: #138808; }
-.bg-navy { background-color: #000080; }
+/* Pulse Animation for Loading States */
+.pulse {
+  animation: bharatchain-pulse 2s ease-in-out infinite;
+}
 
-/* Responsive design */
-@media (max-width: 768px) {
+@keyframes bharatchain-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Indian Flag Color Classes */
+.color-saffron { color: var(--primary-saffron) !important; }
+.color-white { color: var(--primary-white) !important; }
+.color-green { color: var(--primary-green) !important; }
+.color-navy { color: var(--primary-navy) !important; }
+
+.bg-saffron { background-color: var(--primary-saffron) !important; }
+.bg-white { background-color: var(--primary-white) !important; }
+.bg-green { background-color: var(--primary-green) !important; }
+.bg-navy { background-color: var(--primary-navy) !important; }
+
+/* Gradient Backgrounds */
+.bg-gradient-india { background: var(--gradient-india); }
+.bg-gradient-primary { background: var(--gradient-primary); }
+.bg-gradient-secondary { background: var(--gradient-secondary); }
+.bg-gradient-dark { background: var(--gradient-dark); }
+
+/* Utility Classes */
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+.font-weight-light { font-weight: 300; }
+.font-weight-normal { font-weight: 400; }
+.font-weight-medium { font-weight: 500; }
+.font-weight-semibold { font-weight: 600; }
+.font-weight-bold { font-weight: 700; }
+
+.d-flex { display: flex; }
+.d-block { display: block; }
+.d-inline { display: inline; }
+.d-inline-block { display: inline-block; }
+.d-none { display: none; }
+
+.justify-content-center { justify-content: center; }
+.justify-content-between { justify-content: space-between; }
+.justify-content-around { justify-content: space-around; }
+.justify-content-start { justify-content: flex-start; }
+.justify-content-end { justify-content: flex-end; }
+
+.align-items-center { align-items: center; }
+.align-items-start { align-items: flex-start; }
+.align-items-end { align-items: flex-end; }
+
+.flex-column { flex-direction: column; }
+.flex-row { flex-direction: row; }
+
+.gap-xs { gap: var(--spacing-xs); }
+.gap-sm { gap: var(--spacing-sm); }
+.gap-md { gap: var(--spacing-md); }
+.gap-lg { gap: var(--spacing-lg); }
+.gap-xl { gap: var(--spacing-xl); }
+
+/* Margin and Padding Utilities */
+.m-0 { margin: 0; }
+.m-auto { margin: auto; }
+.mt-0 { margin-top: 0; }
+.mb-0 { margin-bottom: 0; }
+.ml-0 { margin-left: 0; }
+.mr-0 { margin-right: 0; }
+
+.p-0 { padding: 0; }
+.pt-0 { padding-top: 0; }
+.pb-0 { padding-bottom: 0; }
+.pl-0 { padding-left: 0; }
+.pr-0 { padding-right: 0; }
+
+/* Border Radius Utilities */
+.rounded-sm { border-radius: var(--radius-sm); }
+.rounded { border-radius: var(--radius-md); }
+.rounded-lg { border-radius: var(--radius-lg); }
+.rounded-xl { border-radius: var(--radius-xl); }
+.rounded-full { border-radius: var(--radius-full); }
+
+/* Shadow Utilities */
+.shadow-sm { box-shadow: var(--shadow-sm); }
+.shadow { box-shadow: var(--shadow-md); }
+.shadow-lg { box-shadow: var(--shadow-lg); }
+.shadow-xl { box-shadow: var(--shadow-xl); }
+
+/* Blockchain Specific Styles */
+.blockchain-address {
+  font-family: var(--font-mono);
+  background: var(--bg-secondary);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  word-break: break-all;
+}
+
+.transaction-hash {
+  font-family: var(--font-mono);
+  color: var(--primary-saffron);
+  font-size: var(--text-sm);
+  word-break: break-all;
+}
+
+.network-status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-size: var(--text-sm);
+  font-weight: 500;
+}
+
+.network-status::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--text-success);
+  animation: bharatchain-blink 2s infinite;
+}
+
+@keyframes bharatchain-blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0.3; }
+}
+
+.wallet-connected {
+  background: var(--gradient-secondary);
+  color: var(--text-white);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: 500;
+}
+
+/* Status Indicators */
+.status-confirmed { color: var(--text-success); }
+.status-pending { color: var(--text-warning); }
+.status-failed { color: var(--text-error); }
+.status-processing { color: var(--text-info); }
+
+/* Responsive Design */
+@media (max-width: 1200px) {
   .bharatchain-container {
-    padding: 0 10px;
+    max-width: 960px;
   }
+}
+
+@media (max-width: 992px) {
+  .bharatchain-container {
+    max-width: 720px;
+    padding: 0 var(--spacing-md);
+  }
+  
+  .bharatchain-section {
+    padding: var(--spacing-2xl) 0;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --text-5xl: 2.25rem;
+    --text-4xl: 1.875rem;
+    --text-3xl: 1.5rem;
+  }
+  
+  .bharatchain-container {
+    max-width: 540px;
+    padding: 0 var(--spacing-sm);
+  }
+  
+  .bharatchain-section {
+    padding: var(--spacing-xl) 0;
+  }
+  
+  .bharatchain-card {
+    padding: var(--spacing-md);
+  }
+  
+  .bharatchain-button {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--text-sm);
+  }
+  
+  h1 { font-size: var(--text-4xl); }
+  h2 { font-size: var(--text-3xl); }
+  h3 { font-size: var(--text-2xl); }
+}
+
+@media (max-width: 576px) {
+  .bharatchain-container {
+    padding: 0 var(--spacing-sm);
+  }
+  
+  .bharatchain-card {
+    padding: var(--spacing-sm);
+  }
+  
+  .loading-spinner {
+    width: 32px;
+    height: 32px;
+    border-width: 3px;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-primary: #1a1a1a;
+    --bg-secondary: #2d2d2d;
+    --bg-card: #2d2d2d;
+    --text-primary: #ffffff;
+    --text-secondary: #cccccc;
+    --text-light: #999999;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .bharatchain-button,
+  .loading,
+  .network-status {
+    display: none !important;
+  }
+  
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  
+  .bharatchain-card {
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+  }
+}
+
+/* Focus Styles for Accessibility */
+.bharatchain-button:focus,
+a:focus {
+  outline: 2px solid var(--primary-saffron);
+  outline-offset: 2px;
+}
+
+/* Selection Styles */
+::selection {
+  background: var(--primary-saffron);
+  color: var(--text-white);
+}
+
+::-moz-selection {
+  background: var(--primary-saffron);
+  color: var(--text-white);
 }
