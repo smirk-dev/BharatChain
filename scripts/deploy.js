@@ -11,8 +11,8 @@ async function main() {
   
   console.log('\n📊 Deployment Information:');
   console.log('- Network:', network.name, `(Chain ID: ${network.chainId})`);
-  console.log('- Deployer:', deployer.getAddress());
-  console.log('- Balance:', ethers.utils.formatEther(await deployer.getBalance()), 'ETH');
+  console.log('- Deployer:', await deployer.getAddress());
+  console.log('- Balance:', ethers.formatEther(await deployer.provider.getBalance(deployer.address)), 'ETH');
 
   const deployedContracts = {};
 

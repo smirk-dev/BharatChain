@@ -9,7 +9,7 @@ require('dotenv').config();
 
 // Import routes
 const authRoutes = require('./routes/auth');
-// const citizenRoutes = require('./routes/citizens');
+const citizenRoutes = require('./routes/citizens');
 const documentRoutes = require('./routes/documents');
 // const grievanceRoutes = require('./routes/grievances');
 // const adminRoutes = require('./routes/admin');
@@ -88,7 +88,7 @@ app.get('/api/health', (req, res) => {
 
 // API Routes
 app.use('/api/auth', authRoutes);
-// app.use('/api/citizens', authMiddleware, citizenRoutes);
+app.use('/api/citizens', authMiddleware, citizenRoutes);
 app.use('/api/documents', authMiddleware, documentRoutes);
 // app.use('/api/grievances', authMiddleware, grievanceRoutes);
 // app.use('/api/admin', authMiddleware, adminRoutes);

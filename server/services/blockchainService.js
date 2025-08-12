@@ -41,33 +41,36 @@ class BlockchainService {
 
   async loadContracts() {
     try {
-      // Load contract ABIs (these would be generated after deployment)
+      // Load contract ABIs from artifacts
+      const path = require('path');
+      
       const contracts = {
         CitizenRegistry: {
           address: process.env.CITIZEN_REGISTRY_ADDRESS,
-          abi: [] // Will be populated from artifacts
+          artifactPath: path.join(__dirname, '../../artifacts/contracts/CitizenRegistry.sol/CitizenRegistry.json')
         },
         DocumentRegistry: {
           address: process.env.DOCUMENT_REGISTRY_ADDRESS,
-          abi: [] // Will be populated from artifacts
+          artifactPath: path.join(__dirname, '../../artifacts/contracts/DocumentRegistry.sol/DocumentRegistry.json')
         },
         GrievanceSystem: {
           address: process.env.GRIEVANCE_SYSTEM_ADDRESS,
-          abi: [] // Will be populated from artifacts
+          artifactPath: path.join(__dirname, '../../artifacts/contracts/GrievanceSystem.sol/GrievanceSystem.json')
         }
       };
 
       // Initialize contract instances if addresses are available
       for (const [name, config] of Object.entries(contracts)) {
-        if (config.address && config.abi.length > 0) {
+        if (config.address && require('fs').existsSync(config.artifactPath)) {
+          const artifact = require(config.artifactPath);
           this.contracts[name] = new ethers.Contract(
             config.address,
-            config.abi,
+            artifact.abi,
             this.signer || this.provider
           );
           console.log(`✅ ${name} contract loaded at ${config.address}`);
         } else {
-          console.log(`⚠️ ${name} contract not configured (missing address or ABI)`);
+          console.log(`⚠️ ${name} contract not configured (missing address or artifact)`);
         }
       }
     } catch (error) {
