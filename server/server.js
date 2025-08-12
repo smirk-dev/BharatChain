@@ -11,7 +11,7 @@ require('dotenv').config();
 const authRoutes = require('./routes/auth');
 const citizenRoutes = require('./routes/citizens');
 const documentRoutes = require('./routes/documents');
-// const grievanceRoutes = require('./routes/grievances');
+const grievanceRoutes = require('./routes/grievances');
 // const adminRoutes = require('./routes/admin');
 // const aiRoutes = require('./routes/ai');
 
@@ -19,12 +19,10 @@ const documentRoutes = require('./routes/documents');
 const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
 const { authMiddleware } = require('./middleware/auth');
 
-// Import database
-const { sequelize } = require('./models');
-
 // Import services
 const blockchainService = require('./services/blockchainService');
 const ipfsService = require('./services/ipfsService');
+const dataStore = require('./services/dataStore');
 
 const app = express();
 const server = createServer(app);
@@ -90,7 +88,7 @@ app.get('/api/health', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/citizens', authMiddleware, citizenRoutes);
 app.use('/api/documents', authMiddleware, documentRoutes);
-// app.use('/api/grievances', authMiddleware, grievanceRoutes);
+app.use('/api/grievances', authMiddleware, grievanceRoutes);
 // app.use('/api/admin', authMiddleware, adminRoutes);
 // app.use('/api/ai', authMiddleware, aiRoutes);
 
@@ -103,26 +101,42 @@ app.use('*', notFoundHandler);
 // Initialize services and start server
 const startServer = async () => {
   try {
-    // Test database connection
-    await sequelize.authenticate();
-    console.log('Database connection established successfully.');
-    
-    // Sync database models
-    await sequelize.sync({ force: false });
-    console.log('Database models synchronized.');
+    // Initialize data store with demo data
+    dataStore.seedDemoData();
+    console.log('In-memory data store initialized with demo data.');
     
     // Initialize blockchain service
-    await blockchainService.initialize();
-    console.log('Blockchain service initialized.');
+    try {
+      await blockchainService.initialize();
+      console.log('Blockchain service initialized.');
+    } catch (blockchainError) {
+      console.log('Blockchain service initialization failed, continuing in demo mode:', blockchainError.message);
+    }
     
     // Initialize IPFS service
-    await ipfsService.initialize();
-    console.log('IPFS service initialized.');
+    try {
+      await ipfsService.initialize();
+      console.log('IPFS service initialized.');
+    } catch (ipfsError) {
+      console.log('IPFS service initialization failed, continuing with mock implementation:', ipfsError.message);
+    }
     
     // Start server
     server.listen(PORT, () => {
-      console.log(`BharatChain server running on port ${PORT}`);
-      console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log(`✅ BharatChain server running on port ${PORT}`);
+      console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log(`📊 API Base URL: http://localhost:${PORT}/api`);
+      console.log(`🔗 Health Check: http://localhost:${PORT}/api/health`);
+      console.log('');
+      console.log('Available endpoints:');
+      console.log('  GET  /api/health - Health check');
+      console.log('  POST /api/auth/login - User login');
+      console.log('  GET  /api/citizens/profile - Get citizen profile');
+      console.log('  POST /api/citizens/register - Register new citizen');
+      console.log('  GET  /api/documents - Get citizen documents');
+      console.log('  POST /api/documents/upload - Upload new document');
+      console.log('  GET  /api/grievances - Get citizen grievances');
+      console.log('  POST /api/grievances - Submit new grievance');
     });
   } catch (error) {
     console.error('Failed to start server:', error);

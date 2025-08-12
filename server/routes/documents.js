@@ -240,23 +240,34 @@ router.post('/:documentId/verify', async (req, res) => {
     }
     
     // Verify document on blockchain
-    await blockchainService.verifyDocument(documentId, issuerAddress);
+    try {
+      await blockchainService.verifyDocument(documentId, issuerAddress);
+    } catch (blockchainError) {
+      console.log('Blockchain verification failed:', blockchainError.message);
+    }
     
-    // Update database
-    await Document.update(
-      { status: 'verified', verifiedBy: issuerAddress, verifiedAt: new Date() },
-      { where: { blockchainId: documentId } }
-    );
+    // Update data store
+    const updatedDoc = dataStore.updateDocument(documentId, { 
+      status: 'verified', 
+      verifiedBy: issuerAddress, 
+      verifiedAt: new Date() 
+    });
     
-    // Get document owner for notification
-    const blockchainDoc = await blockchainService.getDocument(documentId);
+    if (!updatedDoc) {
+      return res.status(404).json({
+        success: false,
+        message: 'Document not found',
+      });
+    }
     
     // Emit real-time update
     const io = req.app.get('io');
-    io.to(`citizen-${blockchainDoc.owner}`).emit('document-verified', {
-      documentId,
-      verifiedBy: issuerAddress,
-    });
+    if (io) {
+      io.to(`citizen-${updatedDoc.citizenAddress}`).emit('document-verified', {
+        documentId,
+        verifiedBy: issuerAddress,
+      });
+    }
     
     res.json({
       success: true,
@@ -296,29 +307,36 @@ router.post('/:documentId/reject', async (req, res) => {
     }
     
     // Reject document on blockchain
-    await blockchainService.rejectDocument(documentId, reason);
+    try {
+      await blockchainService.rejectDocument(documentId, reason);
+    } catch (blockchainError) {
+      console.log('Blockchain rejection failed:', blockchainError.message);
+    }
     
-    // Update database
-    await Document.update(
-      { 
-        status: 'rejected', 
-        rejectedBy: issuerAddress, 
-        rejectedAt: new Date(),
-        rejectionReason: reason 
-      },
-      { where: { blockchainId: documentId } }
-    );
+    // Update data store
+    const updatedDoc = dataStore.updateDocument(documentId, { 
+      status: 'rejected', 
+      rejectedBy: issuerAddress, 
+      rejectedAt: new Date(),
+      rejectionReason: reason 
+    });
     
-    // Get document owner for notification
-    const blockchainDoc = await blockchainService.getDocument(documentId);
+    if (!updatedDoc) {
+      return res.status(404).json({
+        success: false,
+        message: 'Document not found',
+      });
+    }
     
     // Emit real-time update
     const io = req.app.get('io');
-    io.to(`citizen-${blockchainDoc.owner}`).emit('document-rejected', {
-      documentId,
-      reason,
-      rejectedBy: issuerAddress,
-    });
+    if (io) {
+      io.to(`citizen-${updatedDoc.citizenAddress}`).emit('document-rejected', {
+        documentId,
+        reason,
+        rejectedBy: issuerAddress,
+      });
+    }
     
     res.json({
       success: true,

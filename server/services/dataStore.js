@@ -139,7 +139,116 @@ class InMemoryStore {
       },
     });
 
+    // Create demo grievance
+    this.createGrievance({
+      blockchainId: 'demo_grv_1',
+      citizenAddress: '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266',
+      title: 'Street Light Not Working',
+      description: 'The street light on Main Road near City Mall has been non-functional for the past 2 weeks. This is causing safety issues for pedestrians and vehicles during night time.',
+      category: 'infrastructure',
+      priority: 'medium',
+      location: 'Main Road, near City Mall, New Delhi',
+      status: 'under_review',
+      handledBy: '0x742d35cc6527c6c7e3f24b8e92ff8a2c7f4b1234',
+      response: 'We have received your complaint and our technical team will inspect the area within 2 working days.',
+    });
+
     console.log('✅ Demo data seeded successfully');
+  }
+
+  // Additional grievance helper methods
+  getGrievancesByCitizen(citizenAddress, filters = {}) {
+    const grievances = Array.from(this.data.grievances.values())
+      .filter(grievance => grievance.citizenAddress === citizenAddress);
+    
+    let filtered = grievances;
+    
+    if (filters.status) {
+      filtered = filtered.filter(g => g.status === filters.status);
+    }
+    
+    if (filters.category) {
+      filtered = filtered.filter(g => g.category === filters.category);
+    }
+    
+    // Simple pagination
+    const page = filters.page || 1;
+    const limit = filters.limit || 10;
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+    
+    return filtered
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .slice(startIndex, endIndex);
+  }
+
+  getAllGrievances(filters = {}) {
+    let grievances = Array.from(this.data.grievances.values());
+    
+    if (filters.status) {
+      grievances = grievances.filter(g => g.status === filters.status);
+    }
+    
+    if (filters.category) {
+      grievances = grievances.filter(g => g.category === filters.category);
+    }
+    
+    return grievances.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  }
+
+  addGrievanceComment(grievanceId, commentData) {
+    const grievance = this.data.grievances.get(grievanceId);
+    if (!grievance) return null;
+    
+    if (!grievance.comments) {
+      grievance.comments = [];
+    }
+    
+    grievance.comments.push(commentData);
+    grievance.updatedAt = new Date();
+    
+    this.data.grievances.set(grievanceId, grievance);
+    return grievance;
+  }
+
+  getGrievanceStats() {
+    const grievances = Array.from(this.data.grievances.values());
+    
+    const stats = {
+      total: grievances.length,
+      byStatus: {},
+      byCategory: {},
+      byPriority: {},
+      recent: grievances
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        .slice(0, 5)
+        .map(g => ({
+          id: g.id,
+          title: g.title,
+          status: g.status,
+          category: g.category,
+          createdAt: g.createdAt,
+        })),
+    };
+    
+    // Count by status
+    grievances.forEach(g => {
+      stats.byStatus[g.status] = (stats.byStatus[g.status] || 0) + 1;
+    });
+    
+    // Count by category
+    grievances.forEach(g => {
+      stats.byCategory[g.category] = (stats.byCategory[g.category] || 0) + 1;
+    });
+    
+    // Count by priority
+    grievances.forEach(g => {
+      if (g.priority) {
+        stats.byPriority[g.priority] = (stats.byPriority[g.priority] || 0) + 1;
+      }
+    });
+    
+    return stats;
   }
 }
 
