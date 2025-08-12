@@ -4,10 +4,8 @@ const { ethers } = require('ethers');
 const { body, validationResult } = require('express-validator');
 const router = express.Router();
 
-// Models
-const { Citizen } = require('../models');
-
 // Services
+const dataStore = require('../services/dataStore');
 const blockchainService = require('../services/blockchainService');
 
 // Validation middleware
@@ -97,8 +95,8 @@ router.post('/connect', validateAuthRequest, async (req, res) => {
       });
     }
 
-    // Check if citizen exists in database
-    let citizen = await Citizen.findOne({ where: { address: normalizedAddress } });
+    // Check if citizen exists in data store
+    let citizen = dataStore.findCitizenByAddress(normalizedAddress);
     let isRegistered = false;
 
     if (!citizen) {
@@ -107,8 +105,8 @@ router.post('/connect', validateAuthRequest, async (req, res) => {
         const blockchainCitizen = await blockchainService.getCitizen(normalizedAddress);
         if (blockchainCitizen && blockchainCitizen.name) {
           isRegistered = true;
-          // Optionally sync with database
-          citizen = await Citizen.create({
+          // Sync with data store
+          citizen = dataStore.createCitizen({
             address: normalizedAddress,
             name: blockchainCitizen.name,
             email: blockchainCitizen.email,
@@ -139,7 +137,7 @@ router.post('/connect', validateAuthRequest, async (req, res) => {
 
     // Update last login
     if (citizen) {
-      await citizen.update({ lastLogin: new Date() });
+      dataStore.updateCitizen(normalizedAddress, { lastLogin: new Date() });
     }
 
     res.json({
@@ -185,7 +183,7 @@ router.post('/refresh', async (req, res) => {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       
       // Generate new token with updated info
-      const citizen = await Citizen.findOne({ where: { address: decoded.address } });
+      const citizen = dataStore.findCitizenByAddress(decoded.address);
       
       const newTokenPayload = {
         address: decoded.address,

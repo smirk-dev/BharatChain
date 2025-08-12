@@ -148,15 +148,9 @@ const startServer = async () => {
 process.on('SIGTERM', async () => {
   console.log('SIGTERM received, shutting down gracefully...');
   
-  server.close(async () => {
-    try {
-      await sequelize.close();
-      console.log('Database connection closed.');
-      process.exit(0);
-    } catch (error) {
-      console.error('Error during shutdown:', error);
-      process.exit(1);
-    }
+  server.close(() => {
+    console.log('Server closed.');
+    process.exit(0);
   });
 });
 
