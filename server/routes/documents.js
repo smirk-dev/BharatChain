@@ -119,16 +119,22 @@ router.post('/upload', upload.single('document'), validateDocument, async (req, 
     
     // Upload to blockchain
     const expiryTimestamp = expiryDate ? Math.floor(new Date(expiryDate).getTime() / 1000) : 0;
-    const documentId = await blockchainService.uploadDocument(
-      citizenAddress,
-      documentType,
-      ipfsHash,
-      metadataHash,
-      expiryTimestamp
-    );
+    let documentId;
+    try {
+      documentId = await blockchainService.uploadDocument(
+        citizenAddress,
+        documentType,
+        ipfsHash,
+        metadataHash,
+        expiryTimestamp
+      );
+    } catch (blockchainError) {
+      console.log('Blockchain upload failed, using local ID:', blockchainError.message);
+      documentId = `doc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    }
     
-    // Store in database
-    const dbDocument = await Document.create({
+    // Store in data store
+    const document = dataStore.createDocument({
       blockchainId: documentId,
       citizenAddress,
       documentType,
@@ -141,11 +147,13 @@ router.post('/upload', upload.single('document'), validateDocument, async (req, 
     
     // Emit real-time update
     const io = req.app.get('io');
-    io.to(`citizen-${citizenAddress}`).emit('document-uploaded', {
-      documentId,
-      documentType,
-      status: 'pending',
-    });
+    if (io) {
+      io.to(`citizen-${citizenAddress}`).emit('document-uploaded', {
+        documentId,
+        documentType,
+        status: 'pending',
+      });
+    }
     
     res.status(201).json({
       success: true,
@@ -172,31 +180,38 @@ router.get('/:documentId', async (req, res) => {
     const { documentId } = req.params;
     const citizenAddress = req.user.address;
     
-    // Get document from blockchain
-    const blockchainDoc = await blockchainService.getDocument(documentId);
+    // Get document from data store
+    const document = dataStore.findDocumentById(documentId);
+    
+    if (!document) {
+      return res.status(404).json({
+        success: false,
+        message: 'Document not found',
+      });
+    }
     
     // Verify ownership
-    if (blockchainDoc.owner.toLowerCase() !== citizenAddress.toLowerCase()) {
+    if (document.citizenAddress.toLowerCase() !== citizenAddress.toLowerCase()) {
       return res.status(403).json({
         success: false,
         message: 'Access denied. You are not the owner of this document.',
       });
     }
     
-    // Get additional data from database
-    const dbDoc = await Document.findOne({ where: { blockchainId: documentId } });
-    
-    // Get file from IPFS
-    const fileBuffer = await ipfsService.getFile(blockchainDoc.ipfsHash);
-    const metadata = await ipfsService.getJSON(blockchainDoc.metadataHash);
+    // Get file from IPFS (mock for now)
+    let fileData = null;
+    try {
+      const fileBuffer = await ipfsService.getFile(document.ipfsHash);
+      fileData = fileBuffer.toString('base64');
+    } catch (ipfsError) {
+      console.log('IPFS fetch failed, returning metadata only:', ipfsError.message);
+    }
     
     res.json({
       success: true,
       data: {
-        ...blockchainDoc,
-        metadata,
-        aiAnalysis: dbDoc ? dbDoc.aiAnalysis : null,
-        fileData: fileBuffer.toString('base64'),
+        ...document,
+        fileData,
       },
     });
   } catch (error) {
