@@ -31,19 +31,16 @@ router.get('/profile', async (req, res) => {
   try {
     const citizenAddress = req.user.address;
 
-    // Get citizen from database
-    let citizen = await Citizen.findOne({ 
-      where: { address: citizenAddress },
-      attributes: { exclude: ['aadharHash'] } // Don't expose sensitive data
-    });
+    // Get citizen from in-memory store
+    let citizen = dataStore.findCitizenByAddress(citizenAddress);
 
     if (!citizen) {
       // Check blockchain for registration
       try {
         const blockchainCitizen = await blockchainService.getCitizen(citizenAddress);
         if (blockchainCitizen && blockchainCitizen.name) {
-          // Sync with database
-          citizen = await Citizen.create({
+          // Sync with in-memory store
+          citizen = dataStore.createCitizen({
             address: citizenAddress,
             name: blockchainCitizen.name,
             email: blockchainCitizen.email,
@@ -63,24 +60,12 @@ router.get('/profile', async (req, res) => {
       });
     }
 
+    // Don't expose sensitive data
+    const { aadharHash, ...safeData } = citizen;
+
     res.json({
       success: true,
-      data: {
-        address: citizen.address,
-        name: citizen.name,
-        email: citizen.email,
-        phone: citizen.phone,
-        dateOfBirth: citizen.dateOfBirth,
-        gender: citizen.gender,
-        city: citizen.city,
-        state: citizen.state,
-        pincode: citizen.pincode,
-        isVerified: citizen.isVerified,
-        isActive: citizen.isActive,
-        verifiedAt: citizen.verifiedAt,
-        lastLogin: citizen.lastLogin,
-        createdAt: citizen.createdAt,
-      },
+      data: safeData,
     });
   } catch (error) {
     console.error('Error fetching citizen profile:', error);
