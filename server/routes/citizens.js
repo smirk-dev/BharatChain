@@ -230,18 +230,11 @@ router.put('/profile', async (req, res) => {
 // Get citizen statistics
 router.get('/stats', async (req, res) => {
   try {
-    const stats = await Citizen.findAll({
-      attributes: [
-        [Citizen.sequelize.fn('COUNT', '*'), 'totalCitizens'],
-        [Citizen.sequelize.fn('COUNT', Citizen.sequelize.col('is_verified')), 'verifiedCitizens'],
-        [Citizen.sequelize.fn('COUNT', Citizen.sequelize.col('is_active')), 'activeCitizens'],
-      ],
-      raw: true,
-    });
+    const stats = dataStore.getCitizenStats();
 
     res.json({
       success: true,
-      data: stats[0],
+      data: stats,
     });
   } catch (error) {
     console.error('Error fetching citizen stats:', error);
