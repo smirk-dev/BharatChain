@@ -2,12 +2,8 @@ require('dotenv').config();
 
 module.exports = {
   development: {
-    username: process.env.DB_USER || 'bharatchain',
-    password: process.env.DB_PASSWORD || 'bharatchain123',
-    database: process.env.DB_NAME || 'bharatchain_dev',
-    host: process.env.DB_HOST || 'localhost',
-    port: process.env.DB_PORT || 5432,
-    dialect: 'postgres',
+    dialect: 'sqlite',
+    storage: './database/bharatchain_dev.sqlite',
     logging: console.log,
     pool: {
       max: 5,
@@ -17,12 +13,8 @@ module.exports = {
     }
   },
   test: {
-    username: process.env.DB_USER || 'bharatchain',
-    password: process.env.DB_PASSWORD || 'bharatchain123',
-    database: process.env.DB_NAME || 'bharatchain_test',
-    host: process.env.DB_HOST || 'localhost',
-    port: process.env.DB_PORT || 5432,
-    dialect: 'postgres',
+    dialect: 'sqlite',
+    storage: ':memory:',
     logging: false,
     pool: {
       max: 5,
