@@ -43,22 +43,8 @@ router.get('/', async (req, res) => {
   try {
     const citizenAddress = req.user.address;
     
-    // Get documents from blockchain
-    const documentIds = await blockchainService.getCitizenDocuments(citizenAddress);
-    
-    const documents = await Promise.all(
-      documentIds.map(async (id) => {
-        const blockchainDoc = await blockchainService.getDocument(id);
-        const dbDoc = await Document.findOne({ where: { blockchainId: id } });
-        
-        return {
-          id,
-          ...blockchainDoc,
-          metadata: dbDoc ? dbDoc.metadata : null,
-          aiAnalysis: dbDoc ? dbDoc.aiAnalysis : null,
-        };
-      })
-    );
+    // Get documents from data store
+    const documents = dataStore.getDocumentsByCitizen(citizenAddress);
     
     res.json({
       success: true,
