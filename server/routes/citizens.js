@@ -2,10 +2,8 @@ const express = require('express');
 const { body, validationResult } = require('express-validator');
 const router = express.Router();
 
-// Models
-const { Citizen } = require('../models');
-
 // Services
+const dataStore = require('../services/dataStore');
 const blockchainService = require('../services/blockchainService');
 
 // Validation middleware
