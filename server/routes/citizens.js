@@ -94,9 +94,7 @@ router.post('/register', validateCitizenRegistration, async (req, res) => {
     const citizenAddress = req.user.address;
 
     // Check if citizen already exists
-    const existingCitizen = await Citizen.findOne({ 
-      where: { address: citizenAddress } 
-    });
+    const existingCitizen = dataStore.findCitizenByAddress(citizenAddress);
 
     if (existingCitizen) {
       return res.status(409).json({
@@ -122,11 +120,11 @@ router.post('/register', validateCitizenRegistration, async (req, res) => {
 
       console.log('Blockchain registration:', blockchainResult);
     } catch (blockchainError) {
-      console.log('Blockchain registration failed, continuing with database only:', blockchainError.message);
+      console.log('Blockchain registration failed, continuing with data store only:', blockchainError.message);
     }
 
-    // Create in database
-    const citizen = await Citizen.create({
+    // Create in data store
+    const citizen = dataStore.createCitizen({
       address: citizenAddress,
       name,
       email,
@@ -138,10 +136,12 @@ router.post('/register', validateCitizenRegistration, async (req, res) => {
 
     // Emit real-time update
     const io = req.app.get('io');
-    io.to(`citizen-${citizenAddress}`).emit('citizen-registered', {
-      address: citizenAddress,
-      name: citizen.name,
-    });
+    if (io) {
+      io.to(`citizen-${citizenAddress}`).emit('citizen-registered', {
+        address: citizenAddress,
+        name: citizen.name,
+      });
+    }
 
     res.status(201).json({
       success: true,
@@ -157,8 +157,8 @@ router.post('/register', validateCitizenRegistration, async (req, res) => {
   } catch (error) {
     console.error('Error registering citizen:', error);
     
-    // Handle specific database errors
-    if (error.name === 'SequelizeUniqueConstraintError') {
+    // Handle specific errors
+    if (error.message.includes('already exists')) {
       return res.status(409).json({
         success: false,
         message: 'Citizen with this information already exists',
@@ -179,7 +179,7 @@ router.put('/profile', async (req, res) => {
     const citizenAddress = req.user.address;
     const { name, email, phone, dateOfBirth, gender, city, state, pincode } = req.body;
 
-    const citizen = await Citizen.findOne({ where: { address: citizenAddress } });
+    const citizen = dataStore.findCitizenByAddress(citizenAddress);
 
     if (!citizen) {
       return res.status(404).json({
@@ -199,22 +199,22 @@ router.put('/profile', async (req, res) => {
     if (state) updateData.state = state;
     if (pincode) updateData.pincode = pincode;
 
-    await citizen.update(updateData);
+    const updatedCitizen = dataStore.updateCitizen(citizenAddress, updateData);
 
     res.json({
       success: true,
       message: 'Profile updated successfully',
       data: {
-        address: citizen.address,
-        name: citizen.name,
-        email: citizen.email,
-        phone: citizen.phone,
-        dateOfBirth: citizen.dateOfBirth,
-        gender: citizen.gender,
-        city: citizen.city,
-        state: citizen.state,
-        pincode: citizen.pincode,
-        updatedAt: citizen.updatedAt,
+        address: updatedCitizen.address,
+        name: updatedCitizen.name,
+        email: updatedCitizen.email,
+        phone: updatedCitizen.phone,
+        dateOfBirth: updatedCitizen.dateOfBirth,
+        gender: updatedCitizen.gender,
+        city: updatedCitizen.city,
+        state: updatedCitizen.state,
+        pincode: updatedCitizen.pincode,
+        updatedAt: updatedCitizen.updatedAt,
       },
     });
   } catch (error) {
