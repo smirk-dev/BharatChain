@@ -7,7 +7,7 @@ const router = express.Router();
 // Services
 const blockchainService = require('../services/blockchainService');
 const ipfsService = require('../services/ipfsService');
-const aiService = require('../services/aiService');
+// const aiService = require('../services/aiService');
 
 // Models
 const { Document, Citizen } = require('../models');
@@ -112,7 +112,15 @@ router.post('/upload', upload.single('document'), validateDocument, async (req, 
     const ipfsHash = await ipfsService.uploadFile(processedFile);
     
     // AI Analysis
-    const aiAnalysis = await aiService.analyzeDocument(processedFile, documentType);
+    // const aiAnalysis = await aiService.analyzeDocument(processedFile, documentType);
+    const aiAnalysis = { 
+      summary: { 
+        confidence: 0.8, 
+        is_valid: true, 
+        document_type: documentType,
+        mock: true 
+      } 
+    }; // Mock for now
     
     // Create metadata hash
     const metadata = {

@@ -11,7 +11,7 @@ async function main() {
   
   console.log('\n📊 Deployment Information:');
   console.log('- Network:', network.name, `(Chain ID: ${network.chainId})`);
-  console.log('- Deployer:', deployer.address);
+  console.log('- Deployer:', deployer.getAddress());
   console.log('- Balance:', ethers.utils.formatEther(await deployer.getBalance()), 'ETH');
 
   const deployedContracts = {};
@@ -21,57 +21,60 @@ async function main() {
     console.log('\n1️⃣ Deploying CitizenRegistry...');
     const CitizenRegistry = await ethers.getContractFactory('CitizenRegistry');
     const citizenRegistry = await CitizenRegistry.deploy();
-    await citizenRegistry.deployed();
+    await citizenRegistry.waitForDeployment();
     
+    const citizenRegistryAddress = await citizenRegistry.getAddress();
     deployedContracts.CitizenRegistry = {
-      address: citizenRegistry.address,
-      transactionHash: citizenRegistry.deployTransaction.hash,
-      gasUsed: (await citizenRegistry.deployTransaction.wait()).gasUsed.toString(),
+      address: citizenRegistryAddress,
+      transactionHash: citizenRegistry.deploymentTransaction().hash,
+      gasUsed: (await citizenRegistry.deploymentTransaction().wait()).gasUsed.toString(),
     };
     
-    console.log('✅ CitizenRegistry deployed to:', citizenRegistry.address);
+    console.log('✅ CitizenRegistry deployed to:', citizenRegistryAddress);
 
     // Deploy DocumentRegistry
     console.log('\n2️⃣ Deploying DocumentRegistry...');
     const DocumentRegistry = await ethers.getContractFactory('DocumentRegistry');
-    const documentRegistry = await DocumentRegistry.deploy(citizenRegistry.address);
-    await documentRegistry.deployed();
+    const documentRegistry = await DocumentRegistry.deploy(citizenRegistryAddress);
+    await documentRegistry.waitForDeployment();
     
+    const documentRegistryAddress = await documentRegistry.getAddress();
     deployedContracts.DocumentRegistry = {
-      address: documentRegistry.address,
-      transactionHash: documentRegistry.deployTransaction.hash,
-      gasUsed: (await documentRegistry.deployTransaction.wait()).gasUsed.toString(),
+      address: documentRegistryAddress,
+      transactionHash: documentRegistry.deploymentTransaction().hash,
+      gasUsed: (await documentRegistry.deploymentTransaction().wait()).gasUsed.toString(),
     };
     
-    console.log('✅ DocumentRegistry deployed to:', documentRegistry.address);
+    console.log('✅ DocumentRegistry deployed to:', documentRegistryAddress);
 
     // Deploy GrievanceSystem
     console.log('\n3️⃣ Deploying GrievanceSystem...');
     const GrievanceSystem = await ethers.getContractFactory('GrievanceSystem');
-    const grievanceSystem = await GrievanceSystem.deploy(citizenRegistry.address);
-    await grievanceSystem.deployed();
+    const grievanceSystem = await GrievanceSystem.deploy(citizenRegistryAddress);
+    await grievanceSystem.waitForDeployment();
     
+    const grievanceSystemAddress = await grievanceSystem.getAddress();
     deployedContracts.GrievanceSystem = {
-      address: grievanceSystem.address,
-      transactionHash: grievanceSystem.deployTransaction.hash,
-      gasUsed: (await grievanceSystem.deployTransaction.wait()).gasUsed.toString(),
+      address: grievanceSystemAddress,
+      transactionHash: grievanceSystem.deploymentTransaction().hash,
+      gasUsed: (await grievanceSystem.deploymentTransaction().wait()).gasUsed.toString(),
     };
     
-    console.log('✅ GrievanceSystem deployed to:', grievanceSystem.address);
+    console.log('✅ GrievanceSystem deployed to:', grievanceSystemAddress);
 
     // Initialize contracts with default permissions
     console.log('\n4️⃣ Initializing contract permissions...');
     
     // Add deployer as default verifier
-    await citizenRegistry.addVerifier(deployer.address, 'System Administrator');
+    await citizenRegistry.addVerifier(deployer.getAddress(), 'System Administrator');
     console.log('✅ Default verifier added');
 
     // Authorize deployer as document issuer
-    await documentRegistry.authorizeIssuer(deployer.address, 'Government Authority');
+    await documentRegistry.authorizeIssuer(deployer.getAddress(), 'Government Authority');
     console.log('✅ Default document issuer authorized');
 
     // Authorize deployer as grievance officer
-    await grievanceSystem.authorizeOfficer(deployer.address, 'Administrative Department');
+    await grievanceSystem.authorizeOfficer(deployer.getAddress(), 'Administrative Department');
     console.log('✅ Default grievance officer authorized');
 
     // Save deployment information
@@ -80,13 +83,13 @@ async function main() {
         name: network.name,
         chainId: network.chainId,
       },
-      deployer: deployer.address,
+      deployer: deployer.getAddress(),
       deploymentDate: new Date().toISOString(),
       contracts: deployedContracts,
       initialization: {
-        defaultVerifier: deployer.address,
-        defaultIssuer: deployer.address,
-        defaultOfficer: deployer.address,
+        defaultVerifier: deployer.getAddress(),
+        defaultIssuer: deployer.getAddress(),
+        defaultOfficer: deployer.getAddress(),
       },
     };
 
@@ -109,9 +112,9 @@ async function main() {
 
     console.log('\n🎉 Deployment completed successfully!');
     console.log('\n📋 Summary:');
-    console.log('- CitizenRegistry:', deployedContracts.CitizenRegistry.address);
-    console.log('- DocumentRegistry:', deployedContracts.DocumentRegistry.address);
-    console.log('- GrievanceSystem:', deployedContracts.GrievanceSystem.address);
+    console.log('- CitizenRegistry:', deployedContracts.CitizenRegistry.getAddress());
+    console.log('- DocumentRegistry:', deployedContracts.DocumentRegistry.getAddress());
+    console.log('- GrievanceSystem:', deployedContracts.GrievanceSystem.getAddress());
     
     console.log('\n🔧 Next Steps:');
     console.log('1. Update your environment files with the new contract addresses');
@@ -143,7 +146,7 @@ function updateEnvironmentFiles(contracts) {
       Object.entries(contracts).forEach(([name, info]) => {
         const key = `${prefix}${name.toUpperCase()}_ADDRESS`;
         const regex = new RegExp(`${key}=.*`, 'g');
-        const replacement = `${key}=${info.address}`;
+        const replacement = `${key}=${info.getAddress()}`;
         
         if (content.includes(key)) {
           content = content.replace(regex, replacement);

@@ -9,15 +9,15 @@ require('dotenv').config();
 
 // Import routes
 const authRoutes = require('./routes/auth');
-const citizenRoutes = require('./routes/citizens');
+// const citizenRoutes = require('./routes/citizens');
 const documentRoutes = require('./routes/documents');
-const grievanceRoutes = require('./routes/grievances');
-const adminRoutes = require('./routes/admin');
-const aiRoutes = require('./routes/ai');
+// const grievanceRoutes = require('./routes/grievances');
+// const adminRoutes = require('./routes/admin');
+// const aiRoutes = require('./routes/ai');
 
 // Import middleware
-const errorHandler = require('./middleware/errorHandler');
-const authMiddleware = require('./middleware/auth');
+const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
+const { authMiddleware } = require('./middleware/auth');
 
 // Import database
 const { sequelize } = require('./models');
@@ -88,22 +88,17 @@ app.get('/api/health', (req, res) => {
 
 // API Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/citizens', authMiddleware, citizenRoutes);
+// app.use('/api/citizens', authMiddleware, citizenRoutes);
 app.use('/api/documents', authMiddleware, documentRoutes);
-app.use('/api/grievances', authMiddleware, grievanceRoutes);
-app.use('/api/admin', authMiddleware, adminRoutes);
-app.use('/api/ai', authMiddleware, aiRoutes);
+// app.use('/api/grievances', authMiddleware, grievanceRoutes);
+// app.use('/api/admin', authMiddleware, adminRoutes);
+// app.use('/api/ai', authMiddleware, aiRoutes);
 
 // Error handling
 app.use(errorHandler);
 
 // 404 handler
-app.use('*', (req, res) => {
-  res.status(404).json({
-    error: 'Route not found',
-    path: req.originalUrl
-  });
-});
+app.use('*', notFoundHandler);
 
 // Initialize services and start server
 const startServer = async () => {
