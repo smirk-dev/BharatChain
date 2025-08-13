@@ -12,8 +12,7 @@ const authRoutes = require('./routes/auth');
 const citizenRoutes = require('./routes/citizens');
 const documentRoutes = require('./routes/documents');
 const grievanceRoutes = require('./routes/grievances');
-// const adminRoutes = require('./routes/admin');
-// const aiRoutes = require('./routes/ai');
+const aiProcessingRoutes = require('./routes/ai-processing');
 
 // Import middleware
 const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
@@ -89,8 +88,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/citizens', authMiddleware, citizenRoutes);
 app.use('/api/documents', authMiddleware, documentRoutes);
 app.use('/api/grievances', authMiddleware, grievanceRoutes);
-// app.use('/api/admin', authMiddleware, adminRoutes);
-// app.use('/api/ai', authMiddleware, aiRoutes);
+app.use('/api/ai-processing', authMiddleware, aiProcessingRoutes);
 
 // Error handling
 app.use(errorHandler);

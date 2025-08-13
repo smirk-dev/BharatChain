@@ -1,6 +1,7 @@
 {
   "short_name": "BharatChain",
-  "name": "BharatChain - Digital India Governance Platform",
+  "name": "BharatChain - Digital Governance Platform",
+  "description": "India's Digital Governance Platform on Blockchain - Secure citizen registration, document management, and grievance redressal system",
   "icons": [
     {
       "src": "favicon.ico",
@@ -20,11 +21,34 @@
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#FF9933",
+  "theme_color": "#FF6B35",
   "background_color": "#FFFFFF",
   "orientation": "portrait-primary",
-  "categories": ["government", "blockchain", "productivity"],
-  "description": "Decentralized governance platform for Indian citizens featuring blockchain-based document management and grievance system.",
+  "categories": ["government", "utilities", "productivity"],
   "lang": "en",
-  "dir": "ltr"
+  "dir": "ltr",
+  "scope": "/",
+  "shortcuts": [
+    {
+      "name": "Submit Grievance",
+      "short_name": "Grievance",
+      "description": "Submit a new grievance",
+      "url": "/?action=grievance",
+      "icons": [{ "src": "logo192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Upload Document",
+      "short_name": "Document",
+      "description": "Upload a new document",
+      "url": "/?action=document",
+      "icons": [{ "src": "logo192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Analytics",
+      "short_name": "Analytics",
+      "description": "View analytics dashboard",
+      "url": "/?action=analytics",
+      "icons": [{ "src": "logo192.png", "sizes": "192x192" }]
+    }
+  ]
 }

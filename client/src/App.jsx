@@ -39,6 +39,9 @@ import {
   ListItemText,
   ListItemAvatar,
   Divider,
+  Switch,
+  Menu,
+  Tooltip,
 } from '@mui/material';
 import {
   AccountBalance,
@@ -55,42 +58,44 @@ import {
   Error as ErrorIcon,
   FileUpload,
   VerifiedUser,
+  Analytics,
+  LocalHospital,
+  SmartToy,
+  AccountBalanceWallet,
+  Language,
+  Brightness4,
+  Brightness7,
+  SupervisorAccount,
 } from '@mui/icons-material';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 
-// BharatChain theme
-const bharatChainTheme = createTheme({
-  palette: {
-    primary: {
-      main: '#FF6B35', // Saffron
-      light: '#FFA366',
-      dark: '#CC4B1A',
-    },
-    secondary: {
-      main: '#138808', // Green
-      light: '#4CAF50',
-      dark: '#0D5D05',
-    },
-    background: {
-      default: '#F8F9FA',
-      paper: '#FFFFFF',
-    },
-  },
-  typography: {
-    h4: {
-      fontWeight: 'bold',
-      color: '#2C3E50',
-    },
-    h6: {
-      fontWeight: '600',
-    },
-  },
-});
+// Import our custom contexts and components
+import { ThemeProvider, useTheme } from './context/ThemeContext';
+import { LanguageProvider, useLanguage } from './context/LanguageContext';
+import useWeb3 from './hooks/useWeb3';
+import AnalyticsDashboard from './components/Analytics/AnalyticsDashboard';
+import HealthcareModule from './components/Healthcare/HealthcareModule';
+import AIDocumentProcessor from './components/AI/AIDocumentProcessor';
+import GovernmentAdminPortal from './components/Admin/GovernmentAdminPortal';
 
 // API Base URL
 const API_BASE_URL = 'http://localhost:5000/api';
 
-function App() {
+function AppContent() {
+  // Hooks
+  const { theme, toggleMode, isDark } = useTheme();
+  const { t, changeLanguage, supportedLanguages, getCurrentLanguage } = useLanguage();
+  const { 
+    account, 
+    isConnected, 
+    connectWallet, 
+    disconnectWallet, 
+    isLoading: web3Loading, 
+    error: web3Error,
+    getNetworkName,
+    isNetworkSupported 
+  } = useWeb3();
+
   const [currentTab, setCurrentTab] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -106,6 +111,10 @@ function App() {
   const [registerDialog, setRegisterDialog] = useState(false);
   const [documentDialog, setDocumentDialog] = useState(false);
   const [grievanceDialog, setGrievanceDialog] = useState(false);
+  
+  // Menu states
+  const [languageMenu, setLanguageMenu] = useState(null);
+  const [walletMenu, setWalletMenu] = useState(null);
   
   // Form states
   const [registerForm, setRegisterForm] = useState({
@@ -123,20 +132,25 @@ function App() {
     location: '',
   });
 
-  // Demo login (since we're in demo mode)
+  // Demo login with Web3 integration
   const demoLogin = async () => {
     setLoading(true);
     setError('');
     
     try {
+      // Try to connect Web3 wallet first
+      if (!isConnected) {
+        await connectWallet();
+      }
+      
       // In demo mode, we'll just simulate login
       setIsLoggedIn(true);
       await fetchUserProfile();
       await fetchUserDocuments();
       await fetchUserGrievances();
-      setSuccess('Successfully logged in to demo account!');
+      setSuccess(t('Successfully logged in to demo account!'));
     } catch (err) {
-      setError('Failed to login to demo account');
+      setError(t('Failed to login to demo account'));
     } finally {
       setLoading(false);
     }
@@ -310,8 +324,41 @@ function App() {
     }
   }, [error, success]);
 
+  // Handle Web3 errors
+  useEffect(() => {
+    if (web3Error) {
+      setError(web3Error);
+    }
+  }, [web3Error]);
+
+  const handleLanguageMenuOpen = (event) => {
+    setLanguageMenu(event.currentTarget);
+  };
+
+  const handleLanguageMenuClose = () => {
+    setLanguageMenu(null);
+  };
+
+  const handleLanguageChange = (languageCode) => {
+    changeLanguage(languageCode);
+    handleLanguageMenuClose();
+  };
+
+  const handleWalletMenuOpen = (event) => {
+    setWalletMenu(event.currentTarget);
+  };
+
+  const handleWalletMenuClose = () => {
+    setWalletMenu(null);
+  };
+
+  const formatAddress = (address) => {
+    if (!address) return '';
+    return `${address.slice(0, 6)}...${address.slice(-4)}`;
+  };
+
   return (
-    <ThemeProvider theme={bharatChainTheme}>
+    <MuiThemeProvider theme={theme}>
       <Box sx={{ flexGrow: 1, minHeight: '100vh', bgcolor: 'background.default' }}>
         {/* Header */}
         <AppBar position="static" elevation={2}>
@@ -321,12 +368,94 @@ function App() {
             </Avatar>
             
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              BharatChain - Digital Governance Platform
+              {t('appTitle')}
             </Typography>
+            
+            {/* Language Selector */}
+            <Tooltip title="Change Language">
+              <IconButton color="inherit" onClick={handleLanguageMenuOpen}>
+                <Language />
+              </IconButton>
+            </Tooltip>
+            <Menu
+              anchorEl={languageMenu}
+              open={Boolean(languageMenu)}
+              onClose={handleLanguageMenuClose}
+            >
+              {supportedLanguages.map((lang) => (
+                <MenuItem 
+                  key={lang.code} 
+                  onClick={() => handleLanguageChange(lang.code)}
+                  selected={getCurrentLanguage().code === lang.code}
+                >
+                  {lang.nativeName}
+                </MenuItem>
+              ))}
+            </Menu>
+            
+            {/* Theme Toggle */}
+            <Tooltip title="Toggle Theme">
+              <IconButton color="inherit" onClick={toggleMode}>
+                {isDark ? <Brightness7 /> : <Brightness4 />}
+              </IconButton>
+            </Tooltip>
+            
+            {/* Web3 Wallet */}
+            {isConnected ? (
+              <>
+                <Tooltip title="Wallet Connected">
+                  <IconButton color="inherit" onClick={handleWalletMenuOpen}>
+                    <AccountBalanceWallet />
+                  </IconButton>
+                </Tooltip>
+                <Menu
+                  anchorEl={walletMenu}
+                  open={Boolean(walletMenu)}
+                  onClose={handleWalletMenuClose}
+                >
+                  <MenuItem disabled>
+                    <Typography variant="body2">
+                      Address: {formatAddress(account)}
+                    </Typography>
+                  </MenuItem>
+                  <MenuItem disabled>
+                    <Typography variant="body2">
+                      Network: {getNetworkName()}
+                    </Typography>
+                  </MenuItem>
+                  <Divider />
+                  <MenuItem onClick={() => {
+                    disconnectWallet();
+                    handleWalletMenuClose();
+                  }}>
+                    Disconnect Wallet
+                  </MenuItem>
+                </Menu>
+                <Chip
+                  icon={<VerifiedUser />}
+                  label={formatAddress(account)}
+                  color="primary"
+                  variant="outlined"
+                  size="small"
+                  sx={{ ml: 1 }}
+                />
+              </>
+            ) : (
+              <Button
+                variant="outlined"
+                color="inherit"
+                onClick={connectWallet}
+                disabled={web3Loading}
+                startIcon={web3Loading ? <CircularProgress size={16} /> : <AccountBalanceWallet />}
+                sx={{ mr: 2 }}
+              >
+                Connect Wallet
+              </Button>
+            )}
             
             <Chip
               icon={<Security />}
-              label="Demo Mode"
+              label={t('demoMode')}
               color="secondary"
               size="small"
               sx={{ mr: 2 }}
@@ -340,7 +469,7 @@ function App() {
                 disabled={loading}
                 startIcon={loading ? <CircularProgress size={16} /> : <Person />}
               >
-                Demo Login
+                {t('demoLogin')}
               </Button>
             ) : (
               <Chip
@@ -376,17 +505,15 @@ function App() {
               </Avatar>
               
               <Typography variant="h4" gutterBottom>
-                Welcome to BharatChain
+                {t('welcome')}
               </Typography>
               
               <Typography variant="h6" color="textSecondary" sx={{ mb: 4 }}>
-                India's Digital Governance Platform on Blockchain
+                {t('welcomeSubtitle')}
               </Typography>
               
               <Typography variant="body1" sx={{ mb: 4, maxWidth: 600, mx: 'auto' }}>
-                Secure citizen registration, document management, and grievance redressal system
-                powered by blockchain technology. Experience transparent, efficient, and trustworthy
-                digital governance.
+                {t('welcomeDescription')}
               </Typography>
               
               <Button
@@ -396,7 +523,7 @@ function App() {
                 disabled={loading}
                 startIcon={loading ? <CircularProgress size={20} /> : <Person />}
               >
-                {loading ? 'Connecting...' : 'Access Demo Dashboard'}
+                {loading ? t('loading') : t('accessDemo')}
               </Button>
             </Paper>
           ) : (
@@ -407,13 +534,18 @@ function App() {
                 <Tabs 
                   value={currentTab} 
                   onChange={(e, newValue) => setCurrentTab(newValue)}
-                  centered
                   textColor="primary"
                   indicatorColor="primary"
+                  variant="scrollable"
+                  scrollButtons="auto"
                 >
-                  <Tab icon={<Person />} label="Profile" />
-                  <Tab icon={<Description />} label="Documents" />
-                  <Tab icon={<ReportProblem />} label="Grievances" />
+                  <Tab icon={<Person />} label={t('profile')} />
+                  <Tab icon={<Description />} label={t('documents')} />
+                  <Tab icon={<ReportProblem />} label={t('grievances')} />
+                  <Tab icon={<Analytics />} label={t('analytics')} />
+                  <Tab icon={<LocalHospital />} label={t('healthcare')} />
+                  <Tab icon={<SmartToy />} label="AI Processing" />
+                  <Tab icon={<SupervisorAccount />} label="Admin Portal" />
                 </Tabs>
               </Paper>
 
@@ -424,31 +556,31 @@ function App() {
                     <Card elevation={2}>
                       <CardContent sx={{ p: 3 }}>
                         <Typography variant="h6" gutterBottom>
-                          Citizen Profile
+                          {t('citizenProfile')}
                         </Typography>
                         
                         {userProfile ? (
                           <Box>
                             <Grid container spacing={2}>
                               <Grid item xs={12} sm={6}>
-                                <Typography variant="body2" color="textSecondary">Name</Typography>
+                                <Typography variant="body2" color="textSecondary">{t('name')}</Typography>
                                 <Typography variant="body1">{userProfile.name}</Typography>
                               </Grid>
                               <Grid item xs={12} sm={6}>
-                                <Typography variant="body2" color="textSecondary">Email</Typography>
+                                <Typography variant="body2" color="textSecondary">{t('email')}</Typography>
                                 <Typography variant="body1">{userProfile.email || 'Not provided'}</Typography>
                               </Grid>
                               <Grid item xs={12} sm={6}>
-                                <Typography variant="body2" color="textSecondary">Address</Typography>
+                                <Typography variant="body2" color="textSecondary">{t('address')}</Typography>
                                 <Typography variant="body1" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>
                                   {userProfile.address}
                                 </Typography>
                               </Grid>
                               <Grid item xs={12} sm={6}>
-                                <Typography variant="body2" color="textSecondary">Status</Typography>
+                                <Typography variant="body2" color="textSecondary">{t('status')}</Typography>
                                 <Chip
                                   icon={getStatusIcon(userProfile.isVerified ? 'verified' : 'pending')}
-                                  label={userProfile.isVerified ? 'Verified' : 'Pending Verification'}
+                                  label={userProfile.isVerified ? t('verified') : t('pending')}
                                   color={userProfile.isVerified ? 'success' : 'warning'}
                                   size="small"
                                 />
@@ -488,7 +620,7 @@ function App() {
                             </ListItemAvatar>
                             <ListItemText
                               primary={userDocuments.length}
-                              secondary="Documents"
+                              secondary={t('documents')}
                             />
                           </ListItem>
                           <ListItem>
@@ -499,7 +631,7 @@ function App() {
                             </ListItemAvatar>
                             <ListItemText
                               primary={userGrievances.length}
-                              secondary="Grievances"
+                              secondary={t('grievances')}
                             />
                           </ListItem>
                         </List>
@@ -642,6 +774,18 @@ function App() {
                   </CardContent>
                 </Card>
               )}
+
+              {/* Analytics Tab */}
+              {currentTab === 3 && <AnalyticsDashboard />}
+
+              {/* Healthcare Tab */}
+              {currentTab === 4 && <HealthcareModule />}
+
+              {/* AI Processing Tab */}
+              {currentTab === 5 && <AIDocumentProcessor />}
+
+              {/* Government Admin Portal Tab */}
+              {currentTab === 6 && <GovernmentAdminPortal />}
 
               {/* Floating Action Button for Refresh */}
               <Fab
@@ -787,6 +931,17 @@ function App() {
           </DialogActions>
         </Dialog>
       </Box>
+    </MuiThemeProvider>
+  );
+}
+
+// Main App component with providers
+function App() {
+  return (
+    <ThemeProvider>
+      <LanguageProvider>
+        <AppContent />
+      </LanguageProvider>
     </ThemeProvider>
   );
 }
