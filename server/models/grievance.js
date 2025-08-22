@@ -66,13 +66,13 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     aiAnalysis: {
-      type: DataTypes.JSONB,
+      type: DataTypes.JSON,
       allowNull: true,
       field: 'ai_analysis',
       defaultValue: {},
     },
     attachments: {
-      type: DataTypes.JSONB,
+      type: DataTypes.JSON,
       allowNull: true,
       defaultValue: [],
     },
