@@ -45,7 +45,10 @@ router.get('/', async (req, res) => {
     const citizenAddress = req.user.address;
     
     // Get documents from data store
-    const documents = dataStore.getDocumentsByCitizen(citizenAddress);
+    const documents = await Document.findAll({ 
+      where: { citizenAddress },
+      order: [['createdAt', 'DESC']]
+    });
     
     res.json({
       success: true,
