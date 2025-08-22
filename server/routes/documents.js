@@ -7,7 +7,8 @@ const router = express.Router();
 // Services
 const blockchainService = require('../services/blockchainService');
 const ipfsService = require('../services/ipfsService');
-const dataStore = require('../services/dataStore');
+// Services
+const { Citizen, Document, Grievance } = require('../models');
 // const aiService = require('../services/aiService');
 
 // Configure multer for file uploads
