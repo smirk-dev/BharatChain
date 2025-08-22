@@ -99,9 +99,17 @@ app.use('*', notFoundHandler);
 // Initialize services and start server
 const startServer = async () => {
   try {
-    // Initialize data store with demo data
-    dataStore.seedDemoData();
-    console.log('In-memory data store initialized with demo data.');
+    // Initialize database
+    await sequelize.authenticate();
+    console.log('✅ Database connection established successfully.');
+    
+    // Sync database (create tables if they don't exist)
+    await sequelize.sync({ alter: true });
+    console.log('✅ Database synchronized.');
+    
+    // Seed demo data if needed
+    await seedDemoData();
+    console.log('✅ Demo data seeded successfully');
     
     // Initialize blockchain service
     try {
