@@ -240,6 +240,9 @@ router.patch('/:grievanceId/status', async (req, res) => {
       });
     }
     
+    // Get the updated grievance
+    const updatedGrievance = await Grievance.findByPk(grievanceId);
+    
     // Emit real-time update
     const io = req.app.get('io');
     if (io) {
