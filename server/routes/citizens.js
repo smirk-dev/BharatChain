@@ -133,11 +133,6 @@ router.post('/register', validateCitizenRegistration, async (req, res) => {
       isVerified: false,
       isActive: true
     });
-      phone,
-      aadharHash,
-      isVerified: false,
-      isActive: true,
-    });
 
     // Emit real-time update
     const io = req.app.get('io');
