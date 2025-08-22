@@ -36,9 +36,11 @@ module.exports = {
       chainId: 137,
     },
     mumbai: {
-      url: process.env.MUMBAI_RPC_URL || 'https://rpc-mumbai.maticvigil.com',
+      url: process.env.MUMBAI_RPC_URL || 'https://polygon-mumbai.g.alchemy.com/v2/demo',
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
       chainId: 80001,
+      gas: 6000000,
+      gasPrice: 1000000000, // 1 gwei
     },
   },
   etherscan: {
