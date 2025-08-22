@@ -4,7 +4,7 @@ import { CssBaseline, Box } from '@mui/material';
 import { Toaster } from 'react-hot-toast';
 
 // Import contexts
-import { Web3Provider } from './context/Web3Context';
+import { SimpleWeb3Provider } from './context/SimpleWeb3Context';
 import { AuthProvider } from './context/AuthContext';
 
 // Import components
