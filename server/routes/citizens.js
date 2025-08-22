@@ -94,7 +94,7 @@ router.post('/register', validateCitizenRegistration, async (req, res) => {
     const citizenAddress = req.user.address;
 
     // Check if citizen already exists
-    const existingCitizen = dataStore.findCitizenByAddress(citizenAddress);
+    const existingCitizen = await Citizen.findOne({ where: { address: citizenAddress } });
 
     if (existingCitizen) {
       return res.status(409).json({
