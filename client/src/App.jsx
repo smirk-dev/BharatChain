@@ -158,7 +158,7 @@ function App() {
     <ErrorBoundary>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <Web3Provider>
+        <SimpleWeb3Provider>
           <AuthProvider>
             <Box 
               sx={{ 
@@ -199,7 +199,7 @@ function App() {
               />
             </Box>
           </AuthProvider>
-        </Web3Provider>
+        </SimpleWeb3Provider>
       </ThemeProvider>
     </ErrorBoundary>
   );
