@@ -143,8 +143,8 @@ export const Web3Provider = ({ children }) => {
       }
     } catch (error) {
       console.error('Error initializing contracts:', error);
-      // Don't show error toast for missing contracts in demo mode
-      console.log('Smart contracts not available - running in demo mode');
+      // Show error for missing contracts in production
+      console.log('Smart contracts not available - please deploy contracts first');
     }
   };
 
