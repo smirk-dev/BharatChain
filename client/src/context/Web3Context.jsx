@@ -77,32 +77,44 @@ export const Web3Provider = ({ children }) => {
 
   const initializeContracts = async (signer) => {
     try {
-      const citizenRegistry = new ethers.Contract(
-        CONTRACT_ADDRESSES.CitizenRegistry,
-        CitizenRegistryABI.abi,
-        signer
-      );
+      const contracts = {};
 
-      const documentRegistry = new ethers.Contract(
-        CONTRACT_ADDRESSES.DocumentRegistry,
-        DocumentRegistryABI.abi,
-        signer
-      );
+      // Only initialize contracts if valid addresses are provided
+      if (CONTRACT_ADDRESSES.CitizenRegistry !== '0x0000000000000000000000000000000000000000') {
+        contracts.citizenRegistry = new ethers.Contract(
+          CONTRACT_ADDRESSES.CitizenRegistry,
+          CitizenRegistryABI.abi,
+          signer
+        );
+      }
 
-      const grievanceSystem = new ethers.Contract(
-        CONTRACT_ADDRESSES.GrievanceSystem,
-        GrievanceSystemABI.abi,
-        signer
-      );
+      if (CONTRACT_ADDRESSES.DocumentRegistry !== '0x0000000000000000000000000000000000000000') {
+        contracts.documentRegistry = new ethers.Contract(
+          CONTRACT_ADDRESSES.DocumentRegistry,
+          DocumentRegistryABI.abi,
+          signer
+        );
+      }
 
-      setContracts({
-        citizenRegistry,
-        documentRegistry,
-        grievanceSystem,
-      });
+      if (CONTRACT_ADDRESSES.GrievanceSystem !== '0x0000000000000000000000000000000000000000') {
+        contracts.grievanceSystem = new ethers.Contract(
+          CONTRACT_ADDRESSES.GrievanceSystem,
+          GrievanceSystemABI.abi,
+          signer
+        );
+      }
+
+      setContracts(contracts);
+      
+      if (Object.keys(contracts).length > 0) {
+        console.log('Smart contracts initialized successfully');
+      } else {
+        console.log('Running in demo mode - no smart contracts deployed');
+      }
     } catch (error) {
       console.error('Error initializing contracts:', error);
-      toast.error('Failed to initialize smart contracts');
+      // Don't show error toast for missing contracts in demo mode
+      console.log('Smart contracts not available - running in demo mode');
     }
   };
 
