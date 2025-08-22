@@ -11,20 +11,28 @@ import {
   Divider,
   Stack,
   IconButton,
+  Avatar,
+  useTheme,
 } from '@mui/material';
 import {
   AccountBalanceWallet,
   ContentCopy,
   CheckCircle,
   Error as ErrorIcon,
+  AccountBalance,
 } from '@mui/icons-material';
+import { motion } from 'framer-motion';
 import { useWeb3 } from '../../context/Web3Context';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
 
+const MotionCard = motion(Card);
+const MotionBox = motion(Box);
+
 export default function AuthForm({ onSubmit, type }) {
+  const theme = useTheme();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [step, setStep] = useState('connect'); // connect, sign, success
@@ -145,19 +153,67 @@ export default function AuthForm({ onSubmit, type }) {
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { duration: 0.6, ease: "easeOut" }
+    }
+  };
+
+  const cardVariants = {
+    hidden: { opacity: 0, scale: 0.9 },
+    visible: { 
+      opacity: 1, 
+      scale: 1,
+      transition: { delay: 0.2, duration: 0.5, ease: "easeOut" }
+    }
+  };
+
   const renderConnectStep = () => (
-    <Stack spacing={3} alignItems="center">
-      <AccountBalanceWallet sx={{ fontSize: 60, color: 'primary.main' }} />
-      <Typography variant="h5" component="h1" gutterBottom align="center">
-        Connect Your Wallet
-      </Typography>
-      <Typography variant="body1" color="text.secondary" align="center">
-        Connect your MetaMask wallet to access BharatChain services
-      </Typography>
+    <Stack spacing={4} alignItems="center">
+      <motion.div
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
+      >
+        <Avatar
+          sx={{
+            width: 80,
+            height: 80,
+            background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+            mb: 2
+          }}
+        >
+          <AccountBalance sx={{ fontSize: 40 }} />
+        </Avatar>
+      </motion.div>
+
+      <Box textAlign="center">
+        <Typography variant="h3" component="h1" gutterBottom sx={{ fontWeight: 700 }}>
+          Welcome to BharatChain
+        </Typography>
+        <Typography variant="h6" color="text.secondary" gutterBottom>
+          Digital Governance Platform
+        </Typography>
+        <Typography variant="body1" color="text.secondary" sx={{ maxWidth: 400 }}>
+          Connect your MetaMask wallet to access secure, blockchain-powered 
+          citizen services and participate in transparent governance.
+        </Typography>
+      </Box>
       
       {!window.ethereum ? (
-        <Alert severity="warning">
-          MetaMask is not installed. Please install MetaMask to continue.
+        <Alert 
+          severity="warning" 
+          sx={{ 
+            borderRadius: 2,
+            '& .MuiAlert-message': { textAlign: 'center', width: '100%' }
+          }}
+        >
+          <Typography variant="body2">
+            MetaMask is not installed. Please install MetaMask to continue.
+          </Typography>
         </Alert>
       ) : (
         <Button
@@ -166,33 +222,61 @@ export default function AuthForm({ onSubmit, type }) {
           onClick={handleConnectWallet}
           disabled={web3Loading || loading}
           startIcon={web3Loading || loading ? <CircularProgress size={20} /> : <AccountBalanceWallet />}
-          sx={{ minWidth: 200 }}
+          sx={{ 
+            minWidth: 220,
+            height: 48,
+            fontSize: '1.1rem',
+            borderRadius: 3,
+          }}
         >
           {web3Loading || loading ? 'Connecting...' : 'Connect MetaMask'}
         </Button>
       )}
+
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mt: 3 }}>
+        <Box sx={{ width: 40, height: 1, bgcolor: 'divider' }} />
+        <Typography variant="body2" color="text.secondary">
+          Secure • Transparent • Decentralized
+        </Typography>
+        <Box sx={{ width: 40, height: 1, bgcolor: 'divider' }} />
+      </Box>
     </Stack>
   );
 
   const renderSignStep = () => (
     <Stack spacing={3}>
       <Box textAlign="center">
-        <CheckCircle sx={{ fontSize: 60, color: 'success.main', mb: 2 }} />
-        <Typography variant="h5" component="h1" gutterBottom>
-          Sign Message
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ type: "spring", stiffness: 200 }}
+        >
+          <CheckCircle sx={{ fontSize: 64, color: 'success.main', mb: 2 }} />
+        </motion.div>
+        <Typography variant="h4" component="h1" gutterBottom sx={{ fontWeight: 700 }}>
+          Sign Authentication Message
         </Typography>
-        <Typography variant="body2" color="text.secondary">
-          Connected: {formatAddress(account)}
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
+          <Typography variant="body1" color="text.secondary">
+            Connected: {formatAddress(account)}
+          </Typography>
           <IconButton size="small" onClick={() => copyToClipboard(account)}>
             <ContentCopy fontSize="small" />
           </IconButton>
-        </Typography>
+        </Box>
       </Box>
 
-      <Alert severity="info">
+      <Alert 
+        severity="info" 
+        sx={{ 
+          borderRadius: 2,
+          bgcolor: `${theme.palette.info.main}10`,
+          border: `1px solid ${theme.palette.info.main}30`
+        }}
+      >
         <Typography variant="body2">
           Please sign this message to prove ownership of your wallet. 
-          This will not cost any gas fees.
+          This will not cost any gas fees and is completely secure.
         </Typography>
       </Alert>
 
@@ -202,105 +286,202 @@ export default function AuthForm({ onSubmit, type }) {
         value={authMessage}
         variant="outlined"
         fullWidth
-        InputProps={{ readOnly: true }}
+        InputProps={{ 
+          readOnly: true,
+          sx: { borderRadius: 2 }
+        }}
         sx={{ 
           '& .MuiInputBase-input': { 
-            fontSize: '0.8rem',
-            fontFamily: 'monospace'
+            fontSize: '0.85rem',
+            fontFamily: 'monospace',
+            bgcolor: theme.palette.mode === 'dark' ? 'grey.900' : 'grey.50'
           }
         }}
       />
 
-      <Button
-        variant="contained"
-        size="large"
-        onClick={handleSignMessage}
-        disabled={loading}
-        startIcon={loading ? <CircularProgress size={20} /> : null}
-      >
-        {loading ? 'Signing...' : 'Sign Message'}
-      </Button>
-
-      <Button
-        variant="outlined"
-        onClick={() => setStep('connect')}
-        disabled={loading}
-      >
-        Back
-      </Button>
+      <Stack direction="row" spacing={2}>
+        <Button
+          variant="outlined"
+          onClick={() => setStep('connect')}
+          disabled={loading}
+          size="large"
+          sx={{ borderRadius: 2, flex: 1 }}
+        >
+          Back
+        </Button>
+        <Button
+          variant="contained"
+          size="large"
+          onClick={handleSignMessage}
+          disabled={loading}
+          startIcon={loading ? <CircularProgress size={20} /> : null}
+          sx={{ borderRadius: 2, flex: 2 }}
+        >
+          {loading ? 'Signing...' : 'Sign Message'}
+        </Button>
+      </Stack>
     </Stack>
   );
 
   const renderSuccessStep = () => (
-    <Stack spacing={3} alignItems="center">
-      <CheckCircle sx={{ fontSize: 60, color: 'success.main' }} />
-      <Typography variant="h5" component="h1" gutterBottom>
-        Welcome to BharatChain!
-      </Typography>
+    <Stack spacing={4} alignItems="center">
+      <motion.div
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        transition={{ type: "spring", stiffness: 200 }}
+      >
+        <CheckCircle sx={{ fontSize: 80, color: 'success.main' }} />
+      </motion.div>
+      
+      <Box textAlign="center">
+        <Typography variant="h3" component="h1" gutterBottom sx={{ fontWeight: 700 }}>
+          🎉 Welcome to BharatChain!
+        </Typography>
+        <Typography variant="h6" color="text.secondary">
+          Authentication successful
+        </Typography>
+      </Box>
       
       {userInfo && (
-        <Box sx={{ width: '100%' }}>
-          <Typography variant="h6" gutterBottom>Account Information:</Typography>
-          <Stack spacing={1}>
-            <Typography variant="body2">
-              <strong>Address:</strong> {formatAddress(userInfo.address)}
-              <IconButton size="small" onClick={() => copyToClipboard(userInfo.address)}>
-                <ContentCopy fontSize="small" />
-              </IconButton>
+        <Card 
+          elevation={0}
+          sx={{ 
+            width: '100%', 
+            border: `1px solid ${theme.palette.divider}`,
+            borderRadius: 2,
+            bgcolor: theme.palette.mode === 'dark' ? 'grey.900' : 'grey.50'
+          }}
+        >
+          <CardContent>
+            <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <AccountBalanceWallet color="primary" />
+              Account Information
             </Typography>
-            <Typography variant="body2">
-              <strong>Registration Status:</strong> {userInfo.isRegistered ? '✅ Registered' : '❌ Not Registered'}
-            </Typography>
-            <Typography variant="body2">
-              <strong>Verification Status:</strong> {userInfo.isVerified ? '✅ Verified' : '⏳ Pending'}
-            </Typography>
-            {userInfo.name && (
-              <Typography variant="body2">
-                <strong>Name:</strong> {userInfo.name}
-              </Typography>
-            )}
-          </Stack>
-        </Box>
+            <Stack spacing={2}>
+              <Box>
+                <Typography variant="caption" color="text.secondary">Address</Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>
+                    {formatAddress(userInfo.address)}
+                  </Typography>
+                  <IconButton size="small" onClick={() => copyToClipboard(userInfo.address)}>
+                    <ContentCopy fontSize="small" />
+                  </IconButton>
+                </Box>
+              </Box>
+              
+              <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+                <Typography variant="body2">
+                  <strong>Registration:</strong> {userInfo.isRegistered ? '✅ Registered' : '❌ Not Registered'}
+                </Typography>
+                <Typography variant="body2">
+                  <strong>Verification:</strong> {userInfo.isVerified ? '✅ Verified' : '⏳ Pending'}
+                </Typography>
+              </Box>
+              
+              {userInfo.name && (
+                <Typography variant="body2">
+                  <strong>Name:</strong> {userInfo.name}
+                </Typography>
+              )}
+            </Stack>
+          </CardContent>
+        </Card>
       )}
 
       {userInfo && !userInfo.isRegistered && (
-        <Alert severity="warning">
-          You need to register as a citizen to access all BharatChain services.
+        <Alert 
+          severity="warning"
+          sx={{ 
+            width: '100%',
+            borderRadius: 2,
+            '& .MuiAlert-message': { width: '100%', textAlign: 'center' }
+          }}
+        >
+          <Typography variant="body2">
+            You need to register as a citizen to access all BharatChain services.
+          </Typography>
         </Alert>
       )}
     </Stack>
   );
 
   return (
-    <Box
+    <MotionBox
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
       sx={{
         minHeight: '100vh',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-        p: 2
+        background: theme.palette.mode === 'dark' 
+          ? 'linear-gradient(135deg, #0A0A0A 0%, #1A1A1A 100%)'
+          : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        p: 2,
+        position: 'relative',
+        overflow: 'hidden'
       }}
     >
-      <Card sx={{ maxWidth: 500, width: '100%' }}>
-        <CardContent sx={{ p: 4 }}>
+      {/* Background decorations */}
+      <Box
+        sx={{
+          position: 'absolute',
+          top: -100,
+          right: -100,
+          width: 300,
+          height: 300,
+          borderRadius: '50%',
+          background: `linear-gradient(45deg, ${theme.palette.primary.main}20, ${theme.palette.secondary.main}20)`,
+          animation: 'float 6s ease-in-out infinite',
+          '@keyframes float': {
+            '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+            '50%': { transform: 'translateY(-20px) rotate(180deg)' }
+          }
+        }}
+      />
+      
+      <MotionCard 
+        variants={cardVariants}
+        sx={{ 
+          maxWidth: 600, 
+          width: '100%',
+          borderRadius: 4,
+          backdropFilter: 'blur(20px)',
+          background: theme.palette.mode === 'dark' 
+            ? 'rgba(26, 26, 26, 0.9)'
+            : 'rgba(255, 255, 255, 0.9)',
+          border: `1px solid ${theme.palette.divider}`,
+        }}
+      >
+        <CardContent sx={{ p: 5 }}>
           {error && (
-            <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError('')}>
-              {error}
-            </Alert>
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <Alert 
+                severity="error" 
+                sx={{ mb: 3, borderRadius: 2 }} 
+                onClose={() => setError('')}
+              >
+                {error}
+              </Alert>
+            </motion.div>
           )}
 
           {step === 'connect' && renderConnectStep()}
           {step === 'sign' && renderSignStep()}
           {step === 'success' && renderSuccessStep()}
 
-          <Divider sx={{ my: 3 }} />
+          <Divider sx={{ my: 4 }} />
           
           <Typography variant="body2" color="text.secondary" align="center">
-            BharatChain uses Web3 authentication for secure, decentralized access
+            BharatChain uses Web3 authentication for secure, decentralized access to government services
           </Typography>
         </CardContent>
-      </Card>
-    </Box>
+      </MotionCard>
+    </MotionBox>
   );
 }
