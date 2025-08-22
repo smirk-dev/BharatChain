@@ -167,9 +167,7 @@ function App() {
                 transition: 'background-color 0.3s ease',
               }}
             >
-              <ProtectedRoute>
-                <CitizenDashboard darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
-              </ProtectedRoute>
+              <CitizenDashboard darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
               
               {/* Toast notifications */}
               <Toaster
