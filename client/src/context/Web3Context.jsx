@@ -51,6 +51,14 @@ export const Web3Provider = ({ children }) => {
     GrievanceSystem: process.env.REACT_APP_GRIEVANCE_SYSTEM_ADDRESS || '0x0000000000000000000000000000000000000000',
   };
 
+  // Helper function to check if address is valid and not a placeholder
+  const isValidContractAddress = (address) => {
+    return address && 
+           address !== '' && 
+           address !== '0x0000000000000000000000000000000000000000' &&
+           ethers.isAddress(address);
+  };
+
   const connectWallet = async () => {
     try {
       setLoading(true);
