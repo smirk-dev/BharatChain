@@ -104,7 +104,6 @@ const translations = {
     // Header
     appTitle: 'भारतचेन - डिजिटल गवर्नेंस प्लेटफॉर्म',
     demoMode: 'डेमो मोड',
-    demoLogin: 'डेमो लॉगिन',
     
     // Navigation
     profile: 'प्रोफाइल',
