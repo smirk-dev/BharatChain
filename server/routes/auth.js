@@ -137,7 +137,7 @@ router.post('/connect', validateAuthRequest, async (req, res) => {
 
     // Update last login
     if (citizen) {
-      dataStore.updateCitizen(normalizedAddress, { lastLogin: new Date() });
+      await citizen.update({ lastLogin: new Date() });
     }
 
     res.json({
