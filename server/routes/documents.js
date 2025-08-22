@@ -147,15 +147,6 @@ router.post('/upload', upload.single('document'), validateDocument, async (req, 
       status: 'pending',
       isActive: true
     });
-      blockchainId: documentId,
-      citizenAddress,
-      documentType,
-      ipfsHash,
-      metadataHash,
-      metadata,
-      aiAnalysis,
-      status: 'pending',
-    });
     
     // Emit real-time update
     const io = req.app.get('io');
