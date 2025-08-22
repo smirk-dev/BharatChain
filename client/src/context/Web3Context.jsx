@@ -53,8 +53,12 @@ export const Web3Provider = ({ children }) => {
       setChainId(Number(network.chainId));
       setIsConnected(true);
 
-      // Initialize contracts
-      await initializeContracts(signer);
+      // Only initialize contracts if addresses are valid
+      if (CONTRACT_ADDRESSES.CitizenRegistry !== '0x0000000000000000000000000000000000000000') {
+        await initializeContracts(signer);
+      } else {
+        console.log('Running in demo mode - no smart contracts to initialize');
+      }
 
       toast.success('Wallet connected successfully!');
     } catch (error) {
