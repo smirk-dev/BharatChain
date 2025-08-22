@@ -123,11 +123,16 @@ router.post('/register', validateCitizenRegistration, async (req, res) => {
       console.log('Blockchain registration failed, continuing with data store only:', blockchainError.message);
     }
 
-    // Create in data store
-    const citizen = dataStore.createCitizen({
+    // Create in database
+    const citizen = await Citizen.create({
       address: citizenAddress,
       name,
       email,
+      phone,
+      aadharHash,
+      isVerified: false,
+      isActive: true
+    });
       phone,
       aadharHash,
       isVerified: false,
