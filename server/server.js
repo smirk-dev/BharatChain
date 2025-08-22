@@ -21,7 +21,85 @@ const { authMiddleware } = require('./middleware/auth');
 // Import services
 const blockchainService = require('./services/blockchainService');
 const ipfsService = require('./services/ipfsService');
-const { sequelize } = require('./models');
+const { sequelize, Citizen, Document, Grievance } = require('./models');
+
+// Demo data seeding function
+const seedDemoData = async () => {
+  try {
+    // Check if demo data already exists
+    const existingCitizens = await Citizen.count();
+    if (existingCitizens > 0) {
+      console.log('Demo data already exists, skipping seeding.');
+      return;
+    }
+
+    // Create demo citizens
+    const demoCitizens = [
+      {
+        address: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'.toLowerCase(),
+        aadharHash: 'demo_aadhar_hash_1',
+        name: 'Demo Citizen 1',
+        email: 'demo1@bharatchain.gov.in',
+        phone: '+91-9876543210',
+        isVerified: true,
+        isActive: true
+      },
+      {
+        address: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8'.toLowerCase(),
+        aadharHash: 'demo_aadhar_hash_2',
+        name: 'Demo Citizen 2',
+        email: 'demo2@bharatchain.gov.in',
+        phone: '+91-9876543211',
+        isVerified: false,
+        isActive: true
+      }
+    ];
+
+    await Citizen.bulkCreate(demoCitizens);
+    console.log('Demo citizens created');
+
+    // Create demo documents
+    const demoDocuments = [
+      {
+        citizenAddress: demoCitizens[0].address,
+        documentType: 'aadhar',
+        ipfsHash: 'QmDemoAadharHash1',
+        isVerified: true,
+        issuerAddress: '0x0000000000000000000000000000000000000001',
+        issuerName: 'Government Authority'
+      },
+      {
+        citizenAddress: demoCitizens[0].address,
+        documentType: 'pan',
+        ipfsHash: 'QmDemoPanHash1',
+        isVerified: true,
+        issuerAddress: '0x0000000000000000000000000000000000000001',
+        issuerName: 'Income Tax Department'
+      }
+    ];
+
+    await Document.bulkCreate(demoDocuments);
+    console.log('Demo documents created');
+
+    // Create demo grievances
+    const demoGrievances = [
+      {
+        citizenAddress: demoCitizens[0].address,
+        title: 'Road Repair Request',
+        description: 'The road near my area needs urgent repair due to potholes.',
+        category: 'infrastructure',
+        priority: 'medium',
+        status: 'pending'
+      }
+    ];
+
+    await Grievance.bulkCreate(demoGrievances);
+    console.log('Demo grievances created');
+
+  } catch (error) {
+    console.error('Error seeding demo data:', error);
+  }
+};
 
 const app = express();
 const server = createServer(app);
