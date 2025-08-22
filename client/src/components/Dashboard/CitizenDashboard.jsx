@@ -106,14 +106,15 @@ const CitizenDashboard = ({ darkMode, toggleDarkMode }) => {
   }
 
   try {
-    web3 = useWeb3();
+    web3 = useSimpleWeb3();
   } catch (error) {
-    console.log('Web3 context not available:', error);
+    console.log('SimpleWeb3 context not available:', error);
     web3 = {
       account: null,
       isConnected: false,
       connectWallet: async () => ({ success: false, error: 'Web3 not available' }),
-      disconnectWallet: () => {}
+      disconnectWallet: () => {},
+      signMessage: async () => { throw new Error('Web3 not available'); }
     };
   }
 
