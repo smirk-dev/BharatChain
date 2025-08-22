@@ -1,6 +1,11 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 
-const LanguageContext = createContext();
+const LanguageContext   hi: {
+    // Header
+    appTitle: 'भारतचेन - डिजिटल शासन मंच',
+    demoMode: 'डेमो मोड',
+    
+    // NavigationeContext();
 
 export const useLanguage = () => {
   const context = useContext(LanguageContext);
