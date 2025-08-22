@@ -108,14 +108,14 @@ export const Web3Provider = ({ children }) => {
       const provider = new ethers.BrowserProvider(window.ethereum);
       
       // Override the provider's resolveName method to prevent ENS resolution issues
-      const originalResolveName = provider.resolveName;
+      const originalProviderResolveName = provider.resolveName;
       provider.resolveName = function(name) {
         // If it looks like an address, return it directly without ENS resolution
         if (typeof name === 'string' && /^0x[a-fA-F0-9]{40}$/i.test(name.trim())) {
           return Promise.resolve(name.trim().toLowerCase());
         }
         // For actual ENS names, use the original method
-        return originalResolveName.call(this, name);
+        return originalProviderResolveName.call(this, name);
       };
       
       const accounts = await provider.send('eth_requestAccounts', []);
