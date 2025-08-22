@@ -105,20 +105,8 @@ export const Web3Provider = ({ children }) => {
         throw lockError;
       }
 
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      
-      // Override the provider's resolveName method to prevent ENS resolution issues
-      const originalProviderResolveName = provider.resolveName;
-      provider.resolveName = function(name) {
-        // If it looks like an address, return it directly without ENS resolution
-        if (typeof name === 'string' && /^0x[a-fA-F0-9]{40}$/i.test(name.trim())) {
-          return Promise.resolve(name.trim().toLowerCase());
-        }
-        // For actual ENS names, use the original method
-        return originalProviderResolveName.call(this, name);
-      };
-      
-      const accounts = await provider.send('eth_requestAccounts', []);
+      // Get accounts directly from MetaMask without using ethers provider initially
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
       
       if (!accounts || accounts.length === 0) {
         toast.error('No accounts found. Please create a MetaMask account.');
@@ -133,21 +121,30 @@ export const Web3Provider = ({ children }) => {
         return { success: false, error: 'Invalid address' };
       }
 
-      // Use the provider directly without triggering ENS resolution
-      const signer = await provider.getSigner();
+      // Create provider without triggering any automatic resolution
+      const provider = new ethers.BrowserProvider(window.ethereum, "any");
       
-      // Override the signer's resolveName method to prevent ENS resolution
-      const originalSignerResolveName = signer.resolveName;
-      signer.resolveName = function(name) {
-        // If it looks like an address, return it directly without ENS resolution
-        if (typeof name === 'string' && /^0x[a-fA-F0-9]{40}$/i.test(name.trim())) {
-          return Promise.resolve(name.trim().toLowerCase());
-        }
-        // For actual ENS names, use the original method
-        return originalSignerResolveName.call(this, name);
-      };
-      
+      // Get network info without triggering ENS
       const network = await provider.getNetwork();
+      
+      // Create a minimal signer that doesn't do ENS resolution
+      const signer = {
+        provider: provider,
+        address: cleanAccount,
+        signMessage: async (message) => {
+          try {
+            return await window.ethereum.request({
+              method: 'personal_sign',
+              params: [message, cleanAccount]
+            });
+          } catch (error) {
+            console.error('Signing error:', error);
+            throw error;
+          }
+        },
+        getAddress: () => Promise.resolve(cleanAccount),
+        connect: (provider) => signer
+      };
 
       setProvider(provider);
       setSigner(signer);
