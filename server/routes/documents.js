@@ -249,11 +249,11 @@ router.post('/:documentId/verify', async (req, res) => {
       console.log('Blockchain verification failed:', blockchainError.message);
     }
     
-    // Update data store
-    const updatedDoc = dataStore.updateDocument(documentId, { 
+    // Update database
+    const updatedDoc = await document.update({ 
       status: 'verified', 
       verifiedBy: issuerAddress, 
-      verifiedAt: new Date() 
+      verifiedAt: new Date()
     });
     
     if (!updatedDoc) {
@@ -316,12 +316,12 @@ router.post('/:documentId/reject', async (req, res) => {
       console.log('Blockchain rejection failed:', blockchainError.message);
     }
     
-    // Update data store
-    const updatedDoc = dataStore.updateDocument(documentId, { 
+    // Update database
+    const updatedDoc = await document.update({ 
       status: 'rejected', 
-      rejectedBy: issuerAddress, 
+      rejectedBy: req.user.address,
       rejectedAt: new Date(),
-      rejectionReason: reason 
+      rejectionReason: reason
     });
     
     if (!updatedDoc) {
