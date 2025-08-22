@@ -65,11 +65,32 @@ export const Web3Provider = ({ children }) => {
       
       if (!window.ethereum) {
         toast.error('MetaMask is not installed. Please install MetaMask to continue.');
-        return;
+        return { success: false, error: 'MetaMask not installed' };
+      }
+
+      // Check if MetaMask is locked
+      try {
+        const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+        if (accounts.length === 0) {
+          // Request account access
+          await window.ethereum.request({ method: 'eth_requestAccounts' });
+        }
+      } catch (lockError) {
+        if (lockError.code === 4001) {
+          toast.error('Please unlock MetaMask to connect.');
+          return { success: false, error: 'MetaMask locked' };
+        }
+        throw lockError;
       }
 
       const provider = new ethers.BrowserProvider(window.ethereum);
       const accounts = await provider.send('eth_requestAccounts', []);
+      
+      if (!accounts || accounts.length === 0) {
+        toast.error('No accounts found. Please create a MetaMask account.');
+        return { success: false, error: 'No accounts' };
+      }
+
       const signer = await provider.getSigner();
       const network = await provider.getNetwork();
 
@@ -87,9 +108,21 @@ export const Web3Provider = ({ children }) => {
       }
 
       toast.success('Wallet connected successfully!');
+      return { success: true };
     } catch (error) {
       console.error('Error connecting wallet:', error);
-      toast.error('Failed to connect wallet');
+      
+      let errorMessage = 'Failed to connect wallet';
+      if (error.code === 4001) {
+        errorMessage = 'Connection rejected by user';
+      } else if (error.code === -32002) {
+        errorMessage = 'Connection request already pending';
+      } else if (error.message?.includes('already pending')) {
+        errorMessage = 'Connection request already pending';
+      }
+      
+      toast.error(errorMessage);
+      return { success: false, error: errorMessage };
     } finally {
       setLoading(false);
     }
