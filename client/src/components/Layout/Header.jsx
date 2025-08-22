@@ -205,10 +205,10 @@ const Header = ({
               <Button
                 variant="outlined"
                 startIcon={<AccountBalanceWallet />}
-                onClick={connectWallet}
+                onClick={handleWalletAction}
                 size="small"
               >
-                Connect Wallet
+                Connect & Authenticate
               </Button>
             )}
 
