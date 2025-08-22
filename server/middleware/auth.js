@@ -3,17 +3,6 @@ const { ethers } = require('ethers');
 
 const authMiddleware = async (req, res, next) => {
   try {
-    // Demo mode bypass for development
-    if (process.env.NODE_ENV === 'development' && process.env.DEMO_MODE === 'true') {
-      req.user = {
-        address: '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266',
-        isVerified: true,
-        role: 'citizen',
-        isDemoUser: true,
-      };
-      return next();
-    }
-
     // Get token from header
     const authHeader = req.header('Authorization');
     
