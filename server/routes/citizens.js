@@ -3,7 +3,8 @@ const { body, validationResult } = require('express-validator');
 const router = express.Router();
 
 // Services
-const { Citizen, Document, Grievance } = require('../models');
+// Database Models
+const { Citizen, Document, sequelize } = require('../models');
 const blockchainService = require('../services/blockchainService');
 
 // Validation middleware
