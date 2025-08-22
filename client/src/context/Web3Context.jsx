@@ -91,12 +91,15 @@ export const Web3Provider = ({ children }) => {
         return { success: false, error: 'No accounts' };
       }
 
+      // Clean the account address to prevent ENS resolution issues
+      const cleanAccount = accounts[0].trim().toLowerCase();
+      
       const signer = await provider.getSigner();
       const network = await provider.getNetwork();
 
       setProvider(provider);
       setSigner(signer);
-      setAccount(accounts[0]);
+      setAccount(cleanAccount);
       setChainId(Number(network.chainId));
       setIsConnected(true);
 
@@ -119,6 +122,8 @@ export const Web3Provider = ({ children }) => {
         errorMessage = 'Connection request already pending';
       } else if (error.message?.includes('already pending')) {
         errorMessage = 'Connection request already pending';
+      } else if (error.message?.includes('ENS')) {
+        errorMessage = 'Network connection issue - please try again';
       }
       
       toast.error(errorMessage);
@@ -218,7 +223,17 @@ export const Web3Provider = ({ children }) => {
 
   const isValidAddress = (address) => {
     try {
-      return ethers.isAddress(address);
+      if (!address || typeof address !== 'string') return false;
+      
+      // Clean the address and check if it's valid
+      const cleanAddress = address.trim();
+      
+      // Check if it's a valid Ethereum address format
+      if (!/^0x[a-fA-F0-9]{40}$/.test(cleanAddress)) {
+        return false;
+      }
+      
+      return ethers.isAddress(cleanAddress);
     } catch {
       return false;
     }
@@ -238,9 +253,12 @@ export const Web3Provider = ({ children }) => {
             const signer = await provider.getSigner();
             const network = await provider.getNetwork();
 
+            // Clean the account address to prevent ENS resolution issues
+            const cleanAccount = accounts[0].trim().toLowerCase();
+
             setProvider(provider);
             setSigner(signer);
-            setAccount(accounts[0]);
+            setAccount(cleanAccount);
             setChainId(Number(network.chainId));
             setIsConnected(true);
 
@@ -251,6 +269,7 @@ export const Web3Provider = ({ children }) => {
           }
         } catch (error) {
           console.error('Error checking connection:', error);
+          // Don't show error toast here as this runs on page load
         }
       }
     };
@@ -263,7 +282,9 @@ export const Web3Provider = ({ children }) => {
         if (accounts.length === 0) {
           disconnectWallet();
         } else {
-          setAccount(accounts[0]);
+          // Clean the account address to prevent ENS resolution issues
+          const cleanAccount = accounts[0].trim().toLowerCase();
+          setAccount(cleanAccount);
         }
       });
 
