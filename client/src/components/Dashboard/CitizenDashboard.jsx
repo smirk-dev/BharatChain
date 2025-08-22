@@ -64,8 +64,38 @@ const MotionBox = motion(Box);
 
 const CitizenDashboard = ({ darkMode, toggleDarkMode }) => {
   const theme = useTheme();
-  const { user, logout, isRegistered, isVerified, userAddress } = useAuth();
-  const { account, isConnected, connectWallet, disconnectWallet } = useWeb3();
+  
+  // Handle missing contexts gracefully
+  let auth = null;
+  let web3 = null;
+  
+  try {
+    auth = useAuth();
+  } catch (error) {
+    console.log('Auth context not available:', error);
+    auth = {
+      user: null,
+      logout: () => {},
+      isRegistered: false,
+      isVerified: false,
+      userAddress: null
+    };
+  }
+
+  try {
+    web3 = useWeb3();
+  } catch (error) {
+    console.log('Web3 context not available:', error);
+    web3 = {
+      account: null,
+      isConnected: false,
+      connectWallet: async () => ({ success: false, error: 'Web3 not available' }),
+      disconnectWallet: () => {}
+    };
+  }
+
+  const { user, logout, isRegistered, isVerified, userAddress } = auth;
+  const { account, isConnected, connectWallet, disconnectWallet } = web3;
 
   const [currentTab, setCurrentTab] = useState(0);
   const [loading, setLoading] = useState(false);
