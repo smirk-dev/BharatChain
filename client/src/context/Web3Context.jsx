@@ -25,6 +25,28 @@ try {
   console.log('GrievanceSystem ABI not found, using empty ABI');
 }
 
+// Utility function to sanitize wallet addresses and remove any invisible characters
+const sanitizeAddress = (address) => {
+  if (!address) return '';
+  
+  // Remove all non-visible characters, whitespace, and normalize
+  const cleaned = address
+    .toString()
+    .replace(/[\u200B-\u200D\uFEFF]/g, '') // Remove zero-width spaces
+    .replace(/\s/g, '') // Remove all whitespace
+    .replace(/[^\x00-\x7F]/g, '') // Remove non-ASCII characters
+    .toLowerCase()
+    .trim();
+  
+  // Validate it's a proper Ethereum address format
+  if (!/^0x[a-f0-9]{40}$/i.test(cleaned)) {
+    console.warn('Invalid address format:', cleaned);
+    return '';
+  }
+  
+  return cleaned;
+};
+
 const Web3Context = createContext();
 
 export const useWeb3 = () => {
@@ -91,9 +113,15 @@ export const Web3Provider = ({ children }) => {
         return { success: false, error: 'No accounts' };
       }
 
-      // Clean the account address to prevent ENS resolution issues
-      const cleanAccount = accounts[0].trim().toLowerCase();
+      // Sanitize the account address to prevent ENS resolution issues
+      const cleanAccount = sanitizeAddress(accounts[0]);
       
+      if (!cleanAccount) {
+        toast.error('Invalid wallet address format.');
+        return { success: false, error: 'Invalid address' };
+      }
+
+      // Use the provider directly without triggering ENS resolution
       const signer = await provider.getSigner();
       const network = await provider.getNetwork();
 
