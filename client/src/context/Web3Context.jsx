@@ -289,34 +289,6 @@ export const Web3Provider = ({ children }) => {
           });
           
           if (accounts && accounts.length > 0) {
-            const provider = new ethers.BrowserProvider(window.ethereum);
-            
-            // Override the provider's resolveName method to prevent ENS resolution issues
-            const originalProviderResolveName = provider.resolveName;
-            provider.resolveName = function(name) {
-              // If it looks like an address, return it directly without ENS resolution
-              if (typeof name === 'string' && /^0x[a-fA-F0-9]{40}$/i.test(name.trim())) {
-                return Promise.resolve(name.trim().toLowerCase());
-              }
-              // For actual ENS names, use the original method
-              return originalProviderResolveName.call(this, name);
-            };
-            
-            const signer = await provider.getSigner();
-            
-            // Override the signer's resolveName method to prevent ENS resolution
-            const originalSignerResolveName = signer.resolveName;
-            signer.resolveName = function(name) {
-              // If it looks like an address, return it directly without ENS resolution
-              if (typeof name === 'string' && /^0x[a-fA-F0-9]{40}$/i.test(name.trim())) {
-                return Promise.resolve(name.trim().toLowerCase());
-              }
-              // For actual ENS names, use the original method
-              return originalSignerResolveName.call(this, name);
-            };
-            
-            const network = await provider.getNetwork();
-
             // Sanitize the account address to prevent ENS resolution issues
             const cleanAccount = sanitizeAddress(accounts[0]);
             
@@ -324,6 +296,29 @@ export const Web3Provider = ({ children }) => {
               console.warn('Invalid wallet address format on reconnection');
               return;
             }
+
+            // Create provider without triggering ENS resolution
+            const provider = new ethers.BrowserProvider(window.ethereum, "any");
+            const network = await provider.getNetwork();
+
+            // Create a minimal signer that doesn't do ENS resolution
+            const signer = {
+              provider: provider,
+              address: cleanAccount,
+              signMessage: async (message) => {
+                try {
+                  return await window.ethereum.request({
+                    method: 'personal_sign',
+                    params: [message, cleanAccount]
+                  });
+                } catch (error) {
+                  console.error('Signing error:', error);
+                  throw error;
+                }
+              },
+              getAddress: () => Promise.resolve(cleanAccount),
+              connect: (provider) => signer
+            };
 
             setProvider(provider);
             setSigner(signer);
