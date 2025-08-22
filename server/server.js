@@ -107,10 +107,6 @@ const startServer = async () => {
     await sequelize.sync({ alter: true });
     console.log('✅ Database synchronized.');
     
-    // Seed demo data if needed
-    await seedDemoData();
-    console.log('✅ Demo data seeded successfully');
-    
     // Initialize blockchain service
     try {
       await blockchainService.initialize();
