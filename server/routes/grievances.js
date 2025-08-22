@@ -31,12 +31,17 @@ router.get('/', async (req, res) => {
     const citizenAddress = req.user.address;
     const { status, category, page = 1, limit = 10 } = req.query;
     
-    // Get grievances from data store
-    const grievances = dataStore.getGrievancesByCitizen(citizenAddress, {
-      status,
-      category,
-      page: parseInt(page),
+    // Get grievances from database
+    const whereClause = { citizenAddress };
+    if (status) whereClause.status = status;
+    if (category) whereClause.category = category;
+    
+    const offset = (parseInt(page) - 1) * parseInt(limit);
+    const grievances = await Grievance.findAndCountAll({
+      where: whereClause,
       limit: parseInt(limit),
+      offset: offset,
+      order: [['createdAt', 'DESC']]
     });
     
     res.json({
