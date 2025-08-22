@@ -56,40 +56,42 @@ const theme = createTheme({
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Web3Provider>
-        <AuthProvider>
-          <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
-            <ProtectedRoute>
-              <CitizenDashboard />
-            </ProtectedRoute>
-            
-            {/* Toast notifications */}
-            <Toaster
-              position="top-right"
-              toastOptions={{
-                duration: 4000,
-                style: {
-                  background: '#363636',
-                  color: '#fff',
-                },
-                success: {
+    <ErrorBoundary>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Web3Provider>
+          <AuthProvider>
+            <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
+              <ProtectedRoute>
+                <CitizenDashboard />
+              </ProtectedRoute>
+              
+              {/* Toast notifications */}
+              <Toaster
+                position="top-right"
+                toastOptions={{
+                  duration: 4000,
                   style: {
-                    background: '#4caf50',
+                    background: '#363636',
+                    color: '#fff',
                   },
-                },
-                error: {
-                  style: {
-                    background: '#f44336',
+                  success: {
+                    style: {
+                      background: '#4caf50',
+                    },
                   },
-                },
-              }}
-            />
-          </Box>
-        </AuthProvider>
-      </Web3Provider>
-    </ThemeProvider>
+                  error: {
+                    style: {
+                      background: '#f44336',
+                    },
+                  },
+                }}
+              />
+            </Box>
+          </AuthProvider>
+        </Web3Provider>
+      </ThemeProvider>
+    </ErrorBoundary>
   );
 }
 
