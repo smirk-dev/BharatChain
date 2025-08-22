@@ -251,17 +251,8 @@ export const Web3Provider = ({ children }) => {
 
   const isValidAddress = (address) => {
     try {
-      if (!address || typeof address !== 'string') return false;
-      
-      // Clean the address and check if it's valid
-      const cleanAddress = address.trim();
-      
-      // Check if it's a valid Ethereum address format
-      if (!/^0x[a-fA-F0-9]{40}$/.test(cleanAddress)) {
-        return false;
-      }
-      
-      return ethers.isAddress(cleanAddress);
+      const sanitized = sanitizeAddress(address);
+      return sanitized !== '' && ethers.isAddress(sanitized);
     } catch {
       return false;
     }
@@ -281,8 +272,13 @@ export const Web3Provider = ({ children }) => {
             const signer = await provider.getSigner();
             const network = await provider.getNetwork();
 
-            // Clean the account address to prevent ENS resolution issues
-            const cleanAccount = accounts[0].trim().toLowerCase();
+            // Sanitize the account address to prevent ENS resolution issues
+            const cleanAccount = sanitizeAddress(accounts[0]);
+            
+            if (!cleanAccount) {
+              console.warn('Invalid wallet address format on reconnection');
+              return;
+            }
 
             setProvider(provider);
             setSigner(signer);
@@ -310,9 +306,14 @@ export const Web3Provider = ({ children }) => {
         if (accounts.length === 0) {
           disconnectWallet();
         } else {
-          // Clean the account address to prevent ENS resolution issues
-          const cleanAccount = accounts[0].trim().toLowerCase();
-          setAccount(cleanAccount);
+          // Sanitize the account address to prevent ENS resolution issues
+          const cleanAccount = sanitizeAddress(accounts[0]);
+          if (cleanAccount) {
+            setAccount(cleanAccount);
+          } else {
+            console.warn('Invalid wallet address format on account change');
+            disconnectWallet();
+          }
         }
       });
 
