@@ -134,6 +134,37 @@ export const Web3Provider = ({ children }) => {
     }
   };
 
+  const getNetworkName = () => {
+    if (!chainId) return 'Unknown';
+    
+    const networks = {
+      1: 'Ethereum Mainnet',
+      3: 'Ropsten Testnet',
+      4: 'Rinkeby Testnet',
+      5: 'Goerli Testnet',
+      11155111: 'Sepolia Testnet',
+      137: 'Polygon Mainnet',
+      80001: 'Polygon Mumbai',
+      1337: 'Localhost',
+      31337: 'Hardhat Network'
+    };
+    
+    return networks[chainId] || `Network ${chainId}`;
+  };
+
+  const isNetworkSupported = () => {
+    const supportedNetworks = [1, 3, 4, 5, 11155111, 137, 80001, 1337, 31337];
+    return supportedNetworks.includes(chainId);
+  };
+
+  const isValidAddress = (address) => {
+    try {
+      return ethers.isAddress(address);
+    } catch {
+      return false;
+    }
+  };
+
   useEffect(() => {
     const checkConnection = async () => {
       if (window.ethereum) {
