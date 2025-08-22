@@ -110,7 +110,7 @@ export const Web3Provider = ({ children }) => {
       const contracts = {};
 
       // Only initialize contracts if valid addresses are provided
-      if (CONTRACT_ADDRESSES.CitizenRegistry !== '0x0000000000000000000000000000000000000000') {
+      if (isValidContractAddress(CONTRACT_ADDRESSES.CitizenRegistry)) {
         contracts.citizenRegistry = new ethers.Contract(
           CONTRACT_ADDRESSES.CitizenRegistry,
           CitizenRegistryABI.abi,
@@ -118,7 +118,7 @@ export const Web3Provider = ({ children }) => {
         );
       }
 
-      if (CONTRACT_ADDRESSES.DocumentRegistry !== '0x0000000000000000000000000000000000000000') {
+      if (isValidContractAddress(CONTRACT_ADDRESSES.DocumentRegistry)) {
         contracts.documentRegistry = new ethers.Contract(
           CONTRACT_ADDRESSES.DocumentRegistry,
           DocumentRegistryABI.abi,
@@ -126,7 +126,7 @@ export const Web3Provider = ({ children }) => {
         );
       }
 
-      if (CONTRACT_ADDRESSES.GrievanceSystem !== '0x0000000000000000000000000000000000000000') {
+      if (isValidContractAddress(CONTRACT_ADDRESSES.GrievanceSystem)) {
         contracts.grievanceSystem = new ethers.Contract(
           CONTRACT_ADDRESSES.GrievanceSystem,
           GrievanceSystemABI.abi,
@@ -212,7 +212,7 @@ export const Web3Provider = ({ children }) => {
             setIsConnected(true);
 
             // Only initialize contracts if addresses are valid
-            if (CONTRACT_ADDRESSES.CitizenRegistry !== '0x0000000000000000000000000000000000000000') {
+            if (isValidContractAddress(CONTRACT_ADDRESSES.CitizenRegistry)) {
               await initializeContracts(signer);
             }
           }
