@@ -356,30 +356,6 @@ const CitizenDashboard = ({ darkMode, toggleDarkMode }) => {
       setLoading(false);
     }
   };
-          phone: '',
-        });
-        await fetchUserProfile();
-      } else {
-        setError(response.data.message || 'Registration failed');
-      }
-    } catch (err) {
-      console.error('Registration error:', err);
-      if (err.response?.status === 401) {
-        setError('Authentication required. Please connect and authenticate your wallet.');
-        setIsAuthenticated(false);
-        setAuthToken(null);
-        localStorage.removeItem('bharatchain_token');
-      } else if (err.response?.status === 409) {
-        setError('Citizen already registered with this wallet address.');
-      } else if (err.code === 'ECONNREFUSED' || err.message.includes('Network Error')) {
-        setError('Unable to connect to server. Please ensure the backend is running on port 5000.');
-      } else {
-        setError(err.response?.data?.message || 'Network error during registration');
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
 
   // Submit grievance with proper error handling
   const handleSubmitGrievance = async () => {
