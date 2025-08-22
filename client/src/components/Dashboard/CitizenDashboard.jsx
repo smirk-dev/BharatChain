@@ -131,43 +131,74 @@ const CitizenDashboard = ({ darkMode, toggleDarkMode }) => {
 
       setLoading(true);
       
+      // Clean the wallet address to prevent ENS issues
+      const cleanAddress = cleanWalletAddress(account);
+      
       // Step 1: Get authentication message
       const messageResponse = await axios.post(`${API_BASE_URL}/api/auth/message`, {
-        address: account
+        address: cleanAddress
+      }, {
+        timeout: 10000,
+        headers: {
+          'Content-Type': 'application/json'
+        }
       });
 
       if (!messageResponse.data.success) {
-        throw new Error('Failed to get authentication message');
+        throw new Error(messageResponse.data.message || 'Failed to get authentication message');
       }
 
-      const { message } = messageResponse.data.data;
+      const message = messageResponse.data.message;
 
-      // Step 2: Sign the message
+      // Step 2: Sign the message with MetaMask
       const signature = await web3.signer.signMessage(message);
 
-      // Step 3: Authenticate with signature
-      const authResponse = await axios.post(`${API_BASE_URL}/api/auth/connect`, {
-        address: account,
-        signature,
-        message
+      // Step 3: Verify signature and get JWT token
+      const authResponse = await axios.post(`${API_BASE_URL}/api/auth/verify`, {
+        address: cleanAddress,
+        signature: signature,
+        message: message
+      }, {
+        timeout: 10000,
+        headers: {
+          'Content-Type': 'application/json'
+        }
       });
 
-      if (authResponse.data.success) {
-        const { token, user } = authResponse.data.data;
-        setAuthToken(token);
-        setIsAuthenticated(true);
-        localStorage.setItem('bharatchain_token', token);
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        
-        toast.success('Wallet authenticated successfully!');
-        return { success: true, user };
-      } else {
+      if (!authResponse.data.success) {
         throw new Error(authResponse.data.message || 'Authentication failed');
       }
+
+      const token = authResponse.data.token;
+      
+      // Store token and set authentication state
+      localStorage.setItem('bharatchain_token', token);
+      setAuthToken(token);
+      setIsAuthenticated(true);
+      
+      // Set default authorization header for future requests
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      
+      setError('');
+      alert('Wallet authenticated successfully!');
+      
+      return { success: true };
     } catch (error) {
       console.error('Authentication error:', error);
-      toast.error(error.message || 'Authentication failed');
-      return { success: false, error: error.message };
+      
+      let errorMessage = 'Authentication failed';
+      if (error.response?.status === 401) {
+        errorMessage = 'Invalid signature. Please try again.';
+      } else if (error.code === 'ACTION_REJECTED') {
+        errorMessage = 'Signature rejected by user.';
+      } else if (error.message?.includes('ENS')) {
+        errorMessage = 'Network connection issue. Please try again.';
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      setError(errorMessage);
+      return { success: false, error: errorMessage };
     } finally {
       setLoading(false);
     }
@@ -327,7 +358,7 @@ const CitizenDashboard = ({ darkMode, toggleDarkMode }) => {
         fullName: formData.fullName,
         aadharNumber: formData.aadharNumber,
         phoneNumber: formData.phoneNumber,
-        walletAddress: formData.walletAddress || account
+        walletAddress: cleanWalletAddress(formData.walletAddress || account)
       };
 
       // Register citizen
