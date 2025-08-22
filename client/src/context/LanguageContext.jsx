@@ -187,7 +187,6 @@ const translations = {
     // Header
     appTitle: 'பாரதசங் - டிஜிட்டல் ஆளுமை தளம்',
     demoMode: 'மாதிரி முறை',
-    demoLogin: 'மாதிரி உள்நுழைவு',
     
     // Navigation
     profile: 'சுயவிவரம்',
