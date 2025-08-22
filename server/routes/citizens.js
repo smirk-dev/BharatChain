@@ -31,8 +31,8 @@ router.get('/profile', async (req, res) => {
   try {
     const citizenAddress = req.user.address;
 
-    // Get citizen from in-memory store
-    let citizen = dataStore.findCitizenByAddress(citizenAddress);
+    // Get citizen from database
+    let citizen = await Citizen.findOne({ where: { address: citizenAddress } });
 
     if (!citizen) {
       // Check blockchain for registration
