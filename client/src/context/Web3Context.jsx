@@ -139,7 +139,7 @@ export const Web3Provider = ({ children }) => {
       if (Object.keys(contracts).length > 0) {
         console.log('Smart contracts initialized successfully');
       } else {
-        console.log('Running in demo mode - no smart contracts deployed');
+        console.log('Smart contracts not deployed - please deploy contracts first');
       }
     } catch (error) {
       console.error('Error initializing contracts:', error);
