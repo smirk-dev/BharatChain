@@ -174,6 +174,12 @@ const DashboardOverview = ({
                     color={isConnected ? 'success' : 'error'}
                     variant={isConnected ? 'filled' : 'outlined'}
                   />
+                  <Chip
+                    icon={<Security />}
+                    label={isAuthenticated ? '🔐 Authenticated' : '🔓 Not Authenticated'}
+                    color={isAuthenticated ? 'success' : 'warning'}
+                    variant={isAuthenticated ? 'filled' : 'outlined'}
+                  />
                 </Box>
 
                 <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
