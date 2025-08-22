@@ -302,38 +302,30 @@ const CitizenDashboard = ({ darkMode, toggleDarkMode }) => {
   }, [isAuthenticated, authToken]);
 
   // Register citizen with proper error handling
-  const handleRegister = async () => {
+  const handleRegister = async (formData) => {
     setLoading(true);
     setError('');
     
     try {
       // Check if wallet is connected and authenticated
       if (!isConnected || !account) {
-        toast.error('Please connect your wallet first');
-        return;
+        throw new Error('Please connect your wallet first');
       }
 
       if (!isAuthenticated) {
-        toast.info('Please authenticate your wallet first...');
-        const authResult = await authenticateWallet();
-        if (!authResult.success) {
-          return;
-        }
+        throw new Error('Please authenticate your wallet first');
       }
 
-      // Validate form data
-      if (!registerForm.name.trim()) {
-        setError('Name is required');
-        return;
-      }
-
-      if (!registerForm.aadharNumber.trim() || registerForm.aadharNumber.length !== 12) {
-        setError('Valid 12-digit Aadhar number is required');
-        return;
-      }
+      // Prepare registration data
+      const registrationData = {
+        fullName: formData.fullName,
+        aadharNumber: formData.aadharNumber,
+        phoneNumber: formData.phoneNumber,
+        walletAddress: formData.walletAddress || account
+      };
 
       // Register citizen
-      const response = await axios.post(`${API_BASE_URL}/api/citizens/register`, registerForm, {
+      const response = await axios.post(`${API_BASE_URL}/api/citizens/register`, registrationData, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${authToken}`
@@ -342,12 +334,28 @@ const CitizenDashboard = ({ darkMode, toggleDarkMode }) => {
       });
       
       if (response.data.success) {
-        toast.success('Citizen registered successfully!');
         setRegisterDialog(false);
-        setRegisterForm({
-          name: '',
-          email: '',
-          aadharNumber: '',
+        setError('');
+        
+        // Update user profile with new data
+        setUserProfile(response.data.citizen);
+        
+        // Show success message
+        alert('Registration successful! Welcome to BharatChain.');
+        
+        // Reload data
+        await loadData();
+      } else {
+        throw new Error(response.data.message || 'Registration failed');
+      }
+    } catch (error) {
+      console.error('Registration error:', error);
+      const errorMessage = error.response?.data?.message || error.message || 'Registration failed. Please try again.';
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
           phone: '',
         });
         await fetchUserProfile();
