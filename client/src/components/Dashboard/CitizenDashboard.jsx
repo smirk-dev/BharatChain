@@ -468,7 +468,15 @@ const CitizenDashboard = ({ darkMode, toggleDarkMode }) => {
   return (
     <Box sx={{ flexGrow: 1, minHeight: '100vh', bgcolor: 'background.default' }}>
       {/* Header */}
-      <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+      <Header 
+        darkMode={darkMode} 
+        toggleDarkMode={toggleDarkMode}
+        isAuthenticated={isAuthenticated}
+        authenticateWallet={authenticateWallet}
+        account={account}
+        isConnected={isConnected}
+        userProfile={userProfile}
+      />
       
       {/* Main Content */}
       <Box sx={{ pt: 8 }}>
