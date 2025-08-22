@@ -60,6 +60,12 @@ import toast from 'react-hot-toast';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3001';
 
+// Utility function to clean wallet addresses and prevent ENS resolution issues
+const cleanWalletAddress = (address) => {
+  if (!address) return '';
+  return address.toString().trim().toLowerCase();
+};
+
 const MotionContainer = motion(Container);
 const MotionBox = motion(Box);
 
