@@ -45,7 +45,7 @@ const CitizenRegistrationModal = ({
     fullName: '',
     aadharNumber: '',
     phoneNumber: '',
-    walletAddress: walletAddress || ''
+    walletAddress: walletAddress ? walletAddress.toString().trim().toLowerCase() : ''
   });
 
   const [errors, setErrors] = useState({});
@@ -122,7 +122,7 @@ const CitizenRegistrationModal = ({
       fullName: '',
       aadharNumber: '',
       phoneNumber: '',
-      walletAddress: walletAddress || ''
+      walletAddress: walletAddress ? walletAddress.toString().trim().toLowerCase() : ''
     });
     setErrors({});
     onClose();
