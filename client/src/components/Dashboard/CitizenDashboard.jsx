@@ -97,9 +97,74 @@ const CitizenDashboard = ({ darkMode, toggleDarkMode }) => {
   const { user, logout, isRegistered, isVerified, userAddress } = auth;
   const { account, isConnected, connectWallet, disconnectWallet } = web3;
 
-  const [currentTab, setCurrentTab] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  // State for authentication
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [authToken, setAuthToken] = useState(null);
+
+  // Check for stored authentication
+  useEffect(() => {
+    const storedToken = localStorage.getItem('bharatchain_token');
+    if (storedToken) {
+      setAuthToken(storedToken);
+      setIsAuthenticated(true);
+      // Set axios default header
+      axios.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
+    }
+  }, []);
+
+  // Wallet authentication function
+  const authenticateWallet = async () => {
+    try {
+      if (!isConnected || !account) {
+        const result = await connectWallet();
+        if (!result?.success) {
+          throw new Error('Please connect your wallet first');
+        }
+      }
+
+      setLoading(true);
+      
+      // Step 1: Get authentication message
+      const messageResponse = await axios.post(`${API_BASE_URL}/api/auth/message`, {
+        address: account
+      });
+
+      if (!messageResponse.data.success) {
+        throw new Error('Failed to get authentication message');
+      }
+
+      const { message } = messageResponse.data.data;
+
+      // Step 2: Sign the message
+      const signature = await web3.signer.signMessage(message);
+
+      // Step 3: Authenticate with signature
+      const authResponse = await axios.post(`${API_BASE_URL}/api/auth/connect`, {
+        address: account,
+        signature,
+        message
+      });
+
+      if (authResponse.data.success) {
+        const { token, user } = authResponse.data.data;
+        setAuthToken(token);
+        setIsAuthenticated(true);
+        localStorage.setItem('bharatchain_token', token);
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        
+        toast.success('Wallet authenticated successfully!');
+        return { success: true, user };
+      } else {
+        throw new Error(authResponse.data.message || 'Authentication failed');
+      }
+    } catch (error) {
+      console.error('Authentication error:', error);
+      toast.error(error.message || 'Authentication failed');
+      return { success: false, error: error.message };
+    } finally {
+      setLoading(false);
+    }
+  };
   
   // User data state
   const [userProfile, setUserProfile] = useState(null);
