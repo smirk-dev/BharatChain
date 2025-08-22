@@ -184,7 +184,7 @@ router.get('/:documentId', async (req, res) => {
     const citizenAddress = req.user.address;
     
     // Get document from data store
-    const document = dataStore.findDocumentById(documentId);
+    const document = await Document.findByPk(documentId);
     
     if (!document) {
       return res.status(404).json({
