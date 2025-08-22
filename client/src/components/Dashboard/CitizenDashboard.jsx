@@ -63,7 +63,23 @@ const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:300
 // Utility function to clean wallet addresses and prevent ENS resolution issues
 const cleanWalletAddress = (address) => {
   if (!address) return '';
-  return address.toString().trim().toLowerCase();
+  
+  // Remove all non-visible characters, whitespace, and normalize
+  const cleaned = address
+    .toString()
+    .replace(/[\u200B-\u200D\uFEFF]/g, '') // Remove zero-width spaces
+    .replace(/\s/g, '') // Remove all whitespace
+    .replace(/[^\x00-\x7F]/g, '') // Remove non-ASCII characters
+    .toLowerCase()
+    .trim();
+  
+  // Validate it's a proper Ethereum address format
+  if (!/^0x[a-f0-9]{40}$/i.test(cleaned)) {
+    console.warn('Invalid address format:', cleaned);
+    return '';
+  }
+  
+  return cleaned;
 };
 
 const MotionContainer = motion(Container);
