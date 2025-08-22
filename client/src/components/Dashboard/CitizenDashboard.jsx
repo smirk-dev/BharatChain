@@ -281,22 +281,24 @@ const CitizenDashboard = ({ darkMode, toggleDarkMode }) => {
     }
   };
 
-  // Load data on component mount
+  // Load data when authenticated
   useEffect(() => {
     const loadData = async () => {
-      try {
-        await Promise.all([
-          fetchUserProfile(),
-          fetchUserDocuments(),
-          fetchUserGrievances()
-        ]);
-      } catch (err) {
-        console.error('Failed to load initial data:', err);
+      if (isAuthenticated && authToken) {
+        try {
+          await Promise.all([
+            fetchUserProfile(),
+            fetchUserDocuments(),
+            fetchUserGrievances()
+          ]);
+        } catch (err) {
+          console.error('Failed to load initial data:', err);
+        }
       }
     };
     
     loadData();
-  }, []);
+  }, [isAuthenticated, authToken]);
 
   // Register citizen with proper error handling
   const handleRegister = async () => {
