@@ -46,11 +46,12 @@ router.get('/', async (req, res) => {
     
     res.json({
       success: true,
-      data: grievances,
+      data: grievances.rows,
       pagination: {
         page: parseInt(page),
         limit: parseInt(limit),
-        total: grievances.length,
+        total: grievances.count,
+        totalPages: Math.ceil(grievances.count / parseInt(limit))
       },
     });
   } catch (error) {
