@@ -183,7 +183,7 @@ router.post('/refresh', async (req, res) => {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       
       // Generate new token with updated info
-      const citizen = dataStore.findCitizenByAddress(decoded.address);
+      const citizen = await Citizen.findOne({ where: { address: decoded.address } });
       
       const newTokenPayload = {
         address: decoded.address,
