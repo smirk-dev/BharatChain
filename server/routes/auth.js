@@ -95,8 +95,8 @@ router.post('/connect', validateAuthRequest, async (req, res) => {
       });
     }
 
-    // Check if citizen exists in data store
-    let citizen = dataStore.findCitizenByAddress(normalizedAddress);
+    // Check if citizen exists in database
+    let citizen = await Citizen.findOne({ where: { address: normalizedAddress } });
     let isRegistered = false;
 
     if (!citizen) {
@@ -105,8 +105,8 @@ router.post('/connect', validateAuthRequest, async (req, res) => {
         const blockchainCitizen = await blockchainService.getCitizen(normalizedAddress);
         if (blockchainCitizen && blockchainCitizen.name) {
           isRegistered = true;
-          // Sync with data store
-          citizen = dataStore.createCitizen({
+          // Sync with database
+          citizen = await Citizen.create({
             address: normalizedAddress,
             name: blockchainCitizen.name,
             email: blockchainCitizen.email,
