@@ -36,12 +36,12 @@ module.exports = (sequelize, DataTypes) => {
       field: 'metadata_hash',
     },
     metadata: {
-      type: DataTypes.JSONB,
+      type: DataTypes.JSON,
       allowNull: true,
       defaultValue: {},
     },
     aiAnalysis: {
-      type: DataTypes.JSONB,
+      type: DataTypes.JSON,
       allowNull: true,
       field: 'ai_analysis',
       defaultValue: {},
