@@ -289,7 +289,7 @@ router.post('/:grievanceId/comments', async (req, res) => {
     }
     
     // Get grievance
-    const grievance = dataStore.findGrievanceById(grievanceId);
+    const grievance = await Grievance.findByPk(grievanceId);
     
     if (!grievance) {
       return res.status(404).json({
