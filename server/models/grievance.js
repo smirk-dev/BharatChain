@@ -82,7 +82,7 @@ module.exports = (sequelize, DataTypes) => {
       field: 'is_active',
     },
     tags: {
-      type: DataTypes.ARRAY(DataTypes.STRING),
+      type: DataTypes.JSON,
       allowNull: true,
       defaultValue: [],
     },
@@ -100,7 +100,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
     },
     location: {
-      type: DataTypes.JSONB,
+      type: DataTypes.JSON,
       allowNull: true,
       defaultValue: {},
     },
