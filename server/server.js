@@ -61,20 +61,20 @@ const seedDemoData = async () => {
     // Create demo documents
     const demoDocuments = [
       {
+        blockchainId: '0x' + '1'.padStart(64, '0'),
         citizenAddress: demoCitizens[0].address,
         documentType: 'aadhar',
         ipfsHash: 'QmDemoAadharHash1',
-        isVerified: true,
-        issuerAddress: '0x0000000000000000000000000000000000000001',
-        issuerName: 'Government Authority'
+        metadataHash: 'QmDemoMetadataHash1',
+        status: 'verified',
       },
       {
+        blockchainId: '0x' + '2'.padStart(64, '0'),
         citizenAddress: demoCitizens[0].address,
         documentType: 'pan',
         ipfsHash: 'QmDemoPanHash1',
-        isVerified: true,
-        issuerAddress: '0x0000000000000000000000000000000000000001',
-        issuerName: 'Income Tax Department'
+        metadataHash: 'QmDemoMetadataHash2',
+        status: 'verified',
       }
     ];
 
