@@ -92,13 +92,13 @@ const translations = {
     welcome: 'Welcome to BharatChain',
     welcomeSubtitle: "India's Digital Governance Platform on Blockchain",
     welcomeDescription: 'Secure citizen registration, document management, and grievance redressal system powered by blockchain technology.',
-    accessDemo: 'Access Demo Dashboard',
+    accessDashboard: 'Access Dashboard',
   },
   
   hi: {
     // Header
     appTitle: 'भारतचेन - डिजिटल गवर्नेंस प्लेटफॉर्म',
-    demoMode: 'डेमो मोड',
+    // Removed demo mode references
     
     // Navigation
     profile: 'प्रोफाइल',
