@@ -58,7 +58,7 @@ import CitizenRegistrationModal from './CitizenRegistrationModal';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3001';
 
 const MotionContainer = motion(Container);
 const MotionBox = motion(Box);
