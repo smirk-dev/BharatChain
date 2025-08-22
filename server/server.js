@@ -84,12 +84,13 @@ const seedDemoData = async () => {
     // Create demo grievances
     const demoGrievances = [
       {
+        blockchainId: 1,
         citizenAddress: demoCitizens[0].address,
         title: 'Road Repair Request',
         description: 'The road near my area needs urgent repair due to potholes.',
         category: 'infrastructure',
         priority: 'medium',
-        status: 'pending'
+        status: 'open'
       }
     ];
 
