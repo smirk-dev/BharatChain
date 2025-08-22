@@ -112,7 +112,7 @@ const startServer = async () => {
       await blockchainService.initialize();
       console.log('Blockchain service initialized.');
     } catch (blockchainError) {
-      console.log('Blockchain service initialization failed, continuing in demo mode:', blockchainError.message);
+      console.log('Blockchain service initialization failed:', blockchainError.message);
     }
     
     // Initialize IPFS service
