@@ -16,7 +16,6 @@ const translations = {
     // Header
     appTitle: 'BharatChain - Digital Governance Platform',
     demoMode: 'Demo Mode',
-    demoLogin: 'Demo Login',
     
     // Navigation
     profile: 'Profile',
