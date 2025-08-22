@@ -171,25 +171,8 @@ const CitizenDashboard = ({ darkMode, toggleDarkMode }) => {
 
       const message = messageResponse.data.message;
 
-      // Step 2: Sign the message with MetaMask directly (avoid ethers signer)
-      let signature;
-      try {
-        if (web3.signer && web3.signer.signMessage) {
-          // Use our custom signer
-          signature = await web3.signer.signMessage(message);
-        } else {
-          // Fallback to direct MetaMask call
-          signature = await window.ethereum.request({
-            method: 'personal_sign',
-            params: [message, cleanAddress]
-          });
-        }
-      } catch (signError) {
-        if (signError.code === 4001) {
-          throw new Error('Signature rejected by user.');
-        }
-        throw new Error('Failed to sign message: ' + signError.message);
-      }
+      // Step 2: Sign the message with our ENS-free signer
+      const signature = await web3.signMessage(message);
 
       // Step 3: Verify signature and get JWT token
       const authResponse = await axios.post(`${API_BASE_URL}/api/auth/verify`, {
