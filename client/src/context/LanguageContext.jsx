@@ -181,7 +181,7 @@ const translations = {
   ta: {
     // Header
     appTitle: 'பாரதசங் - டிஜிட்டல் ஆளுமை தளம்',
-    demoMode: 'மாதிரி முறை',
+    // Removed demo mode references
     
     // Navigation
     profile: 'சுயவிவரம்',
