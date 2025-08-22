@@ -229,9 +229,11 @@ router.patch('/:grievanceId/status', async (req, res) => {
     if (estimatedResolution) updateData.estimatedResolution = estimatedResolution;
     if (status === 'resolved') updateData.resolvedAt = new Date();
     
-    const updatedGrievance = dataStore.updateGrievance(grievanceId, updateData);
+    const [affectedRows] = await Grievance.update(updateData, {
+      where: { id: grievanceId }
+    });
     
-    if (!updatedGrievance) {
+    if (affectedRows === 0) {
       return res.status(404).json({
         success: false,
         message: 'Grievance not found',
