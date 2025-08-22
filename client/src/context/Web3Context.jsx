@@ -28,9 +28,9 @@ export const Web3Provider = ({ children }) => {
 
   // Contract addresses (you'll need to update these after deployment)
   const CONTRACT_ADDRESSES = {
-    CitizenRegistry: process.env.REACT_APP_CITIZEN_REGISTRY_ADDRESS || '0x...',
-    DocumentRegistry: process.env.REACT_APP_DOCUMENT_REGISTRY_ADDRESS || '0x...',
-    GrievanceSystem: process.env.REACT_APP_GRIEVANCE_SYSTEM_ADDRESS || '0x...',
+    CitizenRegistry: process.env.REACT_APP_CITIZEN_REGISTRY_ADDRESS || '0x0000000000000000000000000000000000000000',
+    DocumentRegistry: process.env.REACT_APP_DOCUMENT_REGISTRY_ADDRESS || '0x0000000000000000000000000000000000000000',
+    GrievanceSystem: process.env.REACT_APP_GRIEVANCE_SYSTEM_ADDRESS || '0x0000000000000000000000000000000000000000',
   };
 
   const connectWallet = async () => {
