@@ -2,10 +2,28 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import toast from 'react-hot-toast';
 
-// Contract ABIs (you'll need to import these from your compiled contracts)
-import CitizenRegistryABI from '../contracts/CitizenRegistry.json';
-import DocumentRegistryABI from '../contracts/DocumentRegistry.json';
-import GrievanceSystemABI from '../contracts/GrievanceSystem.json';
+// Contract ABIs - with error handling for missing files
+let CitizenRegistryABI = { abi: [] };
+let DocumentRegistryABI = { abi: [] };
+let GrievanceSystemABI = { abi: [] };
+
+try {
+  CitizenRegistryABI = require('../contracts/CitizenRegistry.json');
+} catch (error) {
+  console.log('CitizenRegistry ABI not found, using empty ABI');
+}
+
+try {
+  DocumentRegistryABI = require('../contracts/DocumentRegistry.json');
+} catch (error) {
+  console.log('DocumentRegistry ABI not found, using empty ABI');
+}
+
+try {
+  GrievanceSystemABI = require('../contracts/GrievanceSystem.json');
+} catch (error) {
+  console.log('GrievanceSystem ABI not found, using empty ABI');
+}
 
 const Web3Context = createContext();
 
