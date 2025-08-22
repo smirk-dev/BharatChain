@@ -1,25 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Container,
-  Grid,
-  Card,
-  CardContent,
-  Button,
   Box,
-  Chip,
-  Avatar,
-  IconButton,
-  Alert,
-  CircularProgress,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
+  Container,
+  Tabs,
+  Tab,
+  Fab,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -29,39 +14,44 @@ import {
   FormControl,
   InputLabel,
   Select,
-  Fab,
-  Tab,
-  Tabs,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemAvatar,
-  Menu,
-  Tooltip,
-  Badge,
+  Button,
+  Grid,
+  CircularProgress,
+  Alert,
+  useTheme,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Chip,
+  Typography,
 } from '@mui/material';
 import {
-  AccountBalance,
+  Refresh,
+  Add,
   Person,
   Description,
   ReportProblem,
-  Add,
-  Refresh,
+  DashboardOutlined,
+  FileUpload,
   CheckCircle,
   Pending,
   Warning,
   Error as ErrorIcon,
-  FileUpload,
-  VerifiedUser,
-  AccountBalanceWallet,
-  ExitToApp,
-  ContentCopy,
-  Dashboard as DashboardIcon,
 } from '@mui/icons-material';
+import { motion, AnimatePresence } from 'framer-motion';
 
 // Import contexts
 import { useAuth } from '../../context/AuthContext';
 import { useWeb3 } from '../../context/Web3Context';
+
+// Import new components
+import Header from '../Layout/Header';
+import DashboardOverview from './DashboardOverview';
+import ProfileSection from './ProfileSection';
 
 // Import API functions
 import axios from 'axios';
@@ -69,7 +59,11 @@ import toast from 'react-hot-toast';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
 
-const CitizenDashboard = () => {
+const MotionContainer = motion(Container);
+const MotionBox = motion(Box);
+
+const CitizenDashboard = ({ darkMode, toggleDarkMode }) => {
+  const theme = useTheme();
   const { user, logout, isRegistered, isVerified, userAddress } = useAuth();
   const { account, isConnected, connectWallet, disconnectWallet } = useWeb3();
 
@@ -85,9 +79,6 @@ const CitizenDashboard = () => {
   // Dialogs
   const [registerDialog, setRegisterDialog] = useState(false);
   const [grievanceDialog, setGrievanceDialog] = useState(false);
-  
-  // Menu states
-  const [walletMenu, setWalletMenu] = useState(null);
   
   // Form states
   const [registerForm, setRegisterForm] = useState({
@@ -287,570 +278,307 @@ const CitizenDashboard = () => {
     }
   };
 
-  const formatAddress = (address) => {
-    if (!address) return '';
-    return `${address.slice(0, 6)}...${address.slice(-4)}`;
+  const refreshData = () => {
+    fetchUserProfile();
+    fetchUserDocuments();
+    fetchUserGrievances();
+    toast.success('Data refreshed!');
   };
 
-  const copyToClipboard = (text) => {
-    navigator.clipboard.writeText(text);
-    toast.success('Copied to clipboard');
-  };
-
-  const handleWalletMenuOpen = (event) => {
-    setWalletMenu(event.currentTarget);
-  };
-
-  const handleWalletMenuClose = () => {
-    setWalletMenu(null);
-  };
-
-  const handleLogout = async () => {
-    await logout();
-    if (isConnected) {
-      disconnectWallet();
+  const tabVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { duration: 0.4, ease: "easeOut" }
+    },
+    exit: { 
+      opacity: 0, 
+      y: -20,
+      transition: { duration: 0.3, ease: "easeIn" }
     }
   };
 
   return (
     <Box sx={{ flexGrow: 1, minHeight: '100vh', bgcolor: 'background.default' }}>
       {/* Header */}
-      <AppBar position="static" elevation={2}>
-        <Toolbar>
-          <Avatar sx={{ mr: 2, bgcolor: 'secondary.main' }}>
-            <AccountBalance />
-          </Avatar>
-          
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            BharatChain - Digital Governance Platform
-          </Typography>
-          
-          {/* Web3 Wallet */}
-          {isConnected ? (
-            <>
-              <Tooltip title="Wallet Connected">
-                <IconButton color="inherit" onClick={handleWalletMenuOpen}>
-                  <Badge color="success" variant="dot">
-                    <AccountBalanceWallet />
-                  </Badge>
-                </IconButton>
-              </Tooltip>
-              <Menu
-                anchorEl={walletMenu}
-                open={Boolean(walletMenu)}
-                onClose={handleWalletMenuClose}
-              >
-                <MenuItem disabled>
-                  <Typography variant="body2">
-                    Address: {formatAddress(account)}
-                  </Typography>
-                </MenuItem>
-                <MenuItem onClick={() => copyToClipboard(account)}>
-                  <ContentCopy sx={{ mr: 1 }} fontSize="small" />
-                  Copy Address
-                </MenuItem>
-                <MenuItem onClick={() => {
-                  disconnectWallet();
-                  handleWalletMenuClose();
-                }}>
-                  Disconnect Wallet
-                </MenuItem>
-              </Menu>
-              <Chip
-                icon={<VerifiedUser />}
-                label={formatAddress(account)}
-                color="primary"
-                variant="outlined"
-                size="small"
-                sx={{ ml: 1 }}
-              />
-            </>
-          ) : (
-            <Button
-              variant="outlined"
-              color="inherit"
-              onClick={connectWallet}
-              startIcon={<AccountBalanceWallet />}
-              sx={{ mr: 2 }}
+      <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+      
+      {/* Main Content */}
+      <Box sx={{ pt: 8 }}>
+        {/* Alert Messages */}
+        <AnimatePresence>
+          {error && (
+            <MotionBox
+              initial={{ opacity: 0, y: -50 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -50 }}
+              sx={{ mx: 2, mt: 2 }}
             >
-              Connect Wallet
-            </Button>
+              <Alert severity="error" onClose={() => setError('')}>
+                {error}
+              </Alert>
+            </MotionBox>
           )}
-          
-          {/* User Info */}
-          <Chip
-            icon={<VerifiedUser />}
-            label={user?.name || formatAddress(userAddress)}
-            color="primary"
-            variant="outlined"
-            size="small"
-            sx={{ mr: 2 }}
-          />
-          
-          {/* Logout */}
-          <Tooltip title="Logout">
-            <IconButton color="inherit" onClick={handleLogout}>
-              <ExitToApp />
-            </IconButton>
-          </Tooltip>
-        </Toolbar>
-      </AppBar>
+        </AnimatePresence>
 
-      {/* Alert Messages */}
-      {error && (
-        <Alert severity="error" sx={{ m: 2 }} onClose={() => setError('')}>
-          {error}
-        </Alert>
-      )}
-
-      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-        {/* Navigation Tabs */}
-        <Tabs 
-          value={currentTab} 
-          onChange={(e, newValue) => setCurrentTab(newValue)}
-          textColor="primary"
-          indicatorColor="primary"
-          variant="scrollable"
-          scrollButtons="auto"
-          sx={{ mb: 3 }}
+        <MotionContainer 
+          maxWidth="xl" 
+          sx={{ mt: 4, mb: 4 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
         >
-          <Tab icon={<DashboardIcon />} label="Dashboard" />
-          <Tab icon={<Person />} label="Profile" />
-          <Tab icon={<Description />} label="Documents" />
-          <Tab icon={<ReportProblem />} label="Grievances" />
-        </Tabs>
+          {/* Navigation Tabs */}
+          <Paper 
+            elevation={0}
+            sx={{ 
+              mb: 4, 
+              border: `1px solid ${theme.palette.divider}`,
+              borderRadius: 2,
+              overflow: 'hidden'
+            }}
+          >
+            <Tabs 
+              value={currentTab} 
+              onChange={(e, newValue) => setCurrentTab(newValue)}
+              textColor="primary"
+              indicatorColor="primary"
+              variant="fullWidth"
+              sx={{
+                '& .MuiTab-root': {
+                  minHeight: 64,
+                  fontSize: '1rem',
+                  fontWeight: 600,
+                  textTransform: 'none',
+                }
+              }}
+            >
+              <Tab icon={<DashboardOutlined />} label="Dashboard" />
+              <Tab icon={<Person />} label="Profile" />
+              <Tab icon={<Description />} label="Documents" />
+              <Tab icon={<ReportProblem />} label="Grievances" />
+            </Tabs>
+          </Paper>
 
-        {/* Dashboard Tab */}
-        {currentTab === 0 && (
-          <Grid container spacing={3}>
-            {/* Welcome Card */}
-            <Grid item xs={12}>
-              <Card elevation={2}>
-                <CardContent sx={{ p: 3 }}>
-                  <Typography variant="h4" gutterBottom color="primary">
-                    🇮🇳 Welcome to BharatChain!
-                  </Typography>
-                  <Typography variant="h6" color="text.secondary" gutterBottom>
-                    Your Digital Governance Platform
-                  </Typography>
-                  <Typography variant="body1" sx={{ mb: 3 }}>
-                    Access citizen services, manage documents, and submit grievances securely using blockchain technology.
-                  </Typography>
-                  
-                  <Grid container spacing={1}>
-                    <Grid item>
-                      <Chip
-                        icon={<VerifiedUser />}
-                        label={isRegistered ? '✅ Registered' : '❌ Not Registered'}
-                        color={isRegistered ? 'success' : 'warning'}
-                      />
-                    </Grid>
-                    <Grid item>
-                      <Chip
-                        icon={<CheckCircle />}
-                        label={isVerified ? '✅ Verified' : '⏳ Pending Verification'}
-                        color={isVerified ? 'success' : 'warning'}
-                      />
-                    </Grid>
-                    <Grid item>
-                      <Chip
-                        icon={<AccountBalanceWallet />}
-                        label={isConnected ? '🔗 Wallet Connected' : '❌ No Wallet'}
-                        color={isConnected ? 'success' : 'error'}
-                      />
-                    </Grid>
-                  </Grid>
-                </CardContent>
-              </Card>
-            </Grid>
+          {/* Tab Content */}
+          <AnimatePresence mode="wait">
+            <MotionBox
+              key={currentTab}
+              variants={tabVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+            >
+              {/* Dashboard Tab */}
+              {currentTab === 0 && (
+                <DashboardOverview
+                  userDocuments={userDocuments}
+                  userGrievances={userGrievances}
+                  isRegistered={isRegistered}
+                  isVerified={isVerified}
+                  isConnected={isConnected}
+                  onRegister={() => setRegisterDialog(true)}
+                  onSubmitGrievance={() => setGrievanceDialog(true)}
+                  onUploadDocument={() => toast.info('Document upload feature coming soon!')}
+                />
+              )}
 
-            {/* Quick Stats */}
-            <Grid item xs={12} md={4}>
-              <Card elevation={2}>
-                <CardContent sx={{ textAlign: 'center' }}>
-                  <Description sx={{ fontSize: 40, color: 'primary.main', mb: 1 }} />
-                  <Typography variant="h3" color="primary">
-                    {userDocuments.length}
-                  </Typography>
-                  <Typography variant="h6" color="text.secondary">
-                    Documents
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Total uploaded documents
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
+              {/* Profile Tab */}
+              {currentTab === 1 && (
+                <ProfileSection
+                  userProfile={userProfile}
+                  userAddress={userAddress}
+                  isVerified={isVerified}
+                  userDocuments={userDocuments}
+                  userGrievances={userGrievances}
+                  onRegister={() => setRegisterDialog(true)}
+                />
+              )}
 
-            <Grid item xs={12} md={4}>
-              <Card elevation={2}>
-                <CardContent sx={{ textAlign: 'center' }}>
-                  <ReportProblem sx={{ fontSize: 40, color: 'secondary.main', mb: 1 }} />
-                  <Typography variant="h3" color="secondary">
-                    {userGrievances.length}
-                  </Typography>
-                  <Typography variant="h6" color="text.secondary">
-                    Grievances
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Total submitted grievances
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-
-            <Grid item xs={12} md={4}>
-              <Card elevation={2}>
-                <CardContent sx={{ textAlign: 'center' }}>
-                  <CheckCircle sx={{ fontSize: 40, color: 'success.main', mb: 1 }} />
-                  <Typography variant="h3" color="success.main">
-                    ✓
-                  </Typography>
-                  <Typography variant="h6" color="text.secondary">
-                    Status
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    System operational
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-
-            {/* Quick Actions */}
-            <Grid item xs={12}>
-              <Card elevation={2}>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    🚀 Quick Actions
-                  </Typography>
-                  <Grid container spacing={2}>
-                    {!isRegistered && (
-                      <Grid item>
-                        <Button
-                          variant="contained"
-                          startIcon={<Person />}
-                          onClick={() => setRegisterDialog(true)}
-                          size="large"
-                        >
-                          Register as Citizen
-                        </Button>
-                      </Grid>
-                    )}
-                    <Grid item>
-                      <Button
-                        variant="outlined"
-                        startIcon={<FileUpload />}
-                        onClick={() => setCurrentTab(2)}
-                      >
-                        Upload Document
-                      </Button>
-                    </Grid>
-                    <Grid item>
-                      <Button
-                        variant="outlined"
-                        startIcon={<Add />}
-                        onClick={() => setGrievanceDialog(true)}
-                      >
-                        Submit Grievance
-                      </Button>
-                    </Grid>
-                    <Grid item>
-                      <Button
-                        variant="outlined"
-                        startIcon={<Refresh />}
-                        onClick={() => {
-                          fetchUserProfile();
-                          fetchUserDocuments();
-                          fetchUserGrievances();
-                          toast.success('Data refreshed!');
-                        }}
-                      >
-                        Refresh Data
-                      </Button>
-                    </Grid>
-                  </Grid>
-                </CardContent>
-              </Card>
-            </Grid>
-          </Grid>
-        )}
-
-        {/* Profile Tab */}
-        {currentTab === 1 && (
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={8}>
-              <Card elevation={2}>
-                <CardContent sx={{ p: 3 }}>
-                  <Typography variant="h5" gutterBottom>
-                    👤 Citizen Profile
-                  </Typography>
-                  
-                  {userProfile ? (
-                    <Box>
-                      <Grid container spacing={3}>
-                        <Grid item xs={12} sm={6}>
-                          <Typography variant="subtitle2" color="text.secondary">Full Name</Typography>
-                          <Typography variant="h6">{userProfile.name}</Typography>
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                          <Typography variant="subtitle2" color="text.secondary">Email Address</Typography>
-                          <Typography variant="h6">{userProfile.email || 'Not provided'}</Typography>
-                        </Grid>
-                        <Grid item xs={12}>
-                          <Typography variant="subtitle2" color="text.secondary">Wallet Address</Typography>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <Typography variant="body1" sx={{ fontFamily: 'monospace', fontSize: '0.9rem' }}>
-                              {userAddress}
-                            </Typography>
-                            <IconButton size="small" onClick={() => copyToClipboard(userAddress)}>
-                              <ContentCopy fontSize="small" />
-                            </IconButton>
-                          </Box>
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                          <Typography variant="subtitle2" color="text.secondary">Verification Status</Typography>
-                          <Chip
-                            icon={getStatusIcon(isVerified ? 'verified' : 'pending')}
-                            label={isVerified ? 'Verified Citizen' : 'Pending Verification'}
-                            color={isVerified ? 'success' : 'warning'}
-                            sx={{ mt: 1 }}
-                          />
-                        </Grid>
-                      </Grid>
-                    </Box>
-                  ) : (
-                    <Box sx={{ textAlign: 'center', py: 4 }}>
-                      <Person sx={{ fontSize: 80, color: 'text.secondary', mb: 2 }} />
-                      <Typography variant="h6" color="text.secondary" gutterBottom>
-                        No profile found
-                      </Typography>
-                      <Typography variant="body1" color="text.secondary" gutterBottom>
-                        Please register as a citizen to access all features.
+              {/* Documents Tab */}
+              {currentTab === 2 && (
+                <Paper 
+                  elevation={0}
+                  sx={{ 
+                    border: `1px solid ${theme.palette.divider}`,
+                    borderRadius: 3,
+                    overflow: 'hidden'
+                  }}
+                >
+                  <Box sx={{ p: 3, borderBottom: `1px solid ${theme.palette.divider}` }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <Typography variant="h5" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Description color="primary" />
+                        My Documents
                       </Typography>
                       <Button
                         variant="contained"
-                        onClick={() => setRegisterDialog(true)}
-                        startIcon={<Person />}
-                        size="large"
-                        sx={{ mt: 2 }}
+                        startIcon={<FileUpload />}
+                        onClick={() => toast.info('Document upload feature will be available soon!')}
                       >
-                        Register Now
+                        Upload Document
                       </Button>
                     </Box>
-                  )}
-                </CardContent>
-              </Card>
-            </Grid>
-            
-            <Grid item xs={12} md={4}>
-              <Card elevation={2}>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    📊 Account Summary
-                  </Typography>
-                  <List>
-                    <ListItem>
-                      <ListItemAvatar>
-                        <Avatar sx={{ bgcolor: 'primary.main' }}>
-                          <Description />
-                        </Avatar>
-                      </ListItemAvatar>
-                      <ListItemText
-                        primary={userDocuments.length}
-                        secondary="Documents Uploaded"
-                      />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemAvatar>
-                        <Avatar sx={{ bgcolor: 'secondary.main' }}>
-                          <ReportProblem />
-                        </Avatar>
-                      </ListItemAvatar>
-                      <ListItemText
-                        primary={userGrievances.length}
-                        secondary="Grievances Submitted"
-                      />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemAvatar>
-                        <Avatar sx={{ bgcolor: isVerified ? 'success.main' : 'warning.main' }}>
-                          <VerifiedUser />
-                        </Avatar>
-                      </ListItemAvatar>
-                      <ListItemText
-                        primary={isVerified ? 'Verified' : 'Unverified'}
-                        secondary="Verification Status"
-                      />
-                    </ListItem>
-                  </List>
-                </CardContent>
-              </Card>
-            </Grid>
-          </Grid>
-        )}
-
-        {/* Documents Tab */}
-        {currentTab === 2 && (
-          <Card elevation={2}>
-            <CardContent>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                <Typography variant="h5">
-                  📄 My Documents
-                </Typography>
-                <Button
-                  variant="contained"
-                  startIcon={<FileUpload />}
-                  onClick={() => toast.info('Document upload feature will be available soon!')}
-                >
-                  Upload Document
-                </Button>
-              </Box>
-              
-              <TableContainer>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell><strong>Document Type</strong></TableCell>
-                      <TableCell><strong>Status</strong></TableCell>
-                      <TableCell><strong>Upload Date</strong></TableCell>
-                      <TableCell><strong>Actions</strong></TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {userDocuments.length > 0 ? (
-                      userDocuments.map((doc, index) => (
-                        <TableRow key={index}>
-                          <TableCell>{doc.documentType || 'Unknown Document'}</TableCell>
-                          <TableCell>
-                            <Chip
-                              icon={getStatusIcon(doc.status)}
-                              label={doc.status || 'pending'}
-                              color={getStatusColor(doc.status)}
-                              size="small"
-                            />
-                          </TableCell>
-                          <TableCell>
-                            {doc.createdAt ? new Date(doc.createdAt).toLocaleDateString() : 'N/A'}
-                          </TableCell>
-                          <TableCell>
-                            <Button size="small" variant="outlined">
-                              View Details
-                            </Button>
-                          </TableCell>
+                  </Box>
+                  
+                  <TableContainer>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell><strong>Document Type</strong></TableCell>
+                          <TableCell><strong>Status</strong></TableCell>
+                          <TableCell><strong>Upload Date</strong></TableCell>
+                          <TableCell><strong>Actions</strong></TableCell>
                         </TableRow>
-                      ))
-                    ) : (
-                      <TableRow>
-                        <TableCell colSpan={4} align="center" sx={{ py: 4 }}>
-                          <Description sx={{ fontSize: 60, color: 'text.secondary', mb: 2 }} />
-                          <Typography variant="h6" color="text.secondary">
-                            No documents uploaded yet
-                          </Typography>
-                          <Typography variant="body2" color="text.secondary">
-                            Upload your first document to get started
-                          </Typography>
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </CardContent>
-          </Card>
-        )}
+                      </TableHead>
+                      <TableBody>
+                        {userDocuments.length > 0 ? (
+                          userDocuments.map((doc, index) => (
+                            <TableRow key={index} hover>
+                              <TableCell>{doc.documentType || 'Unknown Document'}</TableCell>
+                              <TableCell>
+                                <Chip
+                                  icon={getStatusIcon(doc.status)}
+                                  label={doc.status || 'pending'}
+                                  color={getStatusColor(doc.status)}
+                                  size="small"
+                                />
+                              </TableCell>
+                              <TableCell>
+                                {doc.createdAt ? new Date(doc.createdAt).toLocaleDateString() : 'N/A'}
+                              </TableCell>
+                              <TableCell>
+                                <Button size="small" variant="outlined">
+                                  View Details
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          ))
+                        ) : (
+                          <TableRow>
+                            <TableCell colSpan={4} align="center" sx={{ py: 8 }}>
+                              <Description sx={{ fontSize: 60, color: 'text.secondary', mb: 2 }} />
+                              <Typography variant="h6" color="text.secondary" gutterBottom>
+                                No documents uploaded yet
+                              </Typography>
+                              <Typography variant="body2" color="text.secondary">
+                                Upload your first document to get started
+                              </Typography>
+                            </TableCell>
+                          </TableRow>
+                        )}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </Paper>
+              )}
 
-        {/* Grievances Tab */}
-        {currentTab === 3 && (
-          <Card elevation={2}>
-            <CardContent>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                <Typography variant="h5">
-                  🗣️ My Grievances
-                </Typography>
-                <Button
-                  variant="contained"
-                  startIcon={<Add />}
-                  onClick={() => setGrievanceDialog(true)}
+              {/* Grievances Tab */}
+              {currentTab === 3 && (
+                <Paper 
+                  elevation={0}
+                  sx={{ 
+                    border: `1px solid ${theme.palette.divider}`,
+                    borderRadius: 3,
+                    overflow: 'hidden'
+                  }}
                 >
-                  Submit New Grievance
-                </Button>
-              </Box>
-              
-              <TableContainer>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell><strong>Title</strong></TableCell>
-                      <TableCell><strong>Category</strong></TableCell>
-                      <TableCell><strong>Status</strong></TableCell>
-                      <TableCell><strong>Submitted Date</strong></TableCell>
-                      <TableCell><strong>Actions</strong></TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {userGrievances.length > 0 ? (
-                      userGrievances.map((grievance, index) => (
-                        <TableRow key={index}>
-                          <TableCell>{grievance.title}</TableCell>
-                          <TableCell>
-                            <Chip
-                              label={grievance.category}
-                              size="small"
-                              variant="outlined"
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <Chip
-                              icon={getStatusIcon(grievance.status)}
-                              label={grievance.status || 'submitted'}
-                              color={getStatusColor(grievance.status)}
-                              size="small"
-                            />
-                          </TableCell>
-                          <TableCell>
-                            {grievance.createdAt ? new Date(grievance.createdAt).toLocaleDateString() : 'N/A'}
-                          </TableCell>
-                          <TableCell>
-                            <Button size="small" variant="outlined">
-                              View Details
-                            </Button>
-                          </TableCell>
+                  <Box sx={{ p: 3, borderBottom: `1px solid ${theme.palette.divider}` }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <Typography variant="h5" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <ReportProblem color="secondary" />
+                        My Grievances
+                      </Typography>
+                      <Button
+                        variant="contained"
+                        startIcon={<Add />}
+                        onClick={() => setGrievanceDialog(true)}
+                      >
+                        Submit New Grievance
+                      </Button>
+                    </Box>
+                  </Box>
+                  
+                  <TableContainer>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell><strong>Title</strong></TableCell>
+                          <TableCell><strong>Category</strong></TableCell>
+                          <TableCell><strong>Status</strong></TableCell>
+                          <TableCell><strong>Submitted Date</strong></TableCell>
+                          <TableCell><strong>Actions</strong></TableCell>
                         </TableRow>
-                      ))
-                    ) : (
-                      <TableRow>
-                        <TableCell colSpan={5} align="center" sx={{ py: 4 }}>
-                          <ReportProblem sx={{ fontSize: 60, color: 'text.secondary', mb: 2 }} />
-                          <Typography variant="h6" color="text.secondary">
-                            No grievances submitted yet
-                          </Typography>
-                          <Typography variant="body2" color="text.secondary">
-                            Submit your first grievance to get started
-                          </Typography>
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </CardContent>
-          </Card>
-        )}
+                      </TableHead>
+                      <TableBody>
+                        {userGrievances.length > 0 ? (
+                          userGrievances.map((grievance, index) => (
+                            <TableRow key={index} hover>
+                              <TableCell>{grievance.title}</TableCell>
+                              <TableCell>
+                                <Chip
+                                  label={grievance.category}
+                                  size="small"
+                                  variant="outlined"
+                                />
+                              </TableCell>
+                              <TableCell>
+                                <Chip
+                                  icon={getStatusIcon(grievance.status)}
+                                  label={grievance.status || 'submitted'}
+                                  color={getStatusColor(grievance.status)}
+                                  size="small"
+                                />
+                              </TableCell>
+                              <TableCell>
+                                {grievance.createdAt ? new Date(grievance.createdAt).toLocaleDateString() : 'N/A'}
+                              </TableCell>
+                              <TableCell>
+                                <Button size="small" variant="outlined">
+                                  View Details
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          ))
+                        ) : (
+                          <TableRow>
+                            <TableCell colSpan={5} align="center" sx={{ py: 8 }}>
+                              <ReportProblem sx={{ fontSize: 60, color: 'text.secondary', mb: 2 }} />
+                              <Typography variant="h6" color="text.secondary" gutterBottom>
+                                No grievances submitted yet
+                              </Typography>
+                              <Typography variant="body2" color="text.secondary">
+                                Submit your first grievance to get started
+                              </Typography>
+                            </TableCell>
+                          </TableRow>
+                        )}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </Paper>
+              )}
+            </MotionBox>
+          </AnimatePresence>
 
-        {/* Floating Action Button for Refresh */}
-        <Fab
-          color="primary"
-          sx={{ position: 'fixed', bottom: 16, right: 16 }}
-          onClick={() => {
-            fetchUserProfile();
-            fetchUserDocuments();
-            fetchUserGrievances();
-            toast.success('Data refreshed!');
-          }}
-        >
-          <Refresh />
-        </Fab>
-      </Container>
+          {/* Floating Action Button for Refresh */}
+          <Fab
+            color="primary"
+            sx={{ 
+              position: 'fixed', 
+              bottom: 24, 
+              right: 24,
+              '&:hover': {
+                transform: 'scale(1.1)',
+              }
+            }}
+            onClick={refreshData}
+          >
+            <Refresh />
+          </Fab>
+        </MotionContainer>
+      </Box>
 
       {/* Register Dialog */}
       <Dialog open={registerDialog} onClose={() => setRegisterDialog(false)} maxWidth="sm" fullWidth>
