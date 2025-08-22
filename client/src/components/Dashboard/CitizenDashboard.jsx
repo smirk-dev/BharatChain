@@ -581,6 +581,183 @@ const CitizenDashboard = ({ darkMode, toggleDarkMode }) => {
       </Box>
 
       {/* Register Dialog */}
+      <Dialog 
+        open={registerDialog} 
+        onClose={() => setRegisterDialog(false)} 
+        maxWidth="sm" 
+        fullWidth
+        PaperProps={{
+          sx: { borderRadius: 3 }
+        }}
+      >
+        <DialogTitle sx={{ pb: 1 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Person color="primary" />
+            Register as Citizen
+          </Box>
+        </DialogTitle>
+        <DialogContent>
+          <TextField
+            fullWidth
+            label="Full Name *"
+            value={registerForm.name}
+            onChange={(e) => setRegisterForm({ ...registerForm, name: e.target.value })}
+            margin="normal"
+            required
+            variant="outlined"
+          />
+          <TextField
+            fullWidth
+            label="Email Address"
+            type="email"
+            value={registerForm.email}
+            onChange={(e) => setRegisterForm({ ...registerForm, email: e.target.value })}
+            margin="normal"
+            variant="outlined"
+          />
+          <TextField
+            fullWidth
+            label="Aadhar Number *"
+            value={registerForm.aadharNumber}
+            onChange={(e) => setRegisterForm({ ...registerForm, aadharNumber: e.target.value })}
+            margin="normal"
+            required
+            placeholder="1234 5678 9012"
+            variant="outlined"
+          />
+          <TextField
+            fullWidth
+            label="Phone Number"
+            value={registerForm.phone}
+            onChange={(e) => setRegisterForm({ ...registerForm, phone: e.target.value })}
+            margin="normal"
+            placeholder="+91 98765 43210"
+            variant="outlined"
+          />
+        </DialogContent>
+        <DialogActions sx={{ p: 3, pt: 1 }}>
+          <Button onClick={() => setRegisterDialog(false)} size="large">
+            Cancel
+          </Button>
+          <Button 
+            onClick={handleRegister} 
+            variant="contained"
+            disabled={loading || !registerForm.name || !registerForm.aadharNumber}
+            size="large"
+            sx={{ minWidth: 120 }}
+          >
+            {loading ? <CircularProgress size={20} /> : 'Register'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Grievance Dialog */}
+      <Dialog 
+        open={grievanceDialog} 
+        onClose={() => setGrievanceDialog(false)} 
+        maxWidth="md" 
+        fullWidth
+        PaperProps={{
+          sx: { borderRadius: 3 }
+        }}
+      >
+        <DialogTitle sx={{ pb: 1 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <ReportProblem color="secondary" />
+            Submit New Grievance
+          </Box>
+        </DialogTitle>
+        <DialogContent>
+          <TextField
+            fullWidth
+            label="Grievance Title *"
+            value={grievanceForm.title}
+            onChange={(e) => setGrievanceForm({ ...grievanceForm, title: e.target.value })}
+            margin="normal"
+            required
+            placeholder="Brief description of the issue"
+            variant="outlined"
+          />
+          <TextField
+            fullWidth
+            label="Detailed Description *"
+            multiline
+            rows={4}
+            value={grievanceForm.description}
+            onChange={(e) => setGrievanceForm({ ...grievanceForm, description: e.target.value })}
+            margin="normal"
+            required
+            placeholder="Provide detailed information about your grievance"
+            variant="outlined"
+          />
+          <Grid container spacing={2} sx={{ mt: 1 }}>
+            <Grid item xs={12} sm={6}>
+              <FormControl fullWidth variant="outlined">
+                <InputLabel>Category *</InputLabel>
+                <Select
+                  value={grievanceForm.category}
+                  onChange={(e) => setGrievanceForm({ ...grievanceForm, category: e.target.value })}
+                  label="Category *"
+                >
+                  <MenuItem value="infrastructure">🏗️ Infrastructure</MenuItem>
+                  <MenuItem value="healthcare">🏥 Healthcare</MenuItem>
+                  <MenuItem value="education">🎓 Education</MenuItem>
+                  <MenuItem value="water_supply">💧 Water Supply</MenuItem>
+                  <MenuItem value="electricity">⚡ Electricity</MenuItem>
+                  <MenuItem value="transportation">🚌 Transportation</MenuItem>
+                  <MenuItem value="sanitation">🧹 Sanitation</MenuItem>
+                  <MenuItem value="corruption">⚖️ Corruption</MenuItem>
+                  <MenuItem value="other">📋 Other</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <FormControl fullWidth variant="outlined">
+                <InputLabel>Priority</InputLabel>
+                <Select
+                  value={grievanceForm.priority}
+                  onChange={(e) => setGrievanceForm({ ...grievanceForm, priority: e.target.value })}
+                  label="Priority"
+                >
+                  <MenuItem value="low">🟢 Low</MenuItem>
+                  <MenuItem value="medium">🟡 Medium</MenuItem>
+                  <MenuItem value="high">🟠 High</MenuItem>
+                  <MenuItem value="urgent">🔴 Urgent</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+          </Grid>
+          <TextField
+            fullWidth
+            label="Location *"
+            value={grievanceForm.location}
+            onChange={(e) => setGrievanceForm({ ...grievanceForm, location: e.target.value })}
+            margin="normal"
+            required
+            placeholder="Ward/Area/City where the issue exists"
+            variant="outlined"
+          />
+        </DialogContent>
+        <DialogActions sx={{ p: 3, pt: 1 }}>
+          <Button onClick={() => setGrievanceDialog(false)} size="large">
+            Cancel
+          </Button>
+          <Button 
+            onClick={handleSubmitGrievance} 
+            variant="contained"
+            disabled={loading || !grievanceForm.title || !grievanceForm.description || !grievanceForm.category || !grievanceForm.location}
+            size="large"
+            sx={{ minWidth: 140 }}
+          >
+            {loading ? <CircularProgress size={20} /> : 'Submit Grievance'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
+  );
+};
+
+      {/* Register Dialog */}
       <Dialog open={registerDialog} onClose={() => setRegisterDialog(false)} maxWidth="sm" fullWidth>
         <DialogTitle>👤 Register as Citizen</DialogTitle>
         <DialogContent>
