@@ -279,9 +279,36 @@ const CitizenDashboard = ({ darkMode, toggleDarkMode }) => {
     setError('');
     
     try {
+      // Check if wallet is connected and authenticated
+      if (!isConnected || !account) {
+        toast.error('Please connect your wallet first');
+        return;
+      }
+
+      if (!isAuthenticated) {
+        toast.info('Please authenticate your wallet first...');
+        const authResult = await authenticateWallet();
+        if (!authResult.success) {
+          return;
+        }
+      }
+
+      // Validate form data
+      if (!registerForm.name.trim()) {
+        setError('Name is required');
+        return;
+      }
+
+      if (!registerForm.aadharNumber.trim() || registerForm.aadharNumber.length !== 12) {
+        setError('Valid 12-digit Aadhar number is required');
+        return;
+      }
+
+      // Register citizen
       const response = await axios.post(`${API_BASE_URL}/api/citizens/register`, registerForm, {
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
         },
         timeout: 10000,
       });
@@ -289,13 +316,26 @@ const CitizenDashboard = ({ darkMode, toggleDarkMode }) => {
       if (response.data.success) {
         toast.success('Citizen registered successfully!');
         setRegisterDialog(false);
+        setRegisterForm({
+          name: '',
+          email: '',
+          aadharNumber: '',
+          phone: '',
+        });
         await fetchUserProfile();
       } else {
         setError(response.data.message || 'Registration failed');
       }
     } catch (err) {
       console.error('Registration error:', err);
-      if (err.code === 'ECONNREFUSED' || err.message.includes('Network Error')) {
+      if (err.response?.status === 401) {
+        setError('Authentication required. Please connect and authenticate your wallet.');
+        setIsAuthenticated(false);
+        setAuthToken(null);
+        localStorage.removeItem('bharatchain_token');
+      } else if (err.response?.status === 409) {
+        setError('Citizen already registered with this wallet address.');
+      } else if (err.code === 'ECONNREFUSED' || err.message.includes('Network Error')) {
         setError('Unable to connect to server. Please ensure the backend is running on port 5000.');
       } else {
         setError(err.response?.data?.message || 'Network error during registration');
