@@ -158,16 +158,16 @@ const Header = ({
             </Tooltip>
 
             {/* Wallet Connection */}
-            {isConnected ? (
+            {currentIsConnected ? (
               <>
-                <Tooltip title="Wallet Connected">
+                <Tooltip title={isAuthenticated ? "Wallet Authenticated" : "Click to Authenticate"}>
                   <Chip
-                    icon={<AccountBalanceWallet />}
-                    label={formatAddress(account)}
-                    color="success"
-                    variant="outlined"
+                    icon={isAuthenticated ? <VerifiedUser /> : <AccountBalanceWallet />}
+                    label={formatAddress(currentAccount)}
+                    color={isAuthenticated ? "success" : "warning"}
+                    variant={isAuthenticated ? "filled" : "outlined"}
                     size="small"
-                    onClick={(e) => setWalletMenu(e.currentTarget)}
+                    onClick={isAuthenticated ? (e) => setWalletMenu(e.currentTarget) : handleWalletAction}
                     sx={{ 
                       cursor: 'pointer',
                       '&:hover': { backgroundColor: 'action.hover' }
