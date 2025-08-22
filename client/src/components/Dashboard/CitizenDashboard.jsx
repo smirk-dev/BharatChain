@@ -52,6 +52,7 @@ import { useWeb3 } from '../../context/Web3Context';
 import Header from '../Layout/Header';
 import DashboardOverview from './DashboardOverview';
 import ProfileSection from './ProfileSection';
+import CitizenRegistrationModal from './CitizenRegistrationModal';
 
 // Import API functions
 import axios from 'axios';
