@@ -44,11 +44,6 @@ class IPFSService {
       throw error;
     }
   }
-      
-    } catch (error) {
-      throw new Error(`Failed to upload file to IPFS: ${error.message}`);
-    }
-  }
 
   async uploadJSON(jsonData) {
     this.ensureInitialized();
