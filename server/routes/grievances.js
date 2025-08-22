@@ -3,7 +3,7 @@ const { body, validationResult } = require('express-validator');
 const router = express.Router();
 
 // Services
-const { Citizen, Document, Grievance } = require('../models');
+const { Citizen, Document, Grievance, sequelize } = require('../models');
 const blockchainService = require('../services/blockchainService');
 
 // Validation middleware
@@ -366,7 +366,49 @@ router.post('/:grievanceId/comments', async (req, res) => {
 // Get grievance statistics
 router.get('/stats/overview', async (req, res) => {
   try {
-    const stats = dataStore.getGrievanceStats();
+    // Get grievance statistics from database
+    const totalGrievances = await Grievance.count();
+    const openGrievances = await Grievance.count({ where: { status: 'open' } });
+    const inProgressGrievances = await Grievance.count({ where: { status: 'in_progress' } });
+    const resolvedGrievances = await Grievance.count({ where: { status: 'resolved' } });
+    const closedGrievances = await Grievance.count({ where: { status: 'closed' } });
+    
+    // Category breakdown
+    const categoryStats = await Grievance.findAll({
+      attributes: [
+        'category',
+        [sequelize.fn('COUNT', sequelize.col('id')), 'count']
+      ],
+      group: ['category']
+    });
+    
+    // Priority breakdown
+    const priorityStats = await Grievance.findAll({
+      attributes: [
+        'priority',
+        [sequelize.fn('COUNT', sequelize.col('id')), 'count']
+      ],
+      group: ['priority']
+    });
+    
+    const stats = {
+      total: totalGrievances,
+      byStatus: {
+        open: openGrievances,
+        in_progress: inProgressGrievances,
+        resolved: resolvedGrievances,
+        closed: closedGrievances
+      },
+      byCategory: categoryStats.reduce((acc, item) => {
+        acc[item.category] = parseInt(item.getDataValue('count'));
+        return acc;
+      }, {}),
+      byPriority: priorityStats.reduce((acc, item) => {
+        acc[item.priority] = parseInt(item.getDataValue('count'));
+        return acc;
+      }, {}),
+      resolutionRate: totalGrievances > 0 ? (resolvedGrievances / totalGrievances * 100).toFixed(2) : 0
+    };
     
     res.json({
       success: true,

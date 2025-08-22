@@ -179,7 +179,7 @@ router.put('/profile', async (req, res) => {
     const citizenAddress = req.user.address;
     const { name, email, phone, dateOfBirth, gender, city, state, pincode } = req.body;
 
-    const citizen = dataStore.findCitizenByAddress(citizenAddress);
+    const citizen = await Citizen.findOne({ where: { address: citizenAddress } });
 
     if (!citizen) {
       return res.status(404).json({
@@ -199,7 +199,19 @@ router.put('/profile', async (req, res) => {
     if (state) updateData.state = state;
     if (pincode) updateData.pincode = pincode;
 
-    const updatedCitizen = dataStore.updateCitizen(citizenAddress, updateData);
+    const [affectedRows] = await Citizen.update(updateData, {
+      where: { address: citizenAddress }
+    });
+    
+    if (affectedRows === 0) {
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to update profile',
+      });
+    }
+    
+    // Get updated citizen
+    const updatedCitizen = await Citizen.findOne({ where: { address: citizenAddress } });
 
     res.json({
       success: true,
