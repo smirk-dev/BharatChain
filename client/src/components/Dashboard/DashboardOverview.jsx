@@ -183,32 +183,60 @@ const DashboardOverview = ({
                 </Box>
 
                 <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-                  {!isRegistered && (
+                  {!isConnected && (
+                    <Box sx={{ textAlign: 'center', p: 2 }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                        Connect your wallet to get started
+                      </Typography>
+                    </Box>
+                  )}
+                  
+                  {isConnected && !isAuthenticated && (
+                    <Button
+                      variant="contained"
+                      size="large"
+                      onClick={onAuthenticate}
+                      sx={{ borderRadius: 2 }}
+                      color="primary"
+                    >
+                      Authenticate Wallet
+                    </Button>
+                  )}
+                  
+                  {isAuthenticated && !isRegistered && (
                     <Button
                       variant="contained"
                       size="large"
                       onClick={onRegister}
                       sx={{ borderRadius: 2 }}
+                      color="success"
                     >
-                      Register Now
+                      Register as Citizen
                     </Button>
                   )}
-                  <Button
-                    variant="outlined"
-                    size="large"
-                    onClick={onSubmitGrievance}
-                    sx={{ borderRadius: 2 }}
-                  >
-                    Submit Grievance
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    size="large"
-                    onClick={onUploadDocument}
-                    sx={{ borderRadius: 2 }}
-                  >
-                    Upload Document
-                  </Button>
+                  
+                  {isAuthenticated && (
+                    <>
+                      <Button
+                        variant="outlined"
+                        size="large"
+                        onClick={onSubmitGrievance}
+                        sx={{ borderRadius: 2 }}
+                        disabled={!isRegistered}
+                      >
+                        Submit Grievance
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        size="large"
+                        onClick={onUploadDocument}
+                        sx={{ borderRadius: 2 }}
+                        disabled={!isRegistered}
+                      >
+                        Upload Document
+                      </Button>
+                    </>
+                  )}
                 </Box>
               </Grid>
               <Grid item xs={12} md={4}>
