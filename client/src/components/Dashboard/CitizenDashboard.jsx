@@ -742,76 +742,15 @@ const CitizenDashboard = ({ darkMode, toggleDarkMode }) => {
         </MotionContainer>
       </Box>
 
-      {/* Register Dialog */}
-      <Dialog 
-        open={registerDialog} 
-        onClose={() => setRegisterDialog(false)} 
-        maxWidth="sm" 
-        fullWidth
-        PaperProps={{
-          sx: { borderRadius: 3 }
-        }}
-      >
-        <DialogTitle sx={{ pb: 1 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Person color="primary" />
-            Register as Citizen
-          </Box>
-        </DialogTitle>
-        <DialogContent>
-          <TextField
-            fullWidth
-            label="Full Name *"
-            value={registerForm.name}
-            onChange={(e) => setRegisterForm({ ...registerForm, name: e.target.value })}
-            margin="normal"
-            required
-            variant="outlined"
-          />
-          <TextField
-            fullWidth
-            label="Email Address"
-            type="email"
-            value={registerForm.email}
-            onChange={(e) => setRegisterForm({ ...registerForm, email: e.target.value })}
-            margin="normal"
-            variant="outlined"
-          />
-          <TextField
-            fullWidth
-            label="Aadhar Number *"
-            value={registerForm.aadharNumber}
-            onChange={(e) => setRegisterForm({ ...registerForm, aadharNumber: e.target.value })}
-            margin="normal"
-            required
-            placeholder="1234 5678 9012"
-            variant="outlined"
-          />
-          <TextField
-            fullWidth
-            label="Phone Number"
-            value={registerForm.phone}
-            onChange={(e) => setRegisterForm({ ...registerForm, phone: e.target.value })}
-            margin="normal"
-            placeholder="+91 98765 43210"
-            variant="outlined"
-          />
-        </DialogContent>
-        <DialogActions sx={{ p: 3, pt: 1 }}>
-          <Button onClick={() => setRegisterDialog(false)} size="large">
-            Cancel
-          </Button>
-          <Button 
-            onClick={handleRegister} 
-            variant="contained"
-            disabled={loading || !registerForm.name || !registerForm.aadharNumber}
-            size="large"
-            sx={{ minWidth: 120 }}
-          >
-            {loading ? <CircularProgress size={20} /> : 'Register'}
-          </Button>
-        </DialogActions>
-      </Dialog>
+      {/* Citizen Registration Modal */}
+      <CitizenRegistrationModal
+        open={registerDialog}
+        onClose={() => setRegisterDialog(false)}
+        onSubmit={handleRegister}
+        loading={loading}
+        error={error}
+        walletAddress={account}
+      />
 
       {/* Grievance Dialog */}
       <Dialog 
