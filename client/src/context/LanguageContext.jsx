@@ -15,7 +15,7 @@ const translations = {
   en: {
     // Header
     appTitle: 'BharatChain - Digital Governance Platform',
-    demoMode: 'Demo Mode',
+    // Removed demo mode references
     
     // Navigation
     profile: 'Profile',
