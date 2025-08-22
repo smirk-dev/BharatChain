@@ -123,6 +123,18 @@ export const Web3Provider = ({ children }) => {
 
       // Use the provider directly without triggering ENS resolution
       const signer = await provider.getSigner();
+      
+      // Override the signer's resolveName method to prevent ENS resolution
+      const originalResolveName = signer.resolveName;
+      signer.resolveName = function(name) {
+        // If it looks like an address, return it directly without ENS resolution
+        if (typeof name === 'string' && /^0x[a-fA-F0-9]{40}$/i.test(name.trim())) {
+          return Promise.resolve(name.trim().toLowerCase());
+        }
+        // For actual ENS names, use the original method
+        return originalResolveName.call(this, name);
+      };
+      
       const network = await provider.getNetwork();
 
       setProvider(provider);

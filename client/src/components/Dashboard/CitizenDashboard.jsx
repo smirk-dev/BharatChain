@@ -150,6 +150,10 @@ const CitizenDashboard = ({ darkMode, toggleDarkMode }) => {
       // Clean the wallet address to prevent ENS issues
       const cleanAddress = cleanWalletAddress(account);
       
+      if (!cleanAddress) {
+        throw new Error('Invalid wallet address format. Please reconnect your wallet.');
+      }
+      
       // Step 1: Get authentication message
       const messageResponse = await axios.post(`${API_BASE_URL}/api/auth/message`, {
         address: cleanAddress
