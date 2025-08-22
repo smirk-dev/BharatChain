@@ -204,10 +204,13 @@ const CitizenDashboard = ({ darkMode, toggleDarkMode }) => {
 
   // Fetch user profile
   const fetchUserProfile = async () => {
+    if (!isAuthenticated || !authToken) return;
+    
     try {
       const response = await axios.get(`${API_BASE_URL}/api/citizens/profile`, {
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
         },
         timeout: 10000,
       });
@@ -216,18 +219,27 @@ const CitizenDashboard = ({ darkMode, toggleDarkMode }) => {
       }
     } catch (err) {
       console.error('Failed to fetch profile:', err);
-      if (err.code === 'NETWORK_ERROR') {
-        setError('Unable to connect to server. Please ensure the backend is running on port 5000.');
+      if (err.response?.status === 401) {
+        // Token expired or invalid
+        setIsAuthenticated(false);
+        setAuthToken(null);
+        localStorage.removeItem('bharatchain_token');
+      } else if (err.response?.status === 404) {
+        // Profile not found - user not registered
+        setUserProfile(null);
       }
     }
   };
 
   // Fetch user documents
   const fetchUserDocuments = async () => {
+    if (!isAuthenticated || !authToken) return;
+    
     try {
       const response = await axios.get(`${API_BASE_URL}/api/documents`, {
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
         },
         timeout: 10000,
       });
@@ -236,15 +248,23 @@ const CitizenDashboard = ({ darkMode, toggleDarkMode }) => {
       }
     } catch (err) {
       console.error('Failed to fetch documents:', err);
+      if (err.response?.status === 401) {
+        setIsAuthenticated(false);
+        setAuthToken(null);
+        localStorage.removeItem('bharatchain_token');
+      }
     }
   };
 
   // Fetch user grievances
   const fetchUserGrievances = async () => {
+    if (!isAuthenticated || !authToken) return;
+    
     try {
       const response = await axios.get(`${API_BASE_URL}/api/grievances`, {
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
         },
         timeout: 10000,
       });
@@ -253,6 +273,11 @@ const CitizenDashboard = ({ darkMode, toggleDarkMode }) => {
       }
     } catch (err) {
       console.error('Failed to fetch grievances:', err);
+      if (err.response?.status === 401) {
+        setIsAuthenticated(false);
+        setAuthToken(null);
+        localStorage.removeItem('bharatchain_token');
+      }
     }
   };
 
