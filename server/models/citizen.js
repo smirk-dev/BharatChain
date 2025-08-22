@@ -104,7 +104,7 @@ module.exports = (sequelize, DataTypes) => {
       field: 'profile_picture',
     },
     preferences: {
-      type: DataTypes.JSONB,
+      type: DataTypes.JSON,
       allowNull: true,
       defaultValue: {},
     },
