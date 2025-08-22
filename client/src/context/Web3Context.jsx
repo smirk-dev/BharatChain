@@ -80,7 +80,7 @@ export const Web3Provider = ({ children }) => {
       setIsConnected(true);
 
       // Only initialize contracts if addresses are valid
-      if (CONTRACT_ADDRESSES.CitizenRegistry !== '0x0000000000000000000000000000000000000000') {
+      if (isValidContractAddress(CONTRACT_ADDRESSES.CitizenRegistry)) {
         await initializeContracts(signer);
       } else {
         console.log('Running in demo mode - no smart contracts to initialize');
