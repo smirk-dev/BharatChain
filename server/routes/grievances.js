@@ -94,8 +94,8 @@ router.post('/', validateGrievance, async (req, res) => {
       blockchainId = `grv_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     }
     
-    // Store in data store
-    const grievance = dataStore.createGrievance({
+    // Store in database
+    const grievance = await Grievance.create({
       blockchainId,
       citizenAddress,
       title,
