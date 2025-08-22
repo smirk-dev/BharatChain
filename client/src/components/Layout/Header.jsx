@@ -30,7 +30,15 @@ import { useAuth } from '../../context/AuthContext';
 import { useWeb3 } from '../../context/Web3Context';
 import toast from 'react-hot-toast';
 
-const Header = ({ darkMode, toggleDarkMode }) => {
+const Header = ({ 
+  darkMode, 
+  toggleDarkMode, 
+  isAuthenticated, 
+  authenticateWallet, 
+  account: connectedAccount, 
+  isConnected: walletConnected, 
+  userProfile 
+}) => {
   const theme = useTheme();
   const { user, logout, isVerified, userAddress } = useAuth();
   const { account, isConnected, connectWallet, disconnectWallet } = useWeb3();
@@ -39,6 +47,26 @@ const Header = ({ darkMode, toggleDarkMode }) => {
   const [userMenu, setUserMenu] = useState(null);
 
   const trigger = useScrollTrigger();
+
+  // Use passed props or fallback to context
+  const currentAccount = connectedAccount || account;
+  const currentIsConnected = walletConnected !== undefined ? walletConnected : isConnected;
+
+  // Handle wallet connection and authentication
+  const handleWalletAction = async () => {
+    if (!currentIsConnected) {
+      // Connect wallet first
+      if (connectWallet) {
+        const result = await connectWallet();
+        if (result?.success && authenticateWallet) {
+          await authenticateWallet();
+        }
+      }
+    } else if (!isAuthenticated && authenticateWallet) {
+      // Wallet connected but not authenticated
+      await authenticateWallet();
+    }
+  };
 
   const formatAddress = (address) => {
     if (!address) return '';
