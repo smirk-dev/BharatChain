@@ -549,12 +549,15 @@ const CitizenDashboard = ({ darkMode, toggleDarkMode }) => {
                 <DashboardOverview
                   userDocuments={userDocuments}
                   userGrievances={userGrievances}
-                  isRegistered={isRegistered}
-                  isVerified={isVerified}
+                  isRegistered={userProfile !== null}
+                  isVerified={userProfile?.isVerified || false}
                   isConnected={isConnected}
+                  isAuthenticated={isAuthenticated}
+                  userProfile={userProfile}
                   onRegister={() => setRegisterDialog(true)}
                   onSubmitGrievance={() => setGrievanceDialog(true)}
                   onUploadDocument={() => toast.info('Document upload feature coming soon!')}
+                  onAuthenticate={authenticateWallet}
                 />
               )}
 
