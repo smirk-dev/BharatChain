@@ -8,6 +8,7 @@ import { Web3Provider } from './context/Web3Context';
 import { AuthProvider } from './context/AuthContext';
 
 // Import components
+import ErrorBoundary from './components/ErrorBoundary';
 import ProtectedRoute from './components/ProtectedRoute';
 import CitizenDashboard from './components/Dashboard/CitizenDashboard';
 
