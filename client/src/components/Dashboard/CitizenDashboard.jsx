@@ -165,6 +165,10 @@ const CitizenDashboard = ({ darkMode, toggleDarkMode }) => {
       setLoading(false);
     }
   };
+
+  const [currentTab, setCurrentTab] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   
   // User data state
   const [userProfile, setUserProfile] = useState(null);
