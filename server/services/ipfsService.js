@@ -10,12 +10,19 @@ class IPFSService {
     try {
       console.log('Initializing IPFS Service...');
       
-      // For now, we'll create a mock IPFS service
-      // In production, you would use: const { create } = require('ipfs-http-client');
-      // this.client = create({ url: process.env.IPFS_API_URL || 'http://127.0.0.1:5001' });
+      // Check if IPFS_API_URL is configured
+      if (!process.env.IPFS_API_URL) {
+        throw new Error('IPFS_API_URL not configured. Please set up IPFS node or provide API URL.');
+      }
+
+      // Try to connect to IPFS node
+      // Uncomment when you have a real IPFS node:
+      // const { create } = require('ipfs-http-client');
+      // this.client = create({ url: process.env.IPFS_API_URL });
+      // await this.client.version(); // Test connection
       
-      console.log('⚠️ Using mock IPFS service (IPFS node not required for testing)');
-      this.isInitialized = true;
+      console.log('❌ IPFS service not implemented. Please install and configure IPFS node.');
+      throw new Error('IPFS service requires implementation');
       
     } catch (error) {
       console.error('❌ Failed to initialize IPFS service:', error.message);
