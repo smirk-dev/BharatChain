@@ -232,6 +232,9 @@ export const Web3Provider = ({ children }) => {
     connectWallet,
     disconnectWallet,
     switchNetwork,
+    getNetworkName,
+    isNetworkSupported,
+    isValidAddress,
   };
 
   return (
