@@ -21,7 +21,7 @@ const { authMiddleware } = require('./middleware/auth');
 // Import services
 const blockchainService = require('./services/blockchainService');
 const ipfsService = require('./services/ipfsService');
-const dataStore = require('./services/dataStore');
+const { sequelize } = require('./models');
 
 const app = express();
 const server = createServer(app);
