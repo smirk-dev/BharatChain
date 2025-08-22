@@ -1,82 +1,98 @@
-import React, { useState, useEffect } from 'react';
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Container,
-  Grid,
-  Card,
-  CardContent,
-  Button,
-  Box,
-  Chip,
-  Avatar,
-  IconButton,
-  Paper,
-  Alert,
-  CircularProgress,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  Select,
-  Fab,
-  Badge,
-  Tab,
-  Tabs,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemAvatar,
-  Divider,
-  Switch,
-  Menu,
-  Tooltip,
-} from '@mui/material';
-import {
-  AccountBalance,
-  Security,
-  CloudUpload,
-  Person,
-  Description,
-  ReportProblem,
-  Add,
-  Refresh,
-  CheckCircle,
-  Pending,
-  Warning,
-  Error as ErrorIcon,
-  FileUpload,
-  VerifiedUser,
-  Analytics,
-  LocalHospital,
-  SmartToy,
-  AccountBalanceWallet,
-  Language,
-  Brightness4,
-  Brightness7,
-  SupervisorAccount,
-} from '@mui/icons-material';
-import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
+import React from 'react';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { CssBaseline, Box } from '@mui/material';
+import { Toaster } from 'react-hot-toast';
 
-// Import our custom contexts and components
-import { ThemeProvider, useTheme } from './context/ThemeContext';
-import { LanguageProvider, useLanguage } from './context/LanguageContext';
-import useWeb3 from './hooks/useWeb3';
-import AnalyticsDashboard from './components/Analytics/AnalyticsDashboard';
-import HealthcareModule from './components/Healthcare/HealthcareModule';
-import AIDocumentProcessor from './components/AI/AIDocumentProcessor';
-import GovernmentAdminPortal from './components/Admin/GovernmentAdminPortal';
+// Import contexts
+import { Web3Provider } from './context/Web3Context';
+import { AuthProvider } from './context/AuthContext';
+
+// Import components
+import ProtectedRoute from './components/ProtectedRoute';
+import CitizenDashboard from './components/Dashboard/CitizenDashboard';
+
+// Create theme
+const theme = createTheme({
+  palette: {
+    mode: 'light',
+    primary: {
+      main: '#FF6D00', // Saffron
+    },
+    secondary: {
+      main: '#138808', // Green
+    },
+    background: {
+      default: '#f5f5f5',
+    },
+  },
+  typography: {
+    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+    h4: {
+      fontWeight: 600,
+    },
+    h6: {
+      fontWeight: 500,
+    },
+  },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          textTransform: 'none',
+          borderRadius: 8,
+        },
+      },
+    },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          borderRadius: 12,
+        },
+      },
+    },
+  },
+});
+
+function App() {
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Web3Provider>
+        <AuthProvider>
+          <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
+            <ProtectedRoute>
+              <CitizenDashboard />
+            </ProtectedRoute>
+            
+            {/* Toast notifications */}
+            <Toaster
+              position="top-right"
+              toastOptions={{
+                duration: 4000,
+                style: {
+                  background: '#363636',
+                  color: '#fff',
+                },
+                success: {
+                  style: {
+                    background: '#4caf50',
+                  },
+                },
+                error: {
+                  style: {
+                    background: '#f44336',
+                  },
+                },
+              }}
+            />
+          </Box>
+        </AuthProvider>
+      </Web3Provider>
+    </ThemeProvider>
+  );
+}
+
+export default App;
 
 // API Base URL
 const API_BASE_URL = 'http://localhost:5000/api';
