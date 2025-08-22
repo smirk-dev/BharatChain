@@ -23,35 +23,6 @@ const blockchainService = require('./services/blockchainService');
 const ipfsService = require('./services/ipfsService');
 const { sequelize, Citizen, Document, Grievance } = require('./models');
 
-    // Create demo documents
-    const demoDocuments = [
-      {
-        blockchainId: '0x' + '1'.padStart(64, '0'),
-        citizenAddress: demoCitizens[0].address,
-        documentType: 'aadhar',
-        ipfsHash: 'QmDemoAadharHash1',
-        metadataHash: 'QmDemoMetadataHash1',
-        status: 'verified',
-      },
-      {
-        blockchainId: '0x' + '2'.padStart(64, '0'),
-        citizenAddress: demoCitizens[0].address,
-        documentType: 'pan',
-        ipfsHash: 'QmDemoPanHash1',
-        metadataHash: 'QmDemoMetadataHash2',
-        status: 'verified',
-      }
-    ];
-
-    await Document.bulkCreate(demoDocuments);
-    console.log('Demo documents created');
-
-    // Create demo grievances
-    const demoGrievances = [
-      {
-        blockchainId: 1,
-        citizenAddress: demoCitizens[0].address,
-        title: 'Road Repair Request',
 const app = express();
 const server = createServer(app);
 const io = new Server(server, {
