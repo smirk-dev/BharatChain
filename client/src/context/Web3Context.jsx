@@ -122,11 +122,26 @@ export const Web3Provider = ({ children }) => {
     const checkConnection = async () => {
       if (window.ethereum) {
         try {
-          const provider = new ethers.BrowserProvider(window.ethereum);
-          const accounts = await provider.listAccounts();
+          // Check if already connected without triggering connection dialog
+          const accounts = await window.ethereum.request({
+            method: 'eth_accounts'
+          });
           
-          if (accounts.length > 0) {
-            await connectWallet();
+          if (accounts && accounts.length > 0) {
+            const provider = new ethers.BrowserProvider(window.ethereum);
+            const signer = await provider.getSigner();
+            const network = await provider.getNetwork();
+
+            setProvider(provider);
+            setSigner(signer);
+            setAccount(accounts[0]);
+            setChainId(Number(network.chainId));
+            setIsConnected(true);
+
+            // Only initialize contracts if addresses are valid
+            if (CONTRACT_ADDRESSES.CitizenRegistry !== '0x0000000000000000000000000000000000000000') {
+              await initializeContracts(signer);
+            }
           }
         } catch (error) {
           console.error('Error checking connection:', error);
