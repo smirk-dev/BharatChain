@@ -151,8 +151,8 @@ router.get('/:grievanceId', async (req, res) => {
     const { grievanceId } = req.params;
     const citizenAddress = req.user.address;
     
-    // Get grievance from data store
-    const grievance = dataStore.findGrievanceById(grievanceId);
+    // Get grievance from database
+    const grievance = await Grievance.findByPk(grievanceId);
     
     if (!grievance) {
       return res.status(404).json({
