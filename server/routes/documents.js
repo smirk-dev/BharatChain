@@ -138,7 +138,15 @@ router.post('/upload', upload.single('document'), validateDocument, async (req, 
     }
     
     // Store in data store
-    const document = dataStore.createDocument({
+    const document = await Document.create({
+      blockchainId: `0x${Date.now().toString(16)}${Math.random().toString(16).substr(2, 8)}`,
+      citizenAddress,
+      documentType,
+      ipfsHash,
+      metadataHash,
+      status: 'pending',
+      isActive: true
+    });
       blockchainId: documentId,
       citizenAddress,
       documentType,
