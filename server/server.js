@@ -52,21 +52,6 @@ const { sequelize, Citizen, Document, Grievance } = require('./models');
         blockchainId: 1,
         citizenAddress: demoCitizens[0].address,
         title: 'Road Repair Request',
-        description: 'The road near my area needs urgent repair due to potholes.',
-        category: 'infrastructure',
-        priority: 'medium',
-        status: 'open'
-      }
-    ];
-
-    await Grievance.bulkCreate(demoGrievances);
-    console.log('Demo grievances created');
-
-  } catch (error) {
-    console.error('Error seeding demo data:', error);
-  }
-};
-
 const app = express();
 const server = createServer(app);
 const io = new Server(server, {
