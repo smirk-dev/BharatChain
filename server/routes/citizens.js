@@ -242,7 +242,29 @@ router.put('/profile', async (req, res) => {
 // Get citizen statistics
 router.get('/stats', async (req, res) => {
   try {
-    const stats = dataStore.getCitizenStats();
+    // Get citizen statistics from database
+    const totalCitizens = await Citizen.count();
+    const verifiedCitizens = await Citizen.count({ where: { isVerified: true } });
+    const activeCitizens = await Citizen.count({ where: { isActive: true } });
+    
+    // Get registration trends (last 30 days)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    const recentRegistrations = await Citizen.count({
+      where: {
+        createdAt: {
+          [sequelize.Op.gte]: thirtyDaysAgo
+        }
+      }
+    });
+    
+    const stats = {
+      total: totalCitizens,
+      verified: verifiedCitizens,
+      active: activeCitizens,
+      recentRegistrations,
+      verificationRate: totalCitizens > 0 ? (verifiedCitizens / totalCitizens * 100).toFixed(2) : 0
+    };
 
     res.json({
       success: true,
