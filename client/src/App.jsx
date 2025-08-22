@@ -9,7 +9,6 @@ import { AuthProvider } from './context/AuthContext';
 
 // Import components
 import ErrorBoundary from './components/ErrorBoundary';
-import ProtectedRoute from './components/ProtectedRoute';
 import CitizenDashboard from './components/Dashboard/CitizenDashboard';
 
 function App() {
