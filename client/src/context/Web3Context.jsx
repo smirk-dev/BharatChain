@@ -83,7 +83,7 @@ export const Web3Provider = ({ children }) => {
       if (isValidContractAddress(CONTRACT_ADDRESSES.CitizenRegistry)) {
         await initializeContracts(signer);
       } else {
-        console.log('Running in demo mode - no smart contracts to initialize');
+        console.log('Smart contracts not available - please deploy contracts first');
       }
 
       toast.success('Wallet connected successfully!');
