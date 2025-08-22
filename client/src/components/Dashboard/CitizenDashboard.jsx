@@ -46,7 +46,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 // Import contexts
 import { useAuth } from '../../context/AuthContext';
-import { useWeb3 } from '../../context/Web3Context';
+import { useSimpleWeb3 } from '../../context/SimpleWeb3Context';
 
 // Import new components
 import Header from '../Layout/Header';
