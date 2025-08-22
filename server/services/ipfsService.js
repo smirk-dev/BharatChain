@@ -34,15 +34,16 @@ class IPFSService {
     this.ensureInitialized();
     
     try {
-      // Mock implementation - generates a fake IPFS hash
-      const hash = this.generateMockHash(fileBuffer);
-      
-      console.log(`📁 Mock file uploaded: ${hash}`);
-      return hash;
-      
       // Real implementation would be:
       // const result = await this.client.add(fileBuffer);
       // return result.cid.toString();
+      
+      throw new Error('IPFS file upload not implemented. Please configure IPFS node.');
+    } catch (error) {
+      console.error('❌ Error uploading file to IPFS:', error.message);
+      throw error;
+    }
+  }
       
     } catch (error) {
       throw new Error(`Failed to upload file to IPFS: ${error.message}`);
