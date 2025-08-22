@@ -67,7 +67,9 @@ import { useWeb3 } from '../../context/Web3Context';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
+const API_BASE_URL = process.env.NODE_ENV === 'production' 
+  ? process.env.REACT_APP_API_BASE_URL 
+  : '';
 
 const CitizenDashboard = () => {
   const { user, logout, isRegistered, isVerified, userAddress } = useAuth();
