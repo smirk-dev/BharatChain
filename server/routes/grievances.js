@@ -319,7 +319,24 @@ router.post('/:grievanceId/comments', async (req, res) => {
       createdAt: new Date(),
     };
     
-    const updatedGrievance = dataStore.addGrievanceComment(grievanceId, commentData);
+    // Add comment to grievance
+    const existingComments = grievance.comments || [];
+    existingComments.push(commentData);
+    
+    const [affectedRows] = await Grievance.update(
+      { comments: existingComments },
+      { where: { id: grievanceId } }
+    );
+    
+    if (affectedRows === 0) {
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to add comment',
+      });
+    }
+    
+    // Get updated grievance
+    const updatedGrievance = await Grievance.findByPk(grievanceId);
     
     // Emit real-time update
     const io = req.app.get('io');

@@ -104,6 +104,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
       defaultValue: {},
     },
+    comments: {
+      type: DataTypes.JSON,
+      allowNull: true,
+      defaultValue: [],
+    },
   }, {
     tableName: 'grievances',
     timestamps: true,
