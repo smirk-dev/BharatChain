@@ -32,9 +32,12 @@ const DashboardOverview = ({
   isRegistered, 
   isVerified, 
   isConnected,
+  isAuthenticated,
+  userProfile,
   onRegister,
   onSubmitGrievance,
-  onUploadDocument 
+  onUploadDocument,
+  onAuthenticate 
 }) => {
   const theme = useTheme();
 
