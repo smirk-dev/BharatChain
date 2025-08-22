@@ -39,8 +39,8 @@ router.get('/profile', async (req, res) => {
       try {
         const blockchainCitizen = await blockchainService.getCitizen(citizenAddress);
         if (blockchainCitizen && blockchainCitizen.name) {
-          // Sync with in-memory store
-          citizen = dataStore.createCitizen({
+          // Sync with database
+          citizen = await Citizen.create({
             address: citizenAddress,
             name: blockchainCitizen.name,
             email: blockchainCitizen.email,
