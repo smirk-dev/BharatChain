@@ -270,7 +270,6 @@ const translations = {
     // Header
     appTitle: 'ভারতচেইন - ডিজিটাল গভর্নেন্স প্ল্যাটফর্ম',
     demoMode: 'ডেমো মোড',
-    demoLogin: 'ডেমো লগইন',
     
     // Navigation
     profile: 'প্রোফাইল',
