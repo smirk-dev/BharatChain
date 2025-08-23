@@ -445,7 +445,7 @@ const CitizenDashboard = ({ darkMode, toggleDarkMode }) => {
     } catch (err) {
       console.error('Grievance submission error:', err);
       if (err.code === 'ECONNREFUSED' || err.message.includes('Network Error')) {
-        setError('Unable to connect to server. Please ensure the backend is running on port 5000.');
+        setError('Unable to connect to server. Please ensure the backend is running on port 3001.');
       } else {
         setError(err.response?.data?.message || 'Network error during submission');
       }
