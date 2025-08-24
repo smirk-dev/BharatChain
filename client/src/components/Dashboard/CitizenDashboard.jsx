@@ -792,6 +792,13 @@ const CitizenDashboard = ({ darkMode, toggleDarkMode }) => {
                   </TableContainer>
                 </Paper>
               )}
+
+              {/* AI Analysis Tab */}
+              {currentTab === 4 && (
+                <Paper elevation={2} sx={{ p: 0, overflow: 'hidden' }}>
+                  <AIDocumentProcessor />
+                </Paper>
+              )}
             </MotionBox>
           </AnimatePresence>
 
