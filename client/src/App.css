@@ -1,0 +1,362 @@
+/* App.css - Additional component-specific styles */
+
+.App {
+  text-align: left;
+}
+
+.App-header {
+  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+  padding: 20px;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.App-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="20" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="20" cy="80" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="80" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grain)"/></svg>');
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.hero-section {
+  position: relative;
+  z-index: 1;
+}
+
+.features-grid {
+  margin-top: 2rem;
+}
+
+.feature-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  height: 100%;
+}
+
+.feature-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.feature-icon {
+  background: linear-gradient(45deg, #1976d2, #42a5f5);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 1rem;
+}
+
+.auth-section {
+  margin-top: 3rem;
+}
+
+.dashboard-container {
+  padding: 2rem 0;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  height: 100%;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1976d2;
+  margin-bottom: 0.5rem;
+}
+
+.stat-label {
+  color: #666;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.quick-actions {
+  margin-top: 2rem;
+}
+
+.action-button {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: inherit;
+}
+
+.action-button:hover {
+  border-color: #1976d2;
+  background: rgba(25, 118, 210, 0.04);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.15);
+}
+
+.action-icon {
+  font-size: 2rem;
+  color: #1976d2;
+  margin-bottom: 0.5rem;
+}
+
+.action-title {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.action-subtitle {
+  font-size: 0.875rem;
+  color: #666;
+}
+
+.tab-content {
+  padding: 2rem 0;
+}
+
+.document-list {
+  margin-top: 1rem;
+}
+
+.document-item {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+}
+
+.document-item:hover {
+  border-color: #1976d2;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.1);
+}
+
+.document-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.document-title {
+  font-weight: 600;
+  color: #333;
+}
+
+.document-meta {
+  font-size: 0.875rem;
+  color: #666;
+}
+
+.grievance-list {
+  margin-top: 1rem;
+}
+
+.grievance-item {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+}
+
+.grievance-item:hover {
+  border-color: #1976d2;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.1);
+}
+
+.grievance-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+}
+
+.grievance-title {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.25rem;
+}
+
+.grievance-category {
+  font-size: 0.875rem;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.grievance-description {
+  color: #666;
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
+}
+
+.grievance-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.875rem;
+  color: #666;
+}
+
+.priority-high {
+  color: #f44336;
+  font-weight: 600;
+}
+
+.priority-medium {
+  color: #ff9800;
+  font-weight: 600;
+}
+
+.priority-low {
+  color: #4caf50;
+  font-weight: 600;
+}
+
+.priority-urgent {
+  color: #e91e63;
+  font-weight: 600;
+  animation: pulse 2s infinite;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #666;
+}
+
+.empty-state-icon {
+  font-size: 4rem;
+  color: #e0e0e0;
+  margin-bottom: 1rem;
+}
+
+.empty-state-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.empty-state-description {
+  margin-bottom: 1.5rem;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem;
+}
+
+.error-container {
+  background: #ffebee;
+  border: 1px solid #ffcdd2;
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1rem 0;
+  color: #c62828;
+}
+
+.success-container {
+  background: #e8f5e8;
+  border: 1px solid #c8e6c9;
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1rem 0;
+  color: #2e7d32;
+}
+
+.info-container {
+  background: #e3f2fd;
+  border: 1px solid #bbdefb;
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1rem 0;
+  color: #1565c0;
+}
+
+.warning-container {
+  background: #fff3e0;
+  border: 1px solid #ffcc02;
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1rem 0;
+  color: #ef6c00;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .App-header {
+    padding: 1rem;
+  }
+  
+  .hero-section h2 {
+    font-size: 1.75rem;
+  }
+  
+  .hero-section h5 {
+    font-size: 1.125rem;
+  }
+  
+  .dashboard-container {
+    padding: 1rem 0;
+  }
+  
+  .stat-card {
+    padding: 1rem;
+  }
+  
+  .stat-number {
+    font-size: 1.5rem;
+  }
+  
+  .action-button {
+    padding: 0.75rem;
+  }
+  
+  .action-icon {
+    font-size: 1.5rem;
+  }
+  
+  .document-header,
+  .grievance-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .grievance-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+}
