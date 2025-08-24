@@ -612,7 +612,10 @@ const CitizenDashboard = ({ darkMode, toggleDarkMode }) => {
                   userProfile={userProfile}
                   onRegister={() => setRegisterDialog(true)}
                   onSubmitGrievance={() => setGrievanceDialog(true)}
-                  onUploadDocument={() => setDocumentUploadDialog(true)}
+                  onUploadDocument={() => {
+                    console.log('Dashboard overview upload clicked!');
+                    setDocumentUploadDialog(true);
+                  }}
                   onAuthenticate={authenticateWallet}
                 />
               )}
@@ -648,7 +651,10 @@ const CitizenDashboard = ({ darkMode, toggleDarkMode }) => {
                       <Button
                         variant="contained"
                         startIcon={<FileUpload />}
-                        onClick={() => setDocumentUploadDialog(true)}
+                        onClick={() => {
+                          console.log('Upload button clicked!');
+                          setDocumentUploadDialog(true);
+                        }}
                       >
                         Upload Document
                       </Button>
