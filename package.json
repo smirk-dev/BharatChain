@@ -1,0 +1,31 @@
+{
+  "name": "bharatchain-governance",
+  "version": "1.0.0",
+  "description": "Blockchain-based digital governance platform for India",
+  "main": "server/server.js",
+  "scripts": {
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd server && npm run dev",
+    "client": "cd client && npm start",
+    "build": "cd client && npm run build",
+    "test": "cd server && npm test && cd ../client && npm test",
+    "compile": "npx hardhat compile",
+    "deploy": "npx hardhat run scripts/deploy.js --network localhost",
+    "deploy:mumbai": "npx hardhat run scripts/deploy.js --network mumbai",
+    "test:contracts": "npx hardhat test",
+    "node": "npx hardhat node",
+    "setup": "npm install && cd client && npm install && cd ../server && npm install"
+  },
+  "keywords": ["blockchain", "governance", "ethereum", "react", "nodejs"],
+  "author": "BharatChain Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "hardhat": "^2.19.4",
+    "concurrently": "^8.2.2"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.0.1",
+    "dotenv": "^16.3.1"
+  }
+}
