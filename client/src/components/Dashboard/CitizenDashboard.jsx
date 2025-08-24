@@ -41,6 +41,7 @@ import {
   Pending,
   Warning,
   Error as ErrorIcon,
+  SmartToy,
 } from '@mui/icons-material';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -54,6 +55,7 @@ import DashboardOverview from './DashboardOverview';
 import ProfileSection from './ProfileSection';
 import CitizenRegistrationModal from './CitizenRegistrationModal';
 import DocumentUploadModal from './DocumentUploadModal';
+import AIDocumentProcessor from '../AI/AIDocumentProcessor';
 
 // Import API functions
 import axios from 'axios';
@@ -585,6 +587,7 @@ const CitizenDashboard = ({ darkMode, toggleDarkMode }) => {
               <Tab icon={<Person />} label="Profile" />
               <Tab icon={<Description />} label="Documents" />
               <Tab icon={<ReportProblem />} label="Grievances" />
+              <Tab icon={<SmartToy />} label="AI Analysis" />
             </Tabs>
           </Paper>
 
