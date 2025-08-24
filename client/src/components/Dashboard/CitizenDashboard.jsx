@@ -53,6 +53,7 @@ import Header from '../Layout/Header';
 import DashboardOverview from './DashboardOverview';
 import ProfileSection from './ProfileSection';
 import CitizenRegistrationModal from './CitizenRegistrationModal';
+import DocumentUploadModal from './DocumentUploadModal';
 
 // Import API functions
 import axios from 'axios';
@@ -237,6 +238,7 @@ const CitizenDashboard = ({ darkMode, toggleDarkMode }) => {
   // Dialogs
   const [registerDialog, setRegisterDialog] = useState(false);
   const [grievanceDialog, setGrievanceDialog] = useState(false);
+  const [documentUploadDialog, setDocumentUploadDialog] = useState(false);
   
   // Form states
   const [registerForm, setRegisterForm] = useState({
@@ -454,6 +456,14 @@ const CitizenDashboard = ({ darkMode, toggleDarkMode }) => {
     }
   };
 
+  // Handle document upload success
+  const handleDocumentUploadSuccess = async (uploadData) => {
+    // Refresh documents list
+    await fetchUserDocuments();
+    setDocumentUploadDialog(false);
+    toast.success('Document uploaded and processed successfully!');
+  };
+
   // Helper functions
   const getStatusIcon = (status) => {
     switch (status) {
@@ -599,7 +609,7 @@ const CitizenDashboard = ({ darkMode, toggleDarkMode }) => {
                   userProfile={userProfile}
                   onRegister={() => setRegisterDialog(true)}
                   onSubmitGrievance={() => setGrievanceDialog(true)}
-                  onUploadDocument={() => toast.info('Document upload feature coming soon!')}
+                  onUploadDocument={() => setDocumentUploadDialog(true)}
                   onAuthenticate={authenticateWallet}
                 />
               )}
@@ -635,7 +645,7 @@ const CitizenDashboard = ({ darkMode, toggleDarkMode }) => {
                       <Button
                         variant="contained"
                         startIcon={<FileUpload />}
-                        onClick={() => toast.info('Document upload feature will be available soon!')}
+                        onClick={() => setDocumentUploadDialog(true)}
                       >
                         Upload Document
                       </Button>
@@ -912,6 +922,13 @@ const CitizenDashboard = ({ darkMode, toggleDarkMode }) => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Document Upload Modal */}
+      <DocumentUploadModal
+        open={documentUploadDialog}
+        onClose={() => setDocumentUploadDialog(false)}
+        onUploadSuccess={handleDocumentUploadSuccess}
+      />
     </Box>
   );
 };
