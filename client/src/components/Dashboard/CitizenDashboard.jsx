@@ -267,10 +267,19 @@ const CitizenDashboard = () => {
                           }} 
                         />
                       </Box>
-                      <Typography variant="h3" sx={{ fontWeight: 700, mb: 1 }}>
+                      <Typography variant="h3" sx={{ 
+                        fontWeight: 700, 
+                        mb: 1,
+                        textShadow: '0 1px 3px rgba(0,0,0,0.3)',
+                        color: 'white'
+                      }}>
                         {stat.value}
                       </Typography>
-                      <Typography variant="body2" sx={{ opacity: 0.9 }}>
+                      <Typography variant="body2" sx={{ 
+                        opacity: 0.95,
+                        textShadow: '0 1px 2px rgba(0,0,0,0.2)',
+                        color: 'white'
+                      }}>
                         {stat.title}
                       </Typography>
                     </CardContent>
