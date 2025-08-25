@@ -1480,7 +1480,7 @@ const CitizenDashboard = () => {
                               </Box>
                             </ListItemSecondaryAction>
                           </ListItem>
-                        </React.Fragment>
+                        </Fragment>
                       ))}
                     </List>
                   )}
