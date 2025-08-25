@@ -342,6 +342,206 @@ const CitizenDashboard = () => {
     }
   };
 
+  // Document functions
+  const loadDocuments = async () => {
+    try {
+      setDocumentsLoading(true);
+      setDocumentsError(null);
+      
+      const response = await fetch('http://localhost:3001/api/documents', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          setDocuments(data.documents || []);
+        } else {
+          setDocuments([]);
+        }
+      } else {
+        throw new Error('Failed to load documents');
+      }
+    } catch (error) {
+      console.error('Error loading documents:', error);
+      setDocumentsError('Failed to load documents. Please try again.');
+      setDocuments([]);
+    } finally {
+      setDocumentsLoading(false);
+    }
+  };
+
+  const handleUploadDialog = () => {
+    setUploadDialogOpen(true);
+    setUploadData({
+      title: '',
+      type: '',
+      description: '',
+      file: null,
+      isPublic: false
+    });
+    setDocumentsError(null);
+    setDocumentsSuccess(null);
+  };
+
+  const handleCloseUploadDialog = () => {
+    setUploadDialogOpen(false);
+    setUploadData({
+      title: '',
+      type: '',
+      description: '',
+      file: null,
+      isPublic: false
+    });
+    setUploadProgress(0);
+    setIsUploading(false);
+  };
+
+  const handleFileSelect = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      // Validate file size (10MB limit)
+      if (file.size > 10 * 1024 * 1024) {
+        setDocumentsError('File size must be less than 10MB');
+        return;
+      }
+
+      // Validate file type
+      const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+      if (!allowedTypes.includes(file.type)) {
+        setDocumentsError('Only PDF, JPEG, PNG, and DOC/DOCX files are allowed');
+        return;
+      }
+
+      setUploadData(prev => ({ ...prev, file }));
+      setDocumentsError(null);
+    }
+  };
+
+  const handleUploadDocument = async () => {
+    try {
+      // Validate form
+      if (!uploadData.title || !uploadData.type || !uploadData.file) {
+        setDocumentsError('Please fill in all required fields and select a file');
+        return;
+      }
+
+      setIsUploading(true);
+      setUploadProgress(0);
+      setDocumentsError(null);
+
+      // Simulate upload progress
+      const progressInterval = setInterval(() => {
+        setUploadProgress(prev => {
+          if (prev >= 90) {
+            clearInterval(progressInterval);
+            return 90;
+          }
+          return prev + 10;
+        });
+      }, 200);
+
+      // Create FormData for file upload
+      const formData = new FormData();
+      formData.append('title', uploadData.title);
+      formData.append('type', uploadData.type);
+      formData.append('description', uploadData.description);
+      formData.append('isPublic', uploadData.isPublic);
+      formData.append('document', uploadData.file);
+      formData.append('walletAddress', account);
+
+      const response = await fetch('http://localhost:3001/api/documents/upload', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+        },
+        body: formData,
+      });
+
+      clearInterval(progressInterval);
+      setUploadProgress(100);
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setDocumentsSuccess('Document uploaded successfully!');
+        handleCloseUploadDialog();
+        loadDocuments(); // Reload documents list
+        
+        // Auto-hide success message
+        setTimeout(() => setDocumentsSuccess(null), 3000);
+      } else {
+        throw new Error(data.message || 'Failed to upload document');
+      }
+    } catch (error) {
+      console.error('Error uploading document:', error);
+      setDocumentsError(error.message || 'Failed to upload document. Please try again.');
+    } finally {
+      setIsUploading(false);
+      setUploadProgress(0);
+    }
+  };
+
+  const handleViewDocument = (document) => {
+    setSelectedDocument(document);
+    setViewDialogOpen(true);
+  };
+
+  const handleDeleteDocument = async (documentId) => {
+    if (!window.confirm('Are you sure you want to delete this document?')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:3001/api/documents/${documentId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+        },
+      });
+
+      if (response.ok) {
+        setDocumentsSuccess('Document deleted successfully!');
+        loadDocuments(); // Reload documents list
+        setTimeout(() => setDocumentsSuccess(null), 3000);
+      } else {
+        throw new Error('Failed to delete document');
+      }
+    } catch (error) {
+      console.error('Error deleting document:', error);
+      setDocumentsError('Failed to delete document. Please try again.');
+    }
+  };
+
+  const getDocumentIcon = (type, mimeType) => {
+    if (mimeType?.includes('pdf')) return <PictureAsPdf color="error" />;
+    if (mimeType?.includes('image')) return <ImageIcon color="primary" />;
+    if (type === 'aadhar' || type === 'pan' || type === 'passport') return <AccountBalance color="warning" />;
+    return <InsertDriveFile color="action" />;
+  };
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'verified': return 'success';
+      case 'pending': return 'warning';
+      case 'rejected': return 'error';
+      default: return 'default';
+    }
+  };
+
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case 'verified': return <CheckCircle />;
+      case 'pending': return <PendingIcon />;
+      case 'rejected': return <ErrorIcon />;
+      default: return <PendingIcon />;
+    }
+  };
+
   // Mock data loading
   useEffect(() => {
     if (isConnected && account) {
@@ -361,7 +561,9 @@ const CitizenDashboard = () => {
           }, 500);
         }),
         // Load real profile data
-        loadProfile()
+        loadProfile(),
+        // Load documents
+        loadDocuments()
       ]).then(([statsData]) => {
         setStats(statsData);
         setIsLoading(false);
