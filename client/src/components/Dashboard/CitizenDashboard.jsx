@@ -699,7 +699,7 @@ const CitizenDashboard = () => {
       setIsSubmittingGrievance(true);
       setGrievancesError(null);
 
-      const response = await fetch('/api/grievances', {
+      const response = await fetch(`${API_BASE_URL}/api/grievances`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
