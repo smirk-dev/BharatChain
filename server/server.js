@@ -13,8 +13,9 @@ const documentRoutes = require('./routes/documents');
 const grievanceRoutes = require('./routes/grievances');
 const healthRoutes = require('./routes/health');
 
-// Import database
+// Import database and models
 const { sequelize } = require('../config/database');
+const { User, Document, Grievance } = require('./models');
 
 const app = express();
 const PORT = process.env.PORT || 3001;

@@ -3,6 +3,7 @@ const multer = require('multer');
 const path = require('path');
 const router = express.Router();
 const { body, validationResult } = require('express-validator');
+const { User, Document } = require('../models');
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
