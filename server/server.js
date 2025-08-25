@@ -151,7 +151,9 @@ app.use('*', (req, res) => {
       'GET /api/documents',
       'POST /api/documents/upload',
       'GET /api/grievances',
-      'POST /api/grievances'
+      'POST /api/grievances',
+      'POST /api/ai/analyze/document',
+      'POST /api/ai/analyze/grievance'
     ]
   });
 });
