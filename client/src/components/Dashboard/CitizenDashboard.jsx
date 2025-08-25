@@ -1391,12 +1391,20 @@ const CitizenDashboard = () => {
                   </Card>
                 </motion.div>
               </Grid>
-            ))}}
+            ))}
 
-            {/* Quick Actions */}
+            {/* Quick Actions with Traditional Indian Style */}
             <Grid item xs={12}>
-              <Typography variant="h5" gutterBottom sx={{ fontWeight: 600, mb: 3, mt: 2 }}>
-                🚀 Quick Actions
+              <Typography variant="h4" gutterBottom sx={{ 
+                fontWeight: 700, 
+                mb: 4, 
+                mt: 4,
+                color: '#000080',
+                textAlign: 'center',
+                fontSize: '2.5rem',
+                fontFamily: '"Playfair Display", serif'
+              }}>
+                🚀 त्वरित कार्य • Quick Actions
               </Typography>
             </Grid>
 
