@@ -33,6 +33,7 @@ import { useWeb3 } from './context/Web3Context';
 import CitizenDashboard from './components/Dashboard/CitizenDashboard';
 import AuthForm from './components/Dashboard/AuthForm';
 import './App.css';
+import './styles/BharatTheme.css';
 
 function App() {
   const { 
