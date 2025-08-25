@@ -278,11 +278,97 @@ router.post('/analyze/grievance', async (req, res) => {
       timeout: AI_SERVICE_TIMEOUT
     });
 
-    // Return AI analysis results
+    // Return enhanced AI analysis results
+    const aiResult = response.data;
+    
     res.json({
       success: true,
       input_text_length: text.length,
-      analysis: response.data.analysis,
+      analysis: {
+        // Main summary for UI display
+        summary: {
+          main_issue: aiResult.analysis_summary?.main_issue || 'Service-related complaint',
+          severity: aiResult.urgency?.severity || 'medium',
+          department: aiResult.category?.department || 'General Administration',
+          immediate_action: aiResult.recommendations?.immediate_action || 'Route to appropriate department'
+        },
+        
+        // Enhanced sentiment analysis
+        sentiment: {
+          overall: aiResult.sentiment?.label || 'neutral',
+          score: aiResult.sentiment?.score || 0,
+          confidence: aiResult.sentiment?.confidence || 0.5,
+          intensity: aiResult.sentiment?.intensity || 'medium',
+          breakdown: aiResult.sentiment?.detected_indicators || {}
+        },
+        
+        // Emotional analysis with confidence
+        emotion: {
+          primary: aiResult.emotion?.primary || 'neutral',
+          confidence: aiResult.emotion?.confidence || 0.5,
+          intensity: aiResult.emotion?.emotional_intensity || 'medium',
+          all_detected: aiResult.emotion?.all_detected || {}
+        },
+        
+        // Smart categorization
+        category: {
+          main: aiResult.category?.predicted || 'general_complaint',
+          subcategory: aiResult.category?.subcategory || 'unspecified',
+          department: aiResult.category?.department || 'General Administration',
+          priority: aiResult.category?.priority_level || 'medium',
+          confidence: aiResult.category?.confidence || 0.5,
+          keywords_matched: aiResult.category?.keywords_matched || 0
+        },
+        
+        // Comprehensive urgency assessment
+        urgency: {
+          level: aiResult.urgency?.level || 'medium',
+          severity: aiResult.urgency?.severity || 'moderate',
+          score: aiResult.urgency?.score || 0.5,
+          response_time: aiResult.urgency?.response_time_recommended || '24 hours',
+          indicators: aiResult.urgency?.indicators_found || {},
+          total_indicators: aiResult.urgency?.total_indicators || 0
+        },
+        
+        // Specific issues identified by AI
+        issues: {
+          primary: aiResult.specific_issues?.primary_issue || 'General service issue',
+          all_problems: aiResult.specific_issues?.specific_problems || [],
+          affected_groups: aiResult.specific_issues?.affected_groups || [],
+          has_timeline: aiResult.specific_issues?.has_time_context || false,
+          duration_details: aiResult.specific_issues?.duration_details || [],
+          frequency_details: aiResult.specific_issues?.frequency_details || []
+        },
+        
+        // AI-generated recommendations
+        recommendations: {
+          immediate: aiResult.recommendations?.immediate_action || 'Process through standard channels',
+          timeline: aiResult.recommendations?.timeline || 'Standard processing time',
+          department_actions: aiResult.recommendations?.department_action || [],
+          follow_up: aiResult.recommendations?.follow_up || [],
+          escalation_path: aiResult.recommendations?.escalation_path || []
+        },
+        
+        // Text analysis metrics
+        text_analysis: {
+          word_count: aiResult.text_analysis?.word_count || text.split(' ').length,
+          complexity_score: aiResult.text_analysis?.complexity_score || 0.5,
+          urgency_keywords: aiResult.text_analysis?.urgency_keywords || [],
+          time_references: aiResult.text_analysis?.time_references || []
+        },
+        
+        // Analysis confidence and metadata
+        metadata: {
+          confidence_score: aiResult.processing_metadata?.confidence_score || 0.7,
+          processing_time_ms: aiResult.processing_metadata?.processing_time_ms || 200,
+          analysis_version: aiResult.processing_metadata?.analysis_version || '2.0',
+          timestamp: aiResult.processing_metadata?.timestamp || new Date().toISOString(),
+          ai_service: 'Enhanced BharatChain AI v2.0'
+        }
+      },
+      
+      // Keep raw analysis for debugging if needed
+      raw_ai_response: aiResult,
       processed_at: new Date().toISOString()
     });
 
