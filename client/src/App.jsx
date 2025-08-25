@@ -147,34 +147,56 @@ function App() {
     );
   }
 
-  // Main App UI
+  // Main App UI with Indian heritage theme
   return (
-    <Box sx={{ flexGrow: 1, minHeight: '100vh', backgroundColor: '#f5f5f5' }}>
-      {/* App Bar */}
+    <Box sx={{ flexGrow: 1, minHeight: '100vh' }} className="bharat-container" style={{ margin: 0, borderRadius: 0 }}>
+      {/* Indian Heritage App Bar */}
       <AppBar position="sticky" elevation={0} sx={{ 
-        background: 'linear-gradient(90deg, #1976d2 0%, #1565c0 100%)',
-        borderBottom: '1px solid rgba(255,255,255,0.1)'
+        background: 'linear-gradient(90deg, #FF9933 0%, #FFFFFF 50%, #138808 100%)',
+        borderBottom: '3px solid #FFD700',
+        color: '#000080'
       }}>
-        <Toolbar>
+        <Toolbar sx={{ py: 1 }}>
           <motion.div
             initial={{ x: -20, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.5 }}
             style={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}
           >
-            <Typography variant="h6" sx={{ fontWeight: 700, display: 'flex', alignItems: 'center' }}>
-              🇮🇳 BharatChain
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Typography sx={{ fontSize: '2rem', mr: 2 }}>🇮🇳</Typography>
+              <Box>
+                <Typography variant="h5" sx={{ 
+                  fontWeight: 900, 
+                  fontFamily: '"Playfair Display", serif',
+                  color: '#000080',
+                  lineHeight: 1,
+                  textShadow: '1px 1px 2px rgba(0,0,0,0.1)'
+                }}>
+                  भारत चेन
+                </Typography>
+                <Typography variant="h6" sx={{ 
+                  fontWeight: 700,
+                  color: '#7B3F00',
+                  lineHeight: 1,
+                  fontSize: '1rem'
+                }}>
+                  BharatChain
+                </Typography>
+              </Box>
               <Chip 
-                label="Beta" 
+                label="डिजिटल भारत • Digital India" 
                 size="small" 
                 sx={{ 
-                  ml: 1, 
-                  backgroundColor: 'rgba(255,255,255,0.2)', 
-                  color: 'white',
-                  fontSize: '0.7rem'
+                  ml: 3, 
+                  backgroundColor: 'rgba(255,215,0,0.3)', 
+                  color: '#7B3F00',
+                  fontWeight: 700,
+                  fontSize: '0.75rem',
+                  border: '1px solid #FFD700'
                 }} 
               />
-            </Typography>
+            </Box>
           </motion.div>
 
           {isConnected && (
@@ -184,7 +206,14 @@ function App() {
               transition={{ duration: 0.5, delay: 0.2 }}
               style={{ display: 'flex', alignItems: 'center' }}
             >
-              <IconButton color="inherit" sx={{ mr: 1 }}>
+              <IconButton 
+                sx={{ 
+                  mr: 2, 
+                  color: '#FF9933',
+                  backgroundColor: 'rgba(255, 153, 51, 0.1)',
+                  '&:hover': { backgroundColor: 'rgba(255, 153, 51, 0.2)' }
+                }}
+              >
                 <NotificationsNone />
               </IconButton>
               
@@ -192,11 +221,16 @@ function App() {
                 startIcon={<AccountBalanceWallet />}
                 onClick={handleMenuOpen}
                 sx={{ 
-                  color: 'white',
-                  backgroundColor: 'rgba(255,255,255,0.1)',
-                  '&:hover': { backgroundColor: 'rgba(255,255,255,0.2)' },
-                  borderRadius: 2,
-                  textTransform: 'none'
+                  color: '#000080',
+                  backgroundColor: 'rgba(255,255,255,0.8)',
+                  '&:hover': { backgroundColor: 'rgba(255,255,255,0.9)' },
+                  borderRadius: 5,
+                  textTransform: 'none',
+                  fontWeight: 700,
+                  px: 3,
+                  py: 1,
+                  border: '2px solid #FFD700',
+                  boxShadow: '0 4px 16px rgba(255, 215, 0, 0.3)'
                 }}
               >
                 {formatAddress(account)}
@@ -209,19 +243,20 @@ function App() {
                 PaperProps={{
                   sx: {
                     mt: 1.5,
-                    minWidth: 200,
-                    borderRadius: 2,
-                    boxShadow: '0 8px 32px rgba(0,0,0,0.12)'
+                    minWidth: 220,
+                    borderRadius: 3,
+                    boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
+                    border: '1px solid #FFD700'
                   }
                 }}
               >
-                <MenuItem onClick={handleMenuClose}>
-                  <SettingsOutlined sx={{ mr: 1 }} />
-                  Settings
+                <MenuItem onClick={handleMenuClose} sx={{ fontWeight: 600, color: '#7B3F00' }}>
+                  <SettingsOutlined sx={{ mr: 2, color: '#FF9933' }} />
+                  सेटिंग्स • Settings
                 </MenuItem>
-                <MenuItem onClick={handleDisconnect} sx={{ color: 'error.main' }}>
-                  <PowerSettingsNew sx={{ mr: 1 }} />
-                  Disconnect
+                <MenuItem onClick={handleDisconnect} sx={{ color: '#E34234', fontWeight: 600 }}>
+                  <PowerSettingsNew sx={{ mr: 2 }} />
+                  डिस्कनेक्ट • Disconnect
                 </MenuItem>
               </Menu>
             </motion.div>
