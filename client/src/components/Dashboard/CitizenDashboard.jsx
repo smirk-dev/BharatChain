@@ -735,11 +735,14 @@ const CitizenDashboard = () => {
                     <Grid item xs={12}>
                       <TextField
                         fullWidth
-                        label="Full Name"
+                        label="Full Name *"
                         value={profile.name}
                         onChange={(e) => handleProfileChange('name', e.target.value)}
                         disabled={!isEditingProfile}
                         variant={isEditingProfile ? "outlined" : "filled"}
+                        required
+                        error={isEditingProfile && !profile.name}
+                        helperText={isEditingProfile && !profile.name ? "Name is required" : ""}
                       />
                     </Grid>
                     
