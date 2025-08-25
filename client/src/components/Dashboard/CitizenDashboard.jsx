@@ -363,9 +363,12 @@ const CitizenDashboard = () => {
                           display: 'flex', 
                           alignItems: 'center', 
                           p: 2, 
-                          backgroundColor: 'success.main',
+                          background: 'linear-gradient(135deg, success.dark 0%, #1b5e20 100%)',
                           borderRadius: 2,
-                          color: 'white'
+                          color: 'white',
+                          '& .MuiTypography-root': {
+                            textShadow: '0 1px 2px rgba(0,0,0,0.4)'
+                          }
                         }}>
                           {service.icon}
                           <Box sx={{ ml: 2 }}>
