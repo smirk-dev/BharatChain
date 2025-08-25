@@ -528,6 +528,32 @@ const CitizenDashboard = () => {
     }
   };
 
+  const handleDownloadDocument = async (document) => {
+    if (!account) {
+      setDocumentsError('Please connect your wallet to download documents');
+      return;
+    }
+
+    try {
+      // Create a link to trigger download
+      const downloadUrl = `/api/documents/${document.id}/download?address=${account}`;
+      
+      // Create a temporary anchor element to trigger download
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = document.originalName || document.filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      setDocumentsSuccess('Download started!');
+      setTimeout(() => setDocumentsSuccess(null), 2000);
+    } catch (error) {
+      console.error('Error downloading document:', error);
+      setDocumentsError('Failed to download document. Please try again.');
+    }
+  };
+
   const getDocumentIcon = (type, mimeType) => {
     if (mimeType?.includes('pdf')) return <PictureAsPdf color="error" />;
     if (mimeType?.includes('image')) return <ImageIcon color="primary" />;
