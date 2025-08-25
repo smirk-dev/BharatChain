@@ -501,28 +501,72 @@ function App() {
         )}
       </Container>
 
-      {/* Footer */}
+      {/* Footer with Indian Heritage Design */}
       <Box
         component="footer"
         sx={{
           mt: 'auto',
-          py: 3,
+          py: 4,
           px: 2,
-          backgroundColor: '#f8f9fa',
-          borderTop: '1px solid rgba(0,0,0,0.08)'
+          background: 'linear-gradient(135deg, #FF9933 0%, #FFFFFF 50%, #138808 100%)',
+          borderTop: '4px solid #FFD700',
+          position: 'relative'
         }}
       >
-        <Container maxWidth="lg">
-          <Grid container spacing={3} alignItems="center">
+        <Box sx={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, opacity: 0.05 }}>
+          <div className="bharat-lotus-pattern"></div>
+        </Box>
+        <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 2 }}>
+          <Grid container spacing={4} alignItems="center">
             <Grid item xs={12} md={6}>
-              <Typography variant="body2" color="text.secondary">
-                © 2024 BharatChain. Government of India Initiative. All rights reserved.
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <Typography sx={{ fontSize: '2rem', mr: 2 }}>🇮🇳</Typography>
+                <Box>
+                  <Typography variant="h6" sx={{ 
+                    fontWeight: 700,
+                    color: '#000080',
+                    fontFamily: '"Playfair Display", serif'
+                  }}>
+                    भारत चेन • BharatChain
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: '#7B3F00', fontWeight: 600 }}>
+                    भारत सरकार की पहल • Government of India Initiative
+                  </Typography>
+                </Box>
+              </Box>
+              <Typography variant="body2" sx={{ color: '#7B3F00', fontWeight: 500 }}>
+                © 2024 BharatChain. सभी अधिकार सुरक्षित • All rights reserved.
               </Typography>
             </Grid>
             <Grid item xs={12} md={6} sx={{ textAlign: { xs: 'center', md: 'right' } }}>
-              <Typography variant="body2" color="text.secondary">
-                Powered by Blockchain Technology | Secure • Transparent • Efficient
+              <Typography className="bharat-sanskrit" sx={{ mb: 2, fontSize: '1rem' }}>
+                सत्यमेव जयते • Truth Alone Triumphs
               </Typography>
+              <Typography variant="body2" sx={{ 
+                color: '#7B3F00',
+                fontWeight: 600,
+                background: 'rgba(255, 255, 255, 0.3)',
+                padding: '8px 16px',
+                borderRadius: '20px',
+                display: 'inline-block'
+              }}>
+                ब्लॉकचेन प्रौद्योगिकी द्वारा संचालित • Powered by Blockchain Technology
+              </Typography>
+              <Box sx={{ mt: 2, display: 'flex', justifyContent: { xs: 'center', md: 'flex-end' }, gap: 1 }}>
+                {['🔒', '🌐', '⚡'].map((emoji, index) => (
+                  <Chip 
+                    key={index}
+                    label={emoji} 
+                    size="small"
+                    sx={{
+                      backgroundColor: 'rgba(255, 215, 0, 0.3)',
+                      color: '#7B3F00',
+                      fontWeight: 700,
+                      border: '1px solid #FFD700'
+                    }}
+                  />
+                ))}
+              </Box>
             </Grid>
           </Grid>
         </Container>
