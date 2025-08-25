@@ -1547,56 +1547,128 @@ const CitizenDashboard = () => {
               </Grid>
             ))}
 
-            {/* System Status */}
+            {/* System Status with Traditional Indian Styling */}
             <Grid item xs={12}>
-              <Card sx={{ mt: 3 }}>
-                <CardContent>
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                    <Typography variant="h6" sx={{ fontWeight: 600, flexGrow: 1, color: 'black' }}>
-                      🔧 System Status
+              <Card className="bharat-card" sx={{ mt: 4 }}>
+                <CardContent sx={{ p: 4 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
+                    <Typography variant="h4" sx={{ 
+                      fontWeight: 700, 
+                      flexGrow: 1, 
+                      color: '#000080',
+                      fontFamily: '"Playfair Display", serif'
+                    }}>
+                      🔧 सिस्टम स्थिति • System Status
                     </Typography>
-                    <Tooltip title="Refresh Status">
-                      <IconButton size="small" sx={{ color: 'black' }}>
+                    <Tooltip title="स्थिति रीफ्रेश करें • Refresh Status">
+                      <IconButton 
+                        size="large" 
+                        sx={{ 
+                          color: '#FF9933',
+                          background: 'linear-gradient(135deg, rgba(255, 153, 51, 0.1) 0%, rgba(255, 215, 0, 0.1) 100%)',
+                          '&:hover': {
+                            background: 'linear-gradient(135deg, #FF9933 0%, #FFD700 100%)',
+                            color: 'white'
+                          }
+                        }}
+                      >
                         <Refresh />
                       </IconButton>
                     </Tooltip>
                   </Box>
                   
-                  <Grid container spacing={2}>
+                  <Grid container spacing={3}>
                     {[
-                      { name: 'Blockchain Network', status: 'Connected', icon: <Security /> },
-                      { name: 'IPFS Storage', status: 'Online', icon: <Speed /> },
-                      { name: 'AI Processing', status: 'Available', icon: <SmartToyIcon /> },
-                      { name: 'Document Verification', status: 'Active', icon: <Verified /> }
+                      { 
+                        name: 'ब्लॉकचेन नेटवर्क', 
+                        englishName: 'Blockchain Network', 
+                        status: 'Connected',
+                        statusHindi: 'जुड़ा हुआ',
+                        icon: '🔗',
+                        gradient: 'linear-gradient(135deg, #138808 0%, #50C878 100%)'
+                      },
+                      { 
+                        name: 'IPFS भंडारण', 
+                        englishName: 'IPFS Storage', 
+                        status: 'Online',
+                        statusHindi: 'ऑनलाइन',
+                        icon: '☁️',
+                        gradient: 'linear-gradient(135deg, #005A5B 0%, #4169E1 100%)'
+                      },
+                      { 
+                        name: 'AI प्रसंस्करण', 
+                        englishName: 'AI Processing', 
+                        status: 'Available',
+                        statusHindi: 'उपलब्ध',
+                        icon: '🤖',
+                        gradient: 'linear-gradient(135deg, #E49B0F 0%, #FFA500 100%)'
+                      },
+                      { 
+                        name: 'दस्तावेज़ सत्यापन', 
+                        englishName: 'Document Verification', 
+                        status: 'Active',
+                        statusHindi: 'सक्रिय',
+                        icon: '✅',
+                        gradient: 'linear-gradient(135deg, #FF6B35 0%, #F7931E 100%)'
+                      }
                     ].map((service, index) => (
                       <Grid item xs={12} sm={6} md={3} key={index}>
-                        <Box sx={{ 
-                          display: 'flex', 
-                          alignItems: 'center', 
-                          p: 2, 
-                          background: 'linear-gradient(135deg, success.light 0%, success.main 100%)',
-                          borderRadius: 2,
-                          color: 'black',
-                          '& .MuiTypography-root': {
-                            color: 'black'
-                          },
-                          '& .MuiSvgIcon-root': {
-                            color: 'black'
-                          }
-                        }}>
-                          {service.icon}
-                          <Box sx={{ ml: 2 }}>
-                            <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                        <motion.div
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ duration: 0.5, delay: index * 0.1 }}
+                        >
+                          <Box sx={{ 
+                            display: 'flex', 
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            p: 3, 
+                            background: service.gradient,
+                            borderRadius: 4,
+                            color: 'white',
+                            textAlign: 'center',
+                            position: 'relative',
+                            overflow: 'hidden',
+                            minHeight: '150px',
+                            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15)'
+                          }}>
+                            <Box sx={{ position: 'absolute', top: -10, right: -10, fontSize: '4rem', opacity: 0.1 }}>
+                              {service.icon}
+                            </Box>
+                            <Typography sx={{ fontSize: '3rem', mb: 2, filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}>
+                              {service.icon}
+                            </Typography>
+                            <Typography variant="h6" sx={{ fontWeight: 700, mb: 1, fontFamily: '"Playfair Display", serif' }}>
                               {service.name}
                             </Typography>
-                            <Typography variant="caption">
-                              {service.status}
+                            <Typography variant="body2" sx={{ mb: 1, opacity: 0.9, fontWeight: 500 }}>
+                              {service.englishName}
                             </Typography>
+                            <Chip
+                              label={`${service.statusHindi} • ${service.status}`}
+                              size="small"
+                              sx={{
+                                backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                                color: 'white',
+                                fontWeight: 600,
+                                border: '1px solid rgba(255, 255, 255, 0.3)'
+                              }}
+                            />
                           </Box>
-                        </Box>
+                        </motion.div>
                       </Grid>
                     ))}
                   </Grid>
+                  
+                  {/* Footer with Inspirational Message */}
+                  <Box sx={{ mt: 4, textAlign: 'center' }}>
+                    <Typography className="bharat-sanskrit" sx={{ fontSize: '1rem', color: '#7B3F00' }}>
+                      वसुधैव कुटुम्बकम् • The World is One Family
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ mt: 1, fontStyle: 'italic' }}>
+                      "Powered by BharatChain - Connecting India's Digital Future with Blockchain Technology"
+                    </Typography>
+                  </Box>
                 </CardContent>
               </Card>
             </Grid>
