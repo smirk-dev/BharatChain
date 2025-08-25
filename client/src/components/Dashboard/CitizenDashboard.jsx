@@ -136,6 +136,24 @@ const CitizenDashboard = () => {
   const [profileError, setProfileError] = useState(null);
   const [profileSuccess, setProfileSuccess] = useState(null);
 
+  // Document state
+  const [documents, setDocuments] = useState([]);
+  const [documentsLoading, setDocumentsLoading] = useState(false);
+  const [documentsError, setDocumentsError] = useState(null);
+  const [documentsSuccess, setDocumentsSuccess] = useState(null);
+  const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
+  const [viewDialogOpen, setViewDialogOpen] = useState(false);
+  const [selectedDocument, setSelectedDocument] = useState(null);
+  const [uploadData, setUploadData] = useState({
+    title: '',
+    type: '',
+    description: '',
+    file: null,
+    isPublic: false
+  });
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
+
   // Handle tab change
   const handleTabChange = (event, newValue) => {
     setCurrentTab(newValue);
