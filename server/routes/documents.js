@@ -420,4 +420,77 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+/**
+ * @route GET /api/documents/:id/download
+ * @desc Download a document file
+ * @access Private
+ */
+router.get('/:id/download', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const walletAddress = req.query.address || req.headers.authorization;
+
+    if (!walletAddress) {
+      return res.status(401).json({
+        error: 'Unauthorized',
+        message: 'Wallet address required'
+      });
+    }
+
+    // Find user
+    const user = await User.findOne({ 
+      where: { walletAddress: walletAddress.toLowerCase() } 
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        error: 'User Not Found',
+        message: 'User not found'
+      });
+    }
+
+    // Find the document and verify ownership
+    const document = await Document.findOne({
+      where: { 
+        id: parseInt(id),
+        userId: user.id
+      }
+    });
+
+    if (!document) {
+      return res.status(404).json({
+        error: 'Document Not Found',
+        message: 'Document not found or you do not have permission to access it'
+      });
+    }
+
+    // Check if file exists
+    const fs = require('fs');
+    const path = require('path');
+    const filePath = path.resolve(document.filePath);
+
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).json({
+        error: 'File Not Found',
+        message: 'Document file not found on server'
+      });
+    }
+
+    // Set appropriate headers for download
+    res.setHeader('Content-Disposition', `attachment; filename="${document.originalName}"`);
+    res.setHeader('Content-Type', document.mimeType);
+    
+    // Stream the file
+    const fileStream = fs.createReadStream(filePath);
+    fileStream.pipe(res);
+
+  } catch (error) {
+    console.error('Download document error:', error);
+    res.status(500).json({
+      error: 'Internal Server Error',
+      message: 'Failed to download document'
+    });
+  }
+});
+
 module.exports = router;
