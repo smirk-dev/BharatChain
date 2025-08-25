@@ -360,12 +360,50 @@ router.put('/:id/verify', [
 router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params;
+    const walletAddress = req.query.address || req.headers.authorization;
 
-    // TODO: Implement actual deletion logic
-    // 1. Check ownership
-    // 2. Remove from IPFS
-    // 3. Update database
-    // 4. Update blockchain if necessary
+    if (!walletAddress) {
+      return res.status(401).json({
+        error: 'Unauthorized',
+        message: 'Wallet address required'
+      });
+    }
+
+    // Find user
+    const user = await User.findOne({ 
+      where: { walletAddress: walletAddress.toLowerCase() } 
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        error: 'User Not Found',
+        message: 'User not found'
+      });
+    }
+
+    // Find the document and verify ownership
+    const document = await Document.findOne({
+      where: { 
+        id: parseInt(id),
+        userId: user.id
+      }
+    });
+
+    if (!document) {
+      return res.status(404).json({
+        error: 'Document Not Found',
+        message: 'Document not found or you do not have permission to delete it'
+      });
+    }
+
+    // Soft delete the document (using paranoid delete)
+    await document.destroy();
+
+    // TODO: In production, also remove the physical file
+    // const fs = require('fs');
+    // if (fs.existsSync(document.filePath)) {
+    //   fs.unlinkSync(document.filePath);
+    // }
 
     res.json({
       success: true,
