@@ -256,14 +256,21 @@ const CitizenDashboard = () => {
                   >
                     <CardContent>
                       <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                        {stat.icon}
+                        <Box sx={{ 
+                          color: 'white',
+                          filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.3))'
+                        }}>
+                          {stat.icon}
+                        </Box>
                         <Chip 
                           label={stat.trend} 
                           size="small" 
                           sx={{ 
                             ml: 'auto',
-                            backgroundColor: 'rgba(255,255,255,0.2)',
-                            color: 'white'
+                            backgroundColor: 'rgba(255,255,255,0.25)',
+                            color: 'white',
+                            fontWeight: 600,
+                            border: '1px solid rgba(255,255,255,0.2)'
                           }} 
                         />
                       </Box>
