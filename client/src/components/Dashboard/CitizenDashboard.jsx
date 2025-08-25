@@ -579,7 +579,7 @@ const CitizenDashboard = () => {
 
     try {
       // Create a link to trigger download
-      const downloadUrl = `/api/documents/${document.id}/download?address=${account}`;
+      const downloadUrl = `${API_BASE_URL}/api/documents/${document.id}/download?address=${account}`;
       
       // Create a temporary anchor element to trigger download
       const link = document.createElement('a');
