@@ -501,11 +501,16 @@ const CitizenDashboard = () => {
       return;
     }
 
+    if (!account) {
+      setDocumentsError('Please connect your wallet to delete documents');
+      return;
+    }
+
     try {
-      const response = await fetch(`http://localhost:3001/api/documents/${documentId}`, {
+      const response = await fetch(`/api/documents/${documentId}?address=${account}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+          'Content-Type': 'application/json',
         },
       });
 
@@ -514,11 +519,12 @@ const CitizenDashboard = () => {
         loadDocuments(); // Reload documents list
         setTimeout(() => setDocumentsSuccess(null), 3000);
       } else {
-        throw new Error('Failed to delete document');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to delete document');
       }
     } catch (error) {
       console.error('Error deleting document:', error);
-      setDocumentsError('Failed to delete document. Please try again.');
+      setDocumentsError(error.message || 'Failed to delete document. Please try again.');
     }
   };
 
