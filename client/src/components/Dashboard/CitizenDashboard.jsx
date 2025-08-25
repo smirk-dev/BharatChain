@@ -1864,56 +1864,103 @@ const CitizenDashboard = () => {
               </Card>
             </Grid>
 
-            {/* Personal Information */}
+            {/* Personal Information with Indian Heritage Design */}
             <Grid item xs={12} md={6}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h6" sx={{ fontWeight: 600, mb: 3, display: 'flex', alignItems: 'center' }}>
-                    <PersonIcon sx={{ mr: 1 }} />
-                    Personal Information
+              <Card className="bharat-card">
+                <CardContent sx={{ p: 4 }}>
+                  <Typography variant="h5" sx={{ 
+                    fontWeight: 700, 
+                    mb: 4, 
+                    display: 'flex', 
+                    alignItems: 'center',
+                    color: '#000080',
+                    fontFamily: '"Playfair Display", serif'
+                  }}>
+                    <PersonIcon sx={{ mr: 2, color: '#FF9933' }} />
+                    व्यक्तिगत जानकारी • Personal Information
                   </Typography>
                   
                   <Grid container spacing={3}>
                     <Grid item xs={12}>
                       <TextField
                         fullWidth
-                        label="Full Name *"
+                        label="पूरा नाम • Full Name *"
                         value={profile.name}
                         onChange={(e) => handleProfileChange('name', e.target.value)}
                         disabled={!isEditingProfile}
                         variant={isEditingProfile ? "outlined" : "filled"}
                         required
                         error={isEditingProfile && !profile.name}
-                        helperText={isEditingProfile && !profile.name ? "Name is required" : ""}
+                        helperText={isEditingProfile && !profile.name ? "नाम आवश्यक है • Name is required" : ""}
+                        className="bharat-input"
+                        sx={{
+                          '& .MuiOutlinedInput-root': {
+                            borderRadius: '12px',
+                            '& fieldset': {
+                              borderColor: 'rgba(255, 153, 51, 0.3)',
+                              borderWidth: '2px'
+                            },
+                            '&:hover fieldset': {
+                              borderColor: '#FF9933'
+                            },
+                            '&.Mui-focused fieldset': {
+                              borderColor: '#FF6B35'
+                            }
+                          },
+                          '& .MuiInputLabel-root': {
+                            color: '#7B3F00',
+                            fontWeight: 600
+                          }
+                        }}
                       />
                     </Grid>
                     
                     <Grid item xs={12} sm={6}>
                       <TextField
                         fullWidth
-                        label="Date of Birth"
+                        label="जन्म तिथि • Date of Birth"
                         type="date"
                         value={profile.dateOfBirth}
                         onChange={(e) => handleProfileChange('dateOfBirth', e.target.value)}
                         disabled={!isEditingProfile}
                         variant={isEditingProfile ? "outlined" : "filled"}
                         InputLabelProps={{ shrink: true }}
+                        sx={{
+                          '& .MuiOutlinedInput-root': {
+                            borderRadius: '12px',
+                            '& fieldset': {
+                              borderColor: 'rgba(255, 153, 51, 0.3)',
+                              borderWidth: '2px'
+                            }
+                          },
+                          '& .MuiInputLabel-root': {
+                            color: '#7B3F00',
+                            fontWeight: 600
+                          }
+                        }}
                       />
                     </Grid>
                     
                     <Grid item xs={12} sm={6}>
                       <FormControl fullWidth disabled={!isEditingProfile}>
-                        <InputLabel>Gender</InputLabel>
+                        <InputLabel sx={{ color: '#7B3F00', fontWeight: 600 }}>लिंग • Gender</InputLabel>
                         <Select
                           value={profile.gender}
-                          label="Gender"
+                          label="लिंग • Gender"
                           onChange={(e) => handleProfileChange('gender', e.target.value)}
                           variant={isEditingProfile ? "outlined" : "filled"}
+                          sx={{
+                            borderRadius: '12px',
+                            '& .MuiOutlinedInput-notchedOutline': {
+                              borderColor: 'rgba(255, 153, 51, 0.3)',
+                              borderWidth: '2px'
+                            }
+                          }}
                         >
-                          <MenuItem value="Male">Male</MenuItem>
-                          <MenuItem value="Female">Female</MenuItem>
-                          <MenuItem value="Other">Other</MenuItem>
-                          <MenuItem value="Prefer not to say">Prefer not to say</MenuItem>
+                          <MenuItem value="Male">पुरुष • Male</MenuItem>
+                          <MenuItem value="Female">महिला • Female</MenuItem>
+                          <MenuItem value="Other">अन्य • Other</MenuItem>
+                          <MenuItem value="Prefer not to say">कहना नहीं चाहते • Prefer not to say</MenuItem>
                         </Select>
                       </FormControl>
                     </Grid>
@@ -1921,13 +1968,26 @@ const CitizenDashboard = () => {
                     <Grid item xs={12}>
                       <TextField
                         fullWidth
-                        label="Education"
+                        label="शिक्षा • Education"
                         value={profile.education}
                         onChange={(e) => handleProfileChange('education', e.target.value)}
                         disabled={!isEditingProfile}
                         variant={isEditingProfile ? "outlined" : "filled"}
                         InputProps={{
-                          startAdornment: <School sx={{ mr: 1, color: 'text.secondary' }} />
+                          startAdornment: <School sx={{ mr: 1, color: '#FF9933' }} />
+                        }}
+                        sx={{
+                          '& .MuiOutlinedInput-root': {
+                            borderRadius: '12px',
+                            '& fieldset': {
+                              borderColor: 'rgba(255, 153, 51, 0.3)',
+                              borderWidth: '2px'
+                            }
+                          },
+                          '& .MuiInputLabel-root': {
+                            color: '#7B3F00',
+                            fontWeight: 600
+                          }
                         }}
                       />
                     </Grid>
@@ -1935,13 +1995,26 @@ const CitizenDashboard = () => {
                     <Grid item xs={12}>
                       <TextField
                         fullWidth
-                        label="Occupation"
+                        label="व्यवसाय • Occupation"
                         value={profile.occupation}
                         onChange={(e) => handleProfileChange('occupation', e.target.value)}
                         disabled={!isEditingProfile}
                         variant={isEditingProfile ? "outlined" : "filled"}
                         InputProps={{
-                          startAdornment: <Work sx={{ mr: 1, color: 'text.secondary' }} />
+                          startAdornment: <Work sx={{ mr: 1, color: '#FF9933' }} />
+                        }}
+                        sx={{
+                          '& .MuiOutlinedInput-root': {
+                            borderRadius: '12px',
+                            '& fieldset': {
+                              borderColor: 'rgba(255, 153, 51, 0.3)',
+                              borderWidth: '2px'
+                            }
+                          },
+                          '& .MuiInputLabel-root': {
+                            color: '#7B3F00',
+                            fontWeight: 600
+                          }
                         }}
                       />
                     </Grid>
