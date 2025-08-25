@@ -205,7 +205,7 @@ const CitizenDashboard = () => {
           <Grid container spacing={3}>
             {/* Statistics Cards */}
             <Grid item xs={12}>
-              <Typography variant="h5" gutterBottom sx={{ fontWeight: 600, mb: 3 }}>
+              <Typography variant="h5" gutterBottom sx={{ fontWeight: 600, mb: 3, color: 'black' }}>
                 📊 Overview Statistics
               </Typography>
             </Grid>
