@@ -125,6 +125,12 @@ const CitizenDashboard = () => {
     resolvedGrievances: 0
   });
 
+  // Helper function for tab emojis
+  const getTabEmoji = (index) => {
+    const emojis = ['🏠', '👤', '📄', '📋', '🤖'];
+    return emojis[index] || '📊';
+  };
+
   // Profile state
   const [profile, setProfile] = useState({
     name: '',
