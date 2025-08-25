@@ -121,10 +121,8 @@ export const Web3Provider = ({ children }) => {
         throw new Error('Invalid account address received from MetaMask.');
       }
 
-      // Create provider with ENS resolution disabled
-      const web3Provider = new ethers.BrowserProvider(window.ethereum, {
-        ensAddress: null, // Disable ENS to prevent resolution issues
-      });
+      // Create provider without specifying network (let it auto-detect)
+      const web3Provider = new ethers.BrowserProvider(window.ethereum);
 
       // Get signer
       const web3Signer = await web3Provider.getSigner();
@@ -243,9 +241,7 @@ export const Web3Provider = ({ children }) => {
           if (accounts.length > 0 && sanitizeAddress(accounts[0]) === storedAddress) {
             // Verify token is still valid (optional)
             // For now, just restore the connection
-            const web3Provider = new ethers.BrowserProvider(window.ethereum, {
-              ensAddress: null,
-            });
+            const web3Provider = new ethers.BrowserProvider(window.ethereum);
             const web3Signer = await web3Provider.getSigner();
             const network = await web3Provider.getNetwork();
 
