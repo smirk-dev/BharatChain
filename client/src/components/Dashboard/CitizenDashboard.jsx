@@ -1746,7 +1746,7 @@ const CitizenDashboard = () => {
                 <Button
                   variant="contained"
                   startIcon={<DownloadIcon />}
-                  onClick={() => window.open(selectedDocument.url, '_blank')}
+                  onClick={() => handleDownloadDocument(selectedDocument)}
                 >
                   Download
                 </Button>
