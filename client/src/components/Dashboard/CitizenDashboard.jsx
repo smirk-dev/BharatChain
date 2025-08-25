@@ -734,7 +734,7 @@ const CitizenDashboard = () => {
     }
 
     try {
-      const response = await fetch(`/api/grievances/${grievanceId}?address=${account}`, {
+      const response = await fetch(`${API_BASE_URL}/api/grievances/${grievanceId}?address=${account}`, {
         method: 'DELETE',
       });
 
@@ -764,7 +764,7 @@ const CitizenDashboard = () => {
     }
 
     try {
-      const response = await fetch(`/api/grievances/${grievanceId}/status`, {
+      const response = await fetch(`${API_BASE_URL}/api/grievances/${grievanceId}/status`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
