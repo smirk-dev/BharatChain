@@ -634,7 +634,7 @@ const CitizenDashboard = () => {
         return;
       }
       
-      const response = await fetch(`/api/grievances?address=${account}`, {
+      const response = await fetch(`${API_BASE_URL}/api/grievances?address=${account}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
