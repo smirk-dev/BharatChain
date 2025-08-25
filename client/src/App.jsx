@@ -92,7 +92,7 @@ function App() {
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
   };
 
-  // Loading state
+  // Loading state with Indian theme
   if (isConnecting) {
     return (
       <Box
@@ -102,31 +102,46 @@ function App() {
           justifyContent: 'center',
           alignItems: 'center',
           minHeight: '100vh',
-          background: 'linear-gradient(135deg, #1976d2 0%, #1565c0 100%)',
-          color: 'white'
+          background: 'linear-gradient(135deg, #FF9933 0%, #FFFFFF 33%, #138808 66%)',
+          color: '#000080',
+          position: 'relative'
         }}
       >
+        <Box sx={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, opacity: 0.05 }}>
+          <div className="bharat-rangoli"></div>
+        </Box>
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.5 }}
+          style={{ textAlign: 'center', zIndex: 2, position: 'relative' }}
         >
-          <Typography variant="h3" gutterBottom sx={{ fontWeight: 700 }}>
-            🇮🇳 BharatChain
+          <div className="bharat-chakra" style={{ margin: '0 auto 30px' }}></div>
+          <Typography variant="h2" gutterBottom sx={{ 
+            fontWeight: 700,
+            fontFamily: '"Playfair Display", serif',
+            color: '#000080',
+            textShadow: '2px 2px 4px rgba(0,0,0,0.1)'
+          }}>
+            🇮🇳 भारत चेन • BharatChain
           </Typography>
-          <Typography variant="h6" gutterBottom sx={{ opacity: 0.9 }}>
-            Connecting to MetaMask...
+          <Typography variant="h5" gutterBottom sx={{ 
+            opacity: 0.8,
+            color: '#7B3F00',
+            fontWeight: 600,
+            mb: 4
+          }}>
+            MetaMask से जुड़ रहा है... • Connecting to MetaMask...
           </Typography>
-          <LinearProgress 
-            sx={{ 
-              mt: 2, 
-              width: 300,
-              backgroundColor: 'rgba(255,255,255,0.2)',
-              '& .MuiLinearProgress-bar': {
-                backgroundColor: 'white'
-              }
-            }} 
-          />
+          <div className="bharat-loading" style={{ margin: '0 auto' }}></div>
+          <Typography variant="body1" sx={{ 
+            mt: 3, 
+            fontStyle: 'italic',
+            color: '#7B3F00',
+            opacity: 0.7
+          }}>
+            कृपया प्रतीक्षा करें... • Please wait...
+          </Typography>
         </motion.div>
       </Box>
     );
