@@ -346,11 +346,11 @@ const CitizenDashboard = () => {
               <Card sx={{ mt: 3 }}>
                 <CardContent>
                   <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                    <Typography variant="h6" sx={{ fontWeight: 600, flexGrow: 1 }}>
+                    <Typography variant="h6" sx={{ fontWeight: 600, flexGrow: 1, color: 'black' }}>
                       🔧 System Status
                     </Typography>
                     <Tooltip title="Refresh Status">
-                      <IconButton size="small">
+                      <IconButton size="small" sx={{ color: 'black' }}>
                         <Refresh />
                       </IconButton>
                     </Tooltip>
