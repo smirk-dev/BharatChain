@@ -2794,57 +2794,23 @@ const CitizenDashboard = () => {
                     {aiResults && aiAnalysisMode === 'document' && (
                       <Box>
                         <Grid container spacing={2}>
-                          <Grid item xs={6}>
-                            <Paper sx={{ p: 2, textAlign: 'center' }}>
-                              <Typography variant="body2" color="text.secondary">Confidence</Typography>
-                              <Typography variant="h4" color={getConfidenceColor(aiResults.confidence)}>
+                          <Grid item xs={12}>
+                            <Paper sx={{ p: 3, textAlign: 'center' }}>
+                              <Typography variant="body2" color="text.secondary" gutterBottom>
+                                Document Analysis Confidence
+                              </Typography>
+                              <Typography variant="h3" color={getConfidenceColor(aiResults.confidence)} sx={{ mb: 2 }}>
                                 {(aiResults.confidence * 100).toFixed(1)}%
                               </Typography>
+                              <Chip
+                                label={aiResults.isValid ? "✅ Document Verified" : "❌ Verification Failed"}
+                                color={aiResults.isValid ? 'success' : 'error'}
+                                size="large"
+                                sx={{ fontSize: '1rem', px: 2, py: 1 }}
+                              />
                             </Paper>
-                          </Grid>
-                          <Grid item xs={6}>
-                            <Paper sx={{ p: 2, textAlign: 'center' }}>
-                              <Typography variant="body2" color="text.secondary">Document Type</Typography>
-                              <Typography variant="h6" sx={{ textTransform: 'capitalize' }}>
-                                {aiResults.documentType.replace('_', ' ')}
-                              </Typography>
-                            </Paper>
-                          </Grid>
-                          <Grid item xs={12}>
-                            <Chip
-                              label={aiResults.isValid ? "✅ Valid Document" : "❌ Invalid Document"}
-                              color={aiResults.isValid ? 'success' : 'error'}
-                              sx={{ mb: 2 }}
-                            />
                           </Grid>
                         </Grid>
-
-                        <Divider sx={{ my: 2 }} />
-
-                        <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 600 }}>
-                          Extracted Information:
-                        </Typography>
-                        {Object.entries(aiResults.extractedData).map(([key, value]) => (
-                          <Box key={key} sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                            <Typography variant="body2" color="text.secondary" sx={{ textTransform: 'capitalize' }}>
-                              {key.replace(/([A-Z])/g, ' $1').trim()}:
-                            </Typography>
-                            <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                              {value}
-                            </Typography>
-                          </Box>
-                        ))}
-
-                        <Divider sx={{ my: 2 }} />
-
-                        <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 600 }}>
-                          AI Recommendations:
-                        </Typography>
-                        {aiResults.recommendations.map((rec, index) => (
-                          <Typography key={index} variant="body2" sx={{ mb: 1, pl: 2 }}>
-                            • {rec}
-                          </Typography>
-                        ))}
                       </Box>
                     )}
 
