@@ -13,7 +13,17 @@ import {
   LinearProgress,
   Alert,
   IconButton,
-  Tooltip
+  Tooltip,
+  TextField,
+  Avatar,
+  Divider,
+  Paper,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Switch,
+  FormControlLabel
 } from '@mui/material';
 import {
   Dashboard as DashboardIcon,
@@ -26,7 +36,17 @@ import {
   Speed,
   Security,
   Refresh,
-  Add as AddIcon
+  Add as AddIcon,
+  Edit as EditIcon,
+  Save as SaveIcon,
+  Cancel as CancelIcon,
+  PhotoCamera,
+  LocationOn,
+  Email,
+  Phone,
+  Work,
+  School,
+  AccountBalance
 } from '@mui/icons-material';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useWeb3 } from '../../context/Web3Context';
