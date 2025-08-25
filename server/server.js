@@ -190,7 +190,10 @@ async function startServer() {
       console.log('   ├── GET  /api/documents        - List documents');
       console.log('   ├── POST /api/documents/upload - Upload document');
       console.log('   ├── GET  /api/grievances       - List grievances');
-      console.log('   └── POST /api/grievances       - Submit grievance');
+      console.log('   ├── POST /api/grievances       - Submit grievance');
+      console.log('   ├── GET  /api/ai/health        - AI service health');
+      console.log('   ├── POST /api/ai/analyze/document - AI document analysis');
+      console.log('   └── POST /api/ai/analyze/grievance - AI grievance analysis');
       console.log('');
       console.log('🔗 Frontend URL: http://localhost:3000');
       console.log('🔗 Backend URL: http://localhost:3001');
