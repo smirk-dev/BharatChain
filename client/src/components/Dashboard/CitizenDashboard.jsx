@@ -683,19 +683,19 @@ const CitizenDashboard = () => {
                       src={profile.profileImage}
                       sx={{ width: 100, height: 100, mr: 3 }}
                     >
-                      {profile.name.charAt(0)}
+                      {profile.name ? profile.name.charAt(0).toUpperCase() : account ? account.charAt(2).toUpperCase() : '?'}
                     </Avatar>
                     <Box>
                       <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                        {profile.name}
+                        {profile.name || 'New User'}
                       </Typography>
                       <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
                         Wallet: {formatAddress(account)}
                       </Typography>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <Chip
-                          label={profile.isVerified ? "Verified Citizen" : "Pending Verification"}
-                          color={profile.isVerified ? "success" : "warning"}
+                          label={profile.isVerified ? "Verified Citizen" : profile.name ? "Pending Verification" : "Profile Incomplete"}
+                          color={profile.isVerified ? "success" : profile.name ? "warning" : "error"}
                           size="small"
                           icon={<Verified />}
                         />
@@ -718,6 +718,13 @@ const CitizenDashboard = () => {
                       </Box>
                     </Box>
                   </Box>
+
+                  {/* New User Welcome Message */}
+                  {!profile.name && !isEditingProfile && (
+                    <Alert severity="info" sx={{ mb: 3 }}>
+                      <strong>Welcome to BharatChain!</strong> Please click "Edit Profile" to complete your citizen registration and unlock all platform features.
+                    </Alert>
+                  )}
                 </CardContent>
               </Card>
             </Grid>
