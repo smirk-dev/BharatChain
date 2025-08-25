@@ -75,8 +75,8 @@ router.get('/', async (req, res) => {
     const formattedDocuments = documents.map(doc => ({
       ...doc.toJSON(),
       fileSize: (doc.fileSize / (1024 * 1024)).toFixed(2) + 'MB',
-      uploadDate: doc.uploadDate.toISOString(),
-      verificationDate: doc.verificationDate ? doc.verificationDate.toISOString() : null
+      uploadDate: new Date(doc.uploadDate || doc.createdAt).toISOString(),
+      verificationDate: doc.verificationDate ? new Date(doc.verificationDate).toISOString() : null
     }));
 
     const stats = {
@@ -198,7 +198,7 @@ router.post('/upload', upload.single('document'), [
       type: document.type,
       filename: document.originalName,
       fileSize: (document.fileSize / (1024 * 1024)).toFixed(2) + 'MB',
-      uploadDate: document.uploadDate.toISOString(),
+      uploadDate: new Date(document.uploadDate || document.createdAt).toISOString(),
       status: document.status,
       description: document.description,
       isPublic: document.isPublic,
