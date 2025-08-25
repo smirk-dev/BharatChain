@@ -264,7 +264,7 @@ function App() {
         </Toolbar>
       </AppBar>
 
-      {/* Welcome Alert */}
+      {/* Welcome Alert with Indian Theme */}
       <AnimatePresence>
         {showWelcome && isConnected && (
           <motion.div
@@ -275,53 +275,107 @@ function App() {
           >
             <Alert 
               severity="success" 
+              className="bharat-alert bharat-alert-success"
               sx={{ 
                 borderRadius: 0,
-                backgroundColor: '#4caf50',
+                background: 'linear-gradient(135deg, #138808 0%, #50C878 100%)',
                 color: 'white',
-                '& .MuiAlert-icon': { color: 'white' }
+                fontSize: '1.1rem',
+                fontWeight: 600,
+                '& .MuiAlert-icon': { color: 'white', fontSize: '1.5rem' }
               }}
             >
-              🎉 Welcome to BharatChain! Your wallet is now connected and you can access all governance services.
+              🎉 भारत चेन में आपका स्वागत है! • Welcome to BharatChain! Your wallet is now connected and you can access all governance services.
             </Alert>
           </motion.div>
         )}
       </AnimatePresence>
 
       {/* Main Content */}
-      <Container maxWidth="xl" sx={{ py: 3 }}>
+      <Container maxWidth="xl" sx={{ py: 4 }}>
         {!isConnected ? (
-          // Landing/Authentication Page
+          // Landing/Authentication Page with Indian Heritage Theme
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            {/* Hero Section */}
+            {/* Hero Section with Traditional Indian Design */}
             <Box
               sx={{
                 textAlign: 'center',
-                py: 8,
-                background: 'linear-gradient(135deg, #1976d2 0%, #1565c0 100%)',
-                borderRadius: 3,
+                py: 10,
+                background: 'linear-gradient(135deg, #FF6B35 0%, #F7931E 50%, #FFD700 100%)',
+                borderRadius: 5,
                 color: 'white',
-                mb: 4,
+                mb: 6,
                 position: 'relative',
-                overflow: 'hidden'
+                overflow: 'hidden',
+                border: '3px solid #FFD700'
               }}
             >
+              <Box sx={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, opacity: 0.1 }}>
+                <div className="bharat-rangoli"></div>
+              </Box>
               <motion.div
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
+                style={{ position: 'relative', zIndex: 2 }}
               >
-                <Typography variant="h2" gutterBottom sx={{ fontWeight: 700 }}>
-                  🇮🇳 Welcome to BharatChain
+                <div className="bharat-chakra" style={{ margin: '0 auto 30px' }}></div>
+                <Typography variant="h1" gutterBottom sx={{ 
+                  fontWeight: 900,
+                  fontFamily: '"Playfair Display", serif',
+                  textShadow: '3px 3px 6px rgba(0,0,0,0.3)',
+                  mb: 2
+                }}>
+                  🇮🇳 भारत चेन में आपका स्वागत है
                 </Typography>
-                <Typography variant="h5" gutterBottom sx={{ opacity: 0.9, maxWidth: 600, mx: 'auto' }}>
+                <Typography variant="h3" gutterBottom sx={{ 
+                  fontWeight: 700,
+                  opacity: 0.95, 
+                  maxWidth: 800, 
+                  mx: 'auto',
+                  textShadow: '2px 2px 4px rgba(0,0,0,0.2)'
+                }}>
+                  Welcome to BharatChain
+                </Typography>
+                <Typography variant="h5" gutterBottom sx={{ 
+                  opacity: 0.9, 
+                  maxWidth: 600, 
+                  mx: 'auto',
+                  fontWeight: 600,
+                  mb: 3
+                }}>
+                  भारत का पहला ब्लॉकचेन-संचालित डिजिटल गवर्नेंस प्लेटफॉर्म
+                </Typography>
+                <Typography variant="h6" gutterBottom sx={{ 
+                  opacity: 0.85, 
+                  maxWidth: 600, 
+                  mx: 'auto',
+                  fontStyle: 'italic'
+                }}>
                   India's First Blockchain-Powered Digital Governance Platform
                 </Typography>
-                <Typography variant="body1" sx={{ opacity: 0.8, maxWidth: 800, mx: 'auto', mb: 4 }}>
+                <div className="bharat-decorative-border" style={{ margin: '30px auto', maxWidth: '400px' }}></div>
+                <Typography variant="body1" sx={{ 
+                  opacity: 0.8, 
+                  maxWidth: 900, 
+                  mx: 'auto', 
+                  mb: 4,
+                  fontSize: '1.2rem',
+                  lineHeight: 1.6
+                }}>
+                  सुरक्षित, पारदर्शी और कुशल नागरिक सेवाएं ब्लॉकचेन प्रौद्योगिकी द्वारा संचालित। दस्तावेज़ सत्यापन, शिकायत प्रबंधन और अधिक तक पहुंचने के लिए अपना वॉलेट कनेक्ट करें।
+                </Typography>
+                <Typography variant="body1" sx={{ 
+                  opacity: 0.75, 
+                  maxWidth: 900, 
+                  mx: 'auto', 
+                  fontStyle: 'italic',
+                  fontSize: '1.1rem'
+                }}>
                   Secure, transparent, and efficient citizen services powered by blockchain technology. 
                   Connect your wallet to access document verification, grievance management, and more.
                 </Typography>
