@@ -70,7 +70,9 @@ import {
   Image as ImageIcon,
   InsertDriveFile,
   Close as CloseIcon,
-  CloudDownload
+  CloudDownload,
+  Visibility as VisibilityIcon,
+  Send as SendIcon
 } from '@mui/icons-material';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useWeb3 } from '../../context/Web3Context';
