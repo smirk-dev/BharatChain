@@ -502,7 +502,7 @@ const CitizenDashboard = () => {
       formData.append('document', uploadData.file);
       formData.append('walletAddress', account);
 
-      const response = await fetch('/api/documents/upload', {
+      const response = await fetch(`${API_BASE_URL}/api/documents/upload`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
