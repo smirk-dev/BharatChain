@@ -208,7 +208,7 @@ const CitizenDashboard = () => {
       setProfileLoading(true);
       setProfileError(null);
       
-      const response = await fetch('http://localhost:3001/api/citizens/profile', {
+      const response = await fetch(`${API_BASE_URL}/api/citizens/profile`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -322,7 +322,7 @@ const CitizenDashboard = () => {
         aadharHash: aadharHash
       };
 
-      const response = await fetch('http://localhost:3001/api/citizens/register', {
+      const response = await fetch(`${API_BASE_URL}/api/citizens/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
