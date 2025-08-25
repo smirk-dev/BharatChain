@@ -10,13 +10,11 @@ import {
   AppBar,
   Toolbar,
   IconButton,
-  Avatar,
   Menu,
   MenuItem,
   Chip,
   Alert,
-  LinearProgress,
-  Fade
+  LinearProgress
 } from '@mui/material';
 import {
   AccountBalanceWallet,
@@ -24,7 +22,6 @@ import {
   Security,
   Speed,
   Verified,
-  Menu as MenuIcon,
   NotificationsNone,
   SettingsOutlined,
   PowerSettingsNew
@@ -42,7 +39,6 @@ function App() {
     account, 
     isConnected, 
     isConnecting, 
-    connectWallet, 
     disconnectWallet,
     error: web3Error,
     clearError
