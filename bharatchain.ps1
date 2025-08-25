@@ -210,17 +210,14 @@ function Show-Logs {
         }
         "3" {
             Write-ColorText "🪟 Opening service terminal windows..." $Colors.Info
-            # This will show the minimized windows
-            Get-Process powershell | Where-Object { $_.MainWindowTitle -like "*BharatChain*" } | ForEach-Object {
-                Add-Type -TypeDefinition @"
-                    using System;
-                    using System.Runtime.InteropServices;
-                    public class Win32 {
-                        [DllImport("user32.dll")]
-                        public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-                    }
-"@
-                [Win32]::ShowWindow($_.MainWindowHandle, 9) # SW_RESTORE
+            # Show all PowerShell windows
+            Get-Process powershell | Where-Object { $_.MainWindowTitle -ne "" } | ForEach-Object {
+                try {
+                    $_.CloseMainWindow()
+                    Start-Sleep -Milliseconds 100
+                } catch {
+                    Write-ColorText "Could not restore window" $Colors.Warning
+                }
             }
         }
         default { Write-ColorText "Invalid choice" $Colors.Error }
