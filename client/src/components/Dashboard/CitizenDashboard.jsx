@@ -454,7 +454,7 @@ const CitizenDashboard = () => {
       formData.append('document', uploadData.file);
       formData.append('walletAddress', account);
 
-      const response = await fetch('http://localhost:3001/api/documents/upload', {
+      const response = await fetch('/api/documents/upload', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
@@ -1525,15 +1525,15 @@ const CitizenDashboard = () => {
                       label="Document Type *"
                       onChange={(e) => setUploadData(prev => ({ ...prev, type: e.target.value }))}
                     >
-                      <MenuItem value="aadhar">Aadhar Card</MenuItem>
-                      <MenuItem value="pan">PAN Card</MenuItem>
-                      <MenuItem value="passport">Passport</MenuItem>
-                      <MenuItem value="driving_license">Driving License</MenuItem>
-                      <MenuItem value="voter_id">Voter ID</MenuItem>
-                      <MenuItem value="birth_certificate">Birth Certificate</MenuItem>
-                      <MenuItem value="education">Education Certificate</MenuItem>
-                      <MenuItem value="income">Income Certificate</MenuItem>
-                      <MenuItem value="other">Other</MenuItem>
+                      <MenuItem value="AADHAR">Aadhar Card</MenuItem>
+                      <MenuItem value="PAN">PAN Card</MenuItem>
+                      <MenuItem value="PASSPORT">Passport</MenuItem>
+                      <MenuItem value="DRIVING_LICENSE">Driving License</MenuItem>
+                      <MenuItem value="VOTER_ID">Voter ID</MenuItem>
+                      <MenuItem value="BIRTH_CERTIFICATE">Birth Certificate</MenuItem>
+                      <MenuItem value="OTHER">Education Certificate</MenuItem>
+                      <MenuItem value="OTHER">Income Certificate</MenuItem>
+                      <MenuItem value="OTHER">Other</MenuItem>
                     </Select>
                   </FormControl>
                 </Grid>
