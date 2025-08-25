@@ -845,11 +845,20 @@ const CitizenDashboard = () => {
                     <Grid item xs={12}>
                       <TextField
                         fullWidth
-                        label="Phone Number"
+                        label="Phone Number *"
                         value={profile.phone}
                         onChange={(e) => handleProfileChange('phone', e.target.value)}
                         disabled={!isEditingProfile}
                         variant={isEditingProfile ? "outlined" : "filled"}
+                        required
+                        error={isEditingProfile && (!profile.phone || (profile.phone && !/^[+]?[0-9\s\-()]{10,}$/.test(profile.phone)))}
+                        helperText={
+                          isEditingProfile && !profile.phone 
+                            ? "Phone number is required" 
+                            : isEditingProfile && profile.phone && !/^[+]?[0-9\s\-()]{10,}$/.test(profile.phone)
+                            ? "Please enter a valid phone number"
+                            : "Include country code if international"
+                        }
                         InputProps={{
                           startAdornment: <Phone sx={{ mr: 1, color: 'text.secondary' }} />
                         }}
