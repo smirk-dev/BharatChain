@@ -2819,63 +2819,90 @@ const CitizenDashboard = () => {
                         <Grid container spacing={2}>
                           <Grid item xs={6}>
                             <Paper sx={{ p: 2, textAlign: 'center' }}>
-                              <Typography variant="body2" color="text.secondary">Sentiment</Typography>
-                              <Chip
-                                label={aiResults.sentiment.label}
-                                color={getSentimentColor(aiResults.sentiment.label)}
-                                sx={{ mt: 1 }}
-                              />
+                              <Typography variant="body2" color="text.secondary">Analysis Confidence</Typography>
+                              <Typography variant="h4" color={getConfidenceColor(aiResults.confidence || 0.8)}>
+                                {((aiResults.confidence || 0.8) * 100).toFixed(1)}%
+                              </Typography>
                             </Paper>
                           </Grid>
                           <Grid item xs={6}>
                             <Paper sx={{ p: 2, textAlign: 'center' }}>
-                              <Typography variant="body2" color="text.secondary">Urgency</Typography>
+                              <Typography variant="body2" color="text.secondary">Verification Status</Typography>
                               <Chip
-                                label={aiResults.urgency.level}
-                                color={getUrgencyColor(aiResults.urgency.level)}
+                                label={aiResults.isValid !== false ? "✅ Verified" : "❌ Needs Review"}
+                                color={aiResults.isValid !== false ? 'success' : 'warning'}
                                 sx={{ mt: 1 }}
                               />
                             </Paper>
                           </Grid>
                         </Grid>
 
-                        <Divider sx={{ my: 2 }} />
-
-                        <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 600 }}>
-                          AI Suggestions:
-                        </Typography>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                          <Typography variant="body2" color="text.secondary">Category:</Typography>
-                          <Chip label={aiResults.suggestedCategory} size="small" color="primary" />
-                        </Box>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                          <Typography variant="body2" color="text.secondary">Priority:</Typography>
-                          <Chip label={aiResults.suggestedPriority} size="small" color="secondary" />
-                        </Box>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                          <Typography variant="body2" color="text.secondary">Similar Cases:</Typography>
-                          <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                            {aiResults.similarCases} found
-                          </Typography>
-                        </Box>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                          <Typography variant="body2" color="text.secondary">Est. Resolution:</Typography>
-                          <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                            {aiResults.estimatedResolutionTime}
-                          </Typography>
-                        </Box>
-
-                        {aiResults.keywords.length > 0 && (
+                        {/* Enhanced AI Results Display */}
+                        {aiResults.analysis && (
                           <>
                             <Divider sx={{ my: 2 }} />
                             <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 600 }}>
-                              Key Topics:
+                              AI Analysis Summary:
                             </Typography>
-                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                              {aiResults.keywords.map((keyword, index) => (
-                                <Chip key={index} label={keyword} size="small" variant="outlined" />
-                              ))}
-                            </Box>
+                            
+                            {/* Main Issue */}
+                            {aiResults.analysis.summary?.main_issue && (
+                              <Box sx={{ mb: 2 }}>
+                                <Typography variant="body2" color="text.secondary">Primary Issue:</Typography>
+                                <Typography variant="body1" sx={{ fontWeight: 500, mb: 1 }}>
+                                  {aiResults.analysis.summary.main_issue}
+                                </Typography>
+                              </Box>
+                            )}
+
+                            {/* Key Metrics Grid */}
+                            <Grid container spacing={2} sx={{ mb: 2 }}>
+                              {aiResults.analysis.emotion?.primary && (
+                                <Grid item xs={6}>
+                                  <Box sx={{ textAlign: 'center' }}>
+                                    <Typography variant="body2" color="text.secondary">Emotion</Typography>
+                                    <Chip
+                                      label={aiResults.analysis.emotion.primary}
+                                      color={getSentimentColor(aiResults.analysis.emotion.primary)}
+                                      size="small"
+                                    />
+                                  </Box>
+                                </Grid>
+                              )}
+                              
+                              {aiResults.analysis.urgency?.level && (
+                                <Grid item xs={6}>
+                                  <Box sx={{ textAlign: 'center' }}>
+                                    <Typography variant="body2" color="text.secondary">Urgency</Typography>
+                                    <Chip
+                                      label={aiResults.analysis.urgency.level}
+                                      color={getUrgencyColor(aiResults.analysis.urgency.level)}
+                                      size="small"
+                                    />
+                                  </Box>
+                                </Grid>
+                              )}
+                            </Grid>
+
+                            {/* Department Assignment */}
+                            {aiResults.analysis.category?.department && (
+                              <Box sx={{ mb: 2 }}>
+                                <Typography variant="body2" color="text.secondary">Assigned Department:</Typography>
+                                <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                                  {aiResults.analysis.category.department}
+                                </Typography>
+                              </Box>
+                            )}
+
+                            {/* Response Time */}
+                            {aiResults.analysis.urgency?.response_time && (
+                              <Box sx={{ mb: 2 }}>
+                                <Typography variant="body2" color="text.secondary">Expected Response Time:</Typography>
+                                <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                                  {aiResults.analysis.urgency.response_time}
+                                </Typography>
+                              </Box>
+                            )}
                           </>
                         )}
                       </Box>
