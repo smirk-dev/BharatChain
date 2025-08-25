@@ -46,7 +46,8 @@ export const Web3Provider = ({ children }) => {
   // Get authentication message from backend
   const getAuthMessage = async (address) => {
     try {
-      const response = await fetch('/api/auth/message', {
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+      const response = await fetch(`${apiUrl}/api/auth/message`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
