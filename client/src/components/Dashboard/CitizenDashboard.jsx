@@ -368,11 +368,14 @@ const CitizenDashboard = () => {
                           display: 'flex', 
                           alignItems: 'center', 
                           p: 2, 
-                          background: 'linear-gradient(135deg, success.dark 0%, #1b5e20 100%)',
+                          background: 'linear-gradient(135deg, success.light 0%, success.main 100%)',
                           borderRadius: 2,
-                          color: 'white',
+                          color: 'black',
                           '& .MuiTypography-root': {
-                            textShadow: '0 1px 2px rgba(0,0,0,0.4)'
+                            color: 'black'
+                          },
+                          '& .MuiSvgIcon-root': {
+                            color: 'black'
                           }
                         }}>
                           {service.icon}
