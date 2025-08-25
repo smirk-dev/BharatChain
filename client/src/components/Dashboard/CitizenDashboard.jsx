@@ -1399,7 +1399,7 @@ const CitizenDashboard = () => {
                   ) : (
                     <List>
                       {documents.map((document, index) => (
-                        <React.Fragment key={document.id || index}>
+                        <Fragment key={document.id || `document-${index}`}>
                           <ListItem
                             sx={{
                               border: '1px solid',
@@ -1733,7 +1733,7 @@ const CitizenDashboard = () => {
         </TabPanel>
 
         {/* AI Analysis Tab */}
-        <TabPanel value={currentTab} index={4}>
+        <TabPanel key="ai-analysis" value={currentTab} index={4}>
           <Card>
             <CardContent>
               <Typography variant="h5" gutterBottom>
