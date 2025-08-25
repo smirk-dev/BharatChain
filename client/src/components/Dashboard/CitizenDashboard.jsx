@@ -106,8 +106,11 @@ const CitizenDashboard = () => {
     isVerified: false,
     profileImage: null
   });
+  const [originalProfile, setOriginalProfile] = useState({});
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [profileLoading, setProfileLoading] = useState(false);
+  const [profileError, setProfileError] = useState(null);
+  const [profileSuccess, setProfileSuccess] = useState(null);
 
   // Handle tab change
   const handleTabChange = (event, newValue) => {
@@ -115,20 +118,133 @@ const CitizenDashboard = () => {
   };
 
   // Profile functions
+  const loadProfile = async () => {
+    try {
+      setProfileLoading(true);
+      setProfileError(null);
+      
+      const response = await fetch('http://localhost:3001/api/citizens/profile', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.citizen) {
+          const profileData = {
+            name: data.citizen.name || '',
+            email: data.citizen.email || '',
+            phone: data.citizen.phone || '',
+            address: data.citizen.address || '',
+            city: data.citizen.city || '',
+            state: data.citizen.state || '',
+            pincode: data.citizen.pincode || '',
+            aadharNumber: data.citizen.aadharNumber || '',
+            panNumber: data.citizen.panNumber || '',
+            occupation: data.citizen.occupation || '',
+            education: data.citizen.education || '',
+            dateOfBirth: data.citizen.dateOfBirth || '',
+            gender: data.citizen.gender || '',
+            emergencyContact: data.citizen.emergencyContact || '',
+            isVerified: data.citizen.isVerified || false,
+            profileImage: data.citizen.profileImage || null
+          };
+          setProfile(profileData);
+          setOriginalProfile(profileData);
+        } else {
+          // Profile doesn't exist, show empty form for new registration
+          setProfile({
+            name: '',
+            email: '',
+            phone: '',
+            address: '',
+            city: '',
+            state: '',
+            pincode: '',
+            aadharNumber: '',
+            panNumber: '',
+            occupation: '',
+            education: '',
+            dateOfBirth: '',
+            gender: '',
+            emergencyContact: '',
+            isVerified: false,
+            profileImage: null
+          });
+        }
+      } else {
+        throw new Error('Failed to load profile');
+      }
+    } catch (error) {
+      console.error('Error loading profile:', error);
+      setProfileError('Failed to load profile. Please try again.');
+    } finally {
+      setProfileLoading(false);
+    }
+  };
+
   const handleProfileEdit = () => {
     setIsEditingProfile(true);
+    setProfileError(null);
+    setProfileSuccess(null);
   };
 
   const handleProfileSave = async () => {
-    setProfileLoading(true);
     try {
-      // Simulate API call to save profile
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      setIsEditingProfile(false);
-      // In real app, would call API to save profile data
-      console.log('Profile saved:', profile);
+      setProfileLoading(true);
+      setProfileError(null);
+      setProfileSuccess(null);
+
+      // Validate required fields
+      if (!profile.name || !profile.email || !profile.phone) {
+        setProfileError('Please fill in all required fields (Name, Email, Phone)');
+        return;
+      }
+
+      // Email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(profile.email)) {
+        setProfileError('Please enter a valid email address');
+        return;
+      }
+
+      // Phone validation
+      const phoneRegex = /^[+]?[0-9\s\-()]{10,}$/;
+      if (!phoneRegex.test(profile.phone)) {
+        setProfileError('Please enter a valid phone number');
+        return;
+      }
+
+      const response = await fetch('http://localhost:3001/api/citizens/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+        },
+        body: JSON.stringify({
+          walletAddress: account,
+          ...profile
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setIsEditingProfile(false);
+        setOriginalProfile(profile);
+        setProfileSuccess('Profile saved successfully!');
+        
+        // Auto-hide success message after 3 seconds
+        setTimeout(() => setProfileSuccess(null), 3000);
+      } else {
+        throw new Error(data.message || 'Failed to save profile');
+      }
     } catch (error) {
       console.error('Error saving profile:', error);
+      setProfileError(error.message || 'Failed to save profile. Please try again.');
     } finally {
       setProfileLoading(false);
     }
@@ -136,7 +252,9 @@ const CitizenDashboard = () => {
 
   const handleProfileCancel = () => {
     setIsEditingProfile(false);
-    // Reset profile to original state if needed
+    setProfile(originalProfile);
+    setProfileError(null);
+    setProfileSuccess(null);
   };
 
   const handleProfileChange = (field, value) => {
@@ -162,41 +280,33 @@ const CitizenDashboard = () => {
 
   // Mock data loading
   useEffect(() => {
-    if (isConnected) {
+    if (isConnected && account) {
       setIsLoading(true);
-      // Simulate API call
-      setTimeout(() => {
-        setStats({
-          totalDocuments: 5,
-          verifiedDocuments: 3,
-          pendingGrievances: 2,
-          resolvedGrievances: 8
-        });
-        
-        // Load mock profile data
-        setProfile({
-          name: 'Rajesh Kumar',
-          email: 'rajesh.kumar@email.com',
-          phone: '+91 9876543210',
-          address: '123 MG Road, Sector 15',
-          city: 'New Delhi',
-          state: 'Delhi',
-          pincode: '110001',
-          aadharNumber: '1234 5678 9012',
-          panNumber: 'ABCDE1234F',
-          occupation: 'Software Engineer',
-          education: 'B.Tech Computer Science',
-          dateOfBirth: '1990-05-15',
-          gender: 'Male',
-          emergencyContact: '+91 9876543211',
-          isVerified: true,
-          profileImage: null
-        });
-        
+      
+      // Load stats and profile data
+      Promise.all([
+        // Load stats (keeping as mock for now)
+        new Promise(resolve => {
+          setTimeout(() => {
+            resolve({
+              totalDocuments: 5,
+              verifiedDocuments: 3,
+              pendingGrievances: 2,
+              resolvedGrievances: 8
+            });
+          }, 500);
+        }),
+        // Load real profile data
+        loadProfile()
+      ]).then(([statsData]) => {
+        setStats(statsData);
         setIsLoading(false);
-      }, 1000);
+      }).catch((error) => {
+        console.error('Error loading dashboard data:', error);
+        setIsLoading(false);
+      });
     }
-  }, [isConnected]);
+  }, [isConnected, account]);
 
   const formatAddress = (address) => {
     if (!address) return '';
