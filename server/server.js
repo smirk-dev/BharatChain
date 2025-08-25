@@ -75,6 +75,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/citizens', citizenRoutes);
 app.use('/api/documents', documentRoutes);
 app.use('/api/grievances', grievanceRoutes);
+app.use('/api/ai', aiAnalysisRoutes);
 
 // Root endpoint
 app.get('/', (req, res) => {
@@ -88,7 +89,8 @@ app.get('/', (req, res) => {
       auth: '/api/auth',
       citizens: '/api/citizens',
       documents: '/api/documents',
-      grievances: '/api/grievances'
+      grievances: '/api/grievances',
+      ai_analysis: '/api/ai'
     }
   });
 });
