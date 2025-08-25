@@ -38,56 +38,61 @@ const upload = multer({
  */
 router.get('/', async (req, res) => {
   try {
-    // TODO: Add JWT middleware to get user address
-    const mockDocuments = [
-      {
-        id: 1,
-        type: 'AADHAR',
-        filename: 'aadhar_card.pdf',
-        uploadDate: '2024-01-15T10:30:00.000Z',
-        status: 'VERIFIED',
-        verificationDate: '2024-01-16T14:20:00.000Z',
-        verifier: '0xverifier123',
-        fileSize: '2.5MB',
-        ipfsHash: 'QmX1234567890',
-        aiAnalysis: {
-          fraudScore: 'Low',
-          confidence: 0.95,
-          extractedData: {
-            name: 'John Doe',
-            number: '****-****-1234'
-          }
-        }
-      },
-      {
-        id: 2,
-        type: 'PAN',
-        filename: 'pan_card.jpg',
-        uploadDate: '2024-01-20T09:15:00.000Z',
-        status: 'PENDING',
-        verificationDate: null,
-        verifier: null,
-        fileSize: '1.8MB',
-        ipfsHash: 'QmY9876543210',
-        aiAnalysis: {
-          fraudScore: 'Low',
-          confidence: 0.88,
-          extractedData: {
-            name: 'John Doe',
-            panNumber: 'ABCD1234E'
-          }
-        }
-      }
-    ];
+    // Get wallet address from query params (in real app, this would come from JWT token)
+    const walletAddress = req.query.address || req.headers.authorization;
+    
+    if (!walletAddress) {
+      return res.status(401).json({
+        error: 'Unauthorized',
+        message: 'Wallet address required'
+      });
+    }
+
+    // Find or create user
+    let user = await User.findOne({ 
+      where: { walletAddress: walletAddress.toLowerCase() } 
+    });
+
+    if (!user) {
+      // Create user if doesn't exist
+      user = await User.create({
+        walletAddress: walletAddress.toLowerCase()
+      });
+    }
+
+    // Get user's documents
+    const documents = await Document.findAll({
+      where: { userId: user.id },
+      order: [['uploadDate', 'DESC']],
+      attributes: [
+        'id', 'title', 'type', 'filename', 'originalName', 'fileSize', 
+        'description', 'status', 'isPublic', 'ipfsHash', 'verificationDate',
+        'verifiedBy', 'aiAnalysis', 'extractedData', 'uploadDate'
+      ]
+    });
+
+    // Format file sizes and dates
+    const formattedDocuments = documents.map(doc => ({
+      ...doc.toJSON(),
+      fileSize: (doc.fileSize / (1024 * 1024)).toFixed(2) + 'MB',
+      uploadDate: doc.uploadDate.toISOString(),
+      verificationDate: doc.verificationDate ? doc.verificationDate.toISOString() : null
+    }));
+
+    const stats = {
+      total: documents.length,
+      verified: documents.filter(d => d.status === 'VERIFIED').length,
+      pending: documents.filter(d => d.status === 'PENDING').length,
+      processing: documents.filter(d => d.status === 'PROCESSING').length,
+      rejected: documents.filter(d => d.status === 'REJECTED').length
+    };
 
     res.json({
       success: true,
       message: 'Documents retrieved successfully',
       data: {
-        documents: mockDocuments,
-        total: mockDocuments.length,
-        verified: mockDocuments.filter(d => d.status === 'VERIFIED').length,
-        pending: mockDocuments.filter(d => d.status === 'PENDING').length
+        documents: formattedDocuments,
+        stats
       }
     });
 
