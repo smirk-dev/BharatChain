@@ -41,7 +41,7 @@ import {
   Person as PersonIcon,
   Description as DocumentIcon,
   ReportProblem as GrievanceIcon,
-  Psychology as AIIcon,
+  Psychology as PsychologyIcon,
   Verified,
   TrendingUp,
   Speed,
@@ -72,7 +72,15 @@ import {
   Close as CloseIcon,
   CloudDownload,
   Visibility as VisibilityIcon,
-  Send as SendIcon
+  Send as SendIcon,
+  SmartToy as SmartToyIcon,
+  Analytics as AnalyticsIcon,
+  TextSnippet as TextIcon,
+  Psychology as BrainIcon,
+  AutoAwesome as MagicIcon,
+  TrendingUp as TrendIcon,
+  Assessment as AssessmentIcon,
+  Timeline as TimelineIcon
 } from '@mui/icons-material';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useWeb3 } from '../../context/Web3Context';
@@ -172,6 +180,19 @@ const CitizenDashboard = () => {
     department: ''
   });
   const [isSubmittingGrievance, setIsSubmittingGrievance] = useState(false);
+
+  // AI Analysis state
+  const [aiAnalysisMode, setAiAnalysisMode] = useState('document'); // 'document' or 'grievance'
+  const [aiAnalysisFile, setAiAnalysisFile] = useState(null);
+  const [aiAnalysisText, setAiAnalysisText] = useState('');
+  const [aiResults, setAiResults] = useState(null);
+  const [aiProcessing, setAiProcessing] = useState(false);
+  const [aiProgress, setAiProgress] = useState(0);
+  const [aiError, setAiError] = useState(null);
+  const [aiSuccess, setAiSuccess] = useState(null);
+  const [aiAnalysisHistory, setAiAnalysisHistory] = useState([]);
+  const [selectedAnalysis, setSelectedAnalysis] = useState(null);
+  const [analysisDetailOpen, setAnalysisDetailOpen] = useState(false);
 
   // Handle tab change
   const handleTabChange = (event, newValue) => {
@@ -799,6 +820,239 @@ const CitizenDashboard = () => {
     }
   };
 
+  // AI Analysis functions
+  const mockAIDocumentAnalysis = async (file) => {
+    // Simulate realistic AI processing
+    const analysisSteps = [
+      { step: 'Uploading file...', progress: 10 },
+      { step: 'Extracting text...', progress: 30 },
+      { step: 'Analyzing document...', progress: 60 },
+      { step: 'Validating information...', progress: 80 },
+      { step: 'Generating results...', progress: 100 }
+    ];
+
+    for (const stepData of analysisSteps) {
+      setAiProgress(stepData.progress);
+      await new Promise(resolve => setTimeout(resolve, 800));
+    }
+
+    // Generate realistic mock results based on file type
+    const mockResults = {
+      id: Date.now(),
+      fileName: file.name,
+      fileSize: file.size,
+      analysisDate: new Date().toISOString(),
+      confidence: 0.85 + Math.random() * 0.1, // 85-95% confidence
+      documentType: detectDocumentType(file.name),
+      isValid: Math.random() > 0.2, // 80% valid documents
+      extractedText: generateMockExtractedText(file.name),
+      extractedData: generateMockExtractedData(file.name),
+      fraudScore: Math.random() * 0.3, // Low fraud score
+      recommendations: generateMockRecommendations(),
+      processingTime: '2.3 seconds',
+      aiModel: 'BharatChain-AI-v2.1'
+    };
+
+    return mockResults;
+  };
+
+  const mockAIGrievanceAnalysis = async (text) => {
+    // Simulate AI processing for grievance text
+    const analysisSteps = [
+      { step: 'Analyzing text...', progress: 20 },
+      { step: 'Detecting sentiment...', progress: 50 },
+      { step: 'Categorizing issue...', progress: 80 },
+      { step: 'Generating insights...', progress: 100 }
+    ];
+
+    for (const stepData of analysisSteps) {
+      setAiProgress(stepData.progress);
+      await new Promise(resolve => setTimeout(resolve, 600));
+    }
+
+    const sentimentScore = Math.random() * 2 - 1; // -1 to 1
+    const urgencyScore = Math.random();
+
+    return {
+      id: Date.now(),
+      text: text,
+      analysisDate: new Date().toISOString(),
+      sentiment: {
+        score: sentimentScore,
+        label: sentimentScore < -0.3 ? 'Negative' : sentimentScore > 0.3 ? 'Positive' : 'Neutral',
+        confidence: 0.8 + Math.random() * 0.15
+      },
+      urgency: {
+        score: urgencyScore,
+        level: urgencyScore > 0.7 ? 'High' : urgencyScore > 0.4 ? 'Medium' : 'Low'
+      },
+      suggestedCategory: ['DOCUMENTATION', 'VERIFICATION', 'TECHNICAL', 'POLICY'][Math.floor(Math.random() * 4)],
+      suggestedPriority: urgencyScore > 0.7 ? 'HIGH' : urgencyScore > 0.4 ? 'MEDIUM' : 'LOW',
+      keywords: extractKeywords(text),
+      similarCases: Math.floor(Math.random() * 5),
+      estimatedResolutionTime: urgencyScore > 0.7 ? '24-48 hours' : urgencyScore > 0.4 ? '3-5 days' : '1-2 weeks',
+      processingTime: '1.8 seconds'
+    };
+  };
+
+  const detectDocumentType = (fileName) => {
+    const name = fileName.toLowerCase();
+    if (name.includes('aadhar') || name.includes('aadhaar')) return 'aadhar';
+    if (name.includes('pan')) return 'pan';
+    if (name.includes('passport')) return 'passport';
+    if (name.includes('license') || name.includes('dl')) return 'driving_license';
+    if (name.includes('voter')) return 'voter_id';
+    return 'other';
+  };
+
+  const generateMockExtractedText = (fileName) => {
+    const templates = {
+      aadhar: "भारत सरकार GOVERNMENT OF INDIA आधार AADHAAR 1234 5678 9012 जॉन डो John Doe पुरुष MALE जन्म तिथि DOB: 01/01/1990",
+      pan: "INCOME TAX DEPARTMENT GOVT. OF INDIA PERMANENT ACCOUNT NUMBER ABCDE1234F John Doe 01/01/1990",
+      passport: "Republic of India भारत गणराज्य PASSPORT पासपोर्ट Type/प्रकार P Country Code/देश कोड IND Passport No./पासपोर्ट संख्या A1234567",
+      default: "This is sample extracted text from the uploaded document. The AI system has successfully processed the document and extracted relevant information."
+    };
+
+    const type = detectDocumentType(fileName);
+    return templates[type] || templates.default;
+  };
+
+  const generateMockExtractedData = (fileName) => {
+    const type = detectDocumentType(fileName);
+    const baseData = {
+      name: "John Doe",
+      dateOfBirth: "01/01/1990",
+      gender: "Male"
+    };
+
+    const typeSpecificData = {
+      aadhar: {
+        ...baseData,
+        aadharNumber: "1234-5678-9012",
+        address: "123 Sample Street, Mumbai, Maharashtra, 400001"
+      },
+      pan: {
+        ...baseData,
+        panNumber: "ABCDE1234F",
+        fatherName: "Father Name"
+      },
+      passport: {
+        ...baseData,
+        passportNumber: "A1234567",
+        placeOfBirth: "Mumbai",
+        nationality: "Indian"
+      },
+      default: baseData
+    };
+
+    return typeSpecificData[type] || typeSpecificData.default;
+  };
+
+  const generateMockRecommendations = () => {
+    const recommendations = [
+      "Document appears to be authentic with high confidence score",
+      "All required fields are clearly visible and readable",
+      "No signs of tampering or forgery detected",
+      "Document format matches official standards",
+      "Recommended for verification approval"
+    ];
+    return recommendations.slice(0, 3 + Math.floor(Math.random() * 2));
+  };
+
+  const extractKeywords = (text) => {
+    const commonKeywords = ['urgent', 'delay', 'problem', 'issue', 'help', 'application', 'document', 'verification', 'status'];
+    const words = text.toLowerCase().split(/\s+/);
+    return commonKeywords.filter(keyword => 
+      words.some(word => word.includes(keyword))
+    ).slice(0, 5);
+  };
+
+  const handleAIDocumentAnalysis = async () => {
+    if (!aiAnalysisFile) {
+      setAiError('Please select a file to analyze');
+      return;
+    }
+
+    try {
+      setAiProcessing(true);
+      setAiProgress(0);
+      setAiError(null);
+
+      const results = await mockAIDocumentAnalysis(aiAnalysisFile);
+      setAiResults(results);
+      setAiAnalysisHistory(prev => [results, ...prev]);
+      setAiSuccess('Document analysis completed successfully!');
+      
+      setTimeout(() => setAiSuccess(null), 3000);
+    } catch (error) {
+      setAiError('Failed to analyze document. Please try again.');
+    } finally {
+      setAiProcessing(false);
+      setAiProgress(0);
+    }
+  };
+
+  const handleAIGrievanceAnalysis = async () => {
+    if (!aiAnalysisText.trim()) {
+      setAiError('Please enter text to analyze');
+      return;
+    }
+
+    try {
+      setAiProcessing(true);
+      setAiProgress(0);
+      setAiError(null);
+
+      const results = await mockAIGrievanceAnalysis(aiAnalysisText);
+      setAiResults(results);
+      setAiAnalysisHistory(prev => [results, ...prev]);
+      setAiSuccess('Grievance analysis completed successfully!');
+      
+      setTimeout(() => setAiSuccess(null), 3000);
+    } catch (error) {
+      setAiError('Failed to analyze text. Please try again.');
+    } finally {
+      setAiProcessing(false);
+      setAiProgress(0);
+    }
+  };
+
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setAiAnalysisFile(file);
+      setAiResults(null);
+      setAiError(null);
+    }
+  };
+
+  const resetAIAnalysis = () => {
+    setAiAnalysisFile(null);
+    setAiAnalysisText('');
+    setAiResults(null);
+    setAiError(null);
+    setAiSuccess(null);
+    setAiProgress(0);
+  };
+
+  const getSentimentColor = (sentiment) => {
+    if (sentiment === 'Positive') return 'success';
+    if (sentiment === 'Negative') return 'error';
+    return 'warning';
+  };
+
+  const getUrgencyColor = (level) => {
+    if (level === 'High') return 'error';
+    if (level === 'Medium') return 'warning';
+    return 'success';
+  };
+
+  const getConfidenceColor = (confidence) => {
+    if (confidence > 0.8) return 'success';
+    if (confidence > 0.6) return 'warning';
+    return 'error';
+  };
+
   // Mock data loading
   useEffect(() => {
     if (isConnected && account) {
@@ -843,7 +1097,7 @@ const CitizenDashboard = () => {
     { label: 'Profile', icon: <PersonIcon /> },
     { label: 'Documents', icon: <DocumentIcon /> },
     { label: 'Grievances', icon: <GrievanceIcon /> },
-    { label: 'AI Analysis', icon: <AIIcon /> }
+    { label: 'AI Analysis', icon: <SmartToyIcon /> }
   ];
 
   const quickActions = [
@@ -864,7 +1118,7 @@ const CitizenDashboard = () => {
     {
       title: 'AI Document Analysis',
       description: 'Advanced document processing',
-      icon: <AIIcon />,
+      icon: <SmartToyIcon />,
       action: () => setCurrentTab(4),
       color: 'info'
     },
@@ -1104,7 +1358,7 @@ const CitizenDashboard = () => {
                     {[
                       { name: 'Blockchain Network', status: 'Connected', icon: <Security /> },
                       { name: 'IPFS Storage', status: 'Online', icon: <Speed /> },
-                      { name: 'AI Processing', status: 'Available', icon: <AIIcon /> },
+                      { name: 'AI Processing', status: 'Available', icon: <SmartToyIcon /> },
                       { name: 'Document Verification', status: 'Active', icon: <Verified /> }
                     ].map((service, index) => (
                       <Grid item xs={12} sm={6} md={3} key={index}>
@@ -2340,16 +2594,468 @@ const CitizenDashboard = () => {
 
         {/* AI Analysis Tab */}
         <TabPanel key="ai-analysis" value={currentTab} index={4}>
-          <Card>
-            <CardContent>
-              <Typography variant="h5" gutterBottom>
-                🤖 AI Document Analysis
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+              <Typography variant="h4" sx={{ fontWeight: 600, color: 'black' }}>
+                🤖 AI-Powered Analysis
               </Typography>
-              <Alert severity="info" sx={{ mb: 3 }}>
-                Advanced AI-powered document analysis tools will be implemented here.
+              <Button
+                variant="outlined"
+                startIcon={<Refresh />}
+                onClick={resetAIAnalysis}
+                disabled={aiProcessing}
+              >
+                Reset Analysis
+              </Button>
+            </Box>
+
+            {aiError && (
+              <Alert severity="error" sx={{ mb: 3 }} onClose={() => setAiError(null)}>
+                {aiError}
               </Alert>
-            </CardContent>
-          </Card>
+            )}
+
+            {aiSuccess && (
+              <Alert severity="success" sx={{ mb: 3 }} onClose={() => setAiSuccess(null)}>
+                {aiSuccess}
+              </Alert>
+            )}
+
+            <Grid container spacing={3}>
+              {/* Analysis Mode Selection */}
+              <Grid item xs={12}>
+                <Card sx={{ mb: 2 }}>
+                  <CardContent>
+                    <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <MagicIcon color="primary" />
+                      Choose Analysis Type
+                    </Typography>
+                    <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
+                      <Button
+                        variant={aiAnalysisMode === 'document' ? 'contained' : 'outlined'}
+                        startIcon={<DocumentIcon />}
+                        onClick={() => {
+                          setAiAnalysisMode('document');
+                          resetAIAnalysis();
+                        }}
+                        disabled={aiProcessing}
+                      >
+                        Document Analysis
+                      </Button>
+                      <Button
+                        variant={aiAnalysisMode === 'grievance' ? 'contained' : 'outlined'}
+                        startIcon={<BrainIcon />}
+                        onClick={() => {
+                          setAiAnalysisMode('grievance');
+                          resetAIAnalysis();
+                        }}
+                        disabled={aiProcessing}
+                      >
+                        Grievance Intelligence
+                      </Button>
+                    </Box>
+                  </CardContent>
+                </Card>
+              </Grid>
+
+              {/* Input Section */}
+              <Grid item xs={12} md={6}>
+                <Card sx={{ height: '100%' }}>
+                  <CardContent>
+                    <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <CloudUpload color="primary" />
+                      {aiAnalysisMode === 'document' ? 'Upload Document' : 'Enter Text'}
+                    </Typography>
+
+                    {aiAnalysisMode === 'document' ? (
+                      <Box>
+                        <input
+                          accept="image/*,.pdf"
+                          style={{ display: 'none' }}
+                          id="ai-file-upload"
+                          type="file"
+                          onChange={handleFileUpload}
+                          disabled={aiProcessing}
+                        />
+                        <label htmlFor="ai-file-upload">
+                          <Paper
+                            sx={{
+                              p: 3,
+                              textAlign: 'center',
+                              border: '2px dashed',
+                              borderColor: aiAnalysisFile ? 'primary.main' : 'grey.300',
+                              cursor: aiProcessing ? 'not-allowed' : 'pointer',
+                              backgroundColor: aiAnalysisFile ? 'primary.50' : 'grey.50',
+                              '&:hover': {
+                                borderColor: aiProcessing ? 'grey.300' : 'primary.main',
+                                backgroundColor: aiProcessing ? 'grey.50' : 'primary.100'
+                              }
+                            }}
+                            component="div"
+                          >
+                            <CloudUpload sx={{ fontSize: 48, color: 'primary.main', mb: 2 }} />
+                            <Typography variant="h6" gutterBottom>
+                              {aiAnalysisFile ? aiAnalysisFile.name : 'Click to upload document'}
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                              Supports: JPG, PNG, PDF (Max 10MB)
+                            </Typography>
+                            {aiAnalysisFile && (
+                              <Chip
+                                label={`${(aiAnalysisFile.size / 1024 / 1024).toFixed(2)} MB`}
+                                color="primary"
+                                size="small"
+                                sx={{ mt: 1 }}
+                              />
+                            )}
+                          </Paper>
+                        </label>
+                      </Box>
+                    ) : (
+                      <TextField
+                        fullWidth
+                        multiline
+                        rows={8}
+                        placeholder="Enter your grievance text here for AI analysis..."
+                        value={aiAnalysisText}
+                        onChange={(e) => setAiAnalysisText(e.target.value)}
+                        disabled={aiProcessing}
+                        sx={{ mt: 2 }}
+                      />
+                    )}
+
+                    <Button
+                      fullWidth
+                      variant="contained"
+                      size="large"
+                      startIcon={aiProcessing ? <CircularProgress size={20} /> : <SmartToyIcon />}
+                      onClick={aiAnalysisMode === 'document' ? handleAIDocumentAnalysis : handleAIGrievanceAnalysis}
+                      disabled={aiProcessing || (aiAnalysisMode === 'document' ? !aiAnalysisFile : !aiAnalysisText.trim())}
+                      sx={{
+                        mt: 3,
+                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                        '&:hover': {
+                          background: 'linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)',
+                        }
+                      }}
+                    >
+                      {aiProcessing ? 'Analyzing...' : `Analyze ${aiAnalysisMode === 'document' ? 'Document' : 'Text'}`}
+                    </Button>
+
+                    {aiProcessing && (
+                      <Box sx={{ mt: 2 }}>
+                        <LinearProgress 
+                          variant="determinate" 
+                          value={aiProgress} 
+                          sx={{ height: 8, borderRadius: 4 }}
+                        />
+                        <Typography variant="body2" color="text.secondary" sx={{ mt: 1, textAlign: 'center' }}>
+                          {aiProgress < 30 ? 'Initializing AI models...' :
+                           aiProgress < 60 ? 'Processing data...' :
+                           aiProgress < 90 ? 'Analyzing content...' : 'Finalizing results...'}
+                        </Typography>
+                      </Box>
+                    )}
+                  </CardContent>
+                </Card>
+              </Grid>
+
+              {/* Results Section */}
+              <Grid item xs={12} md={6}>
+                <Card sx={{ height: '100%' }}>
+                  <CardContent>
+                    <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <AssessmentIcon color="primary" />
+                      Analysis Results
+                    </Typography>
+
+                    {!aiResults && !aiProcessing && (
+                      <Box sx={{ textAlign: 'center', py: 4 }}>
+                        <SmartToyIcon sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
+                        <Typography variant="h6" color="text.secondary" gutterBottom>
+                          Ready for AI Analysis
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {aiAnalysisMode === 'document' 
+                            ? 'Upload a document to see AI-powered insights'
+                            : 'Enter text to get intelligent analysis'
+                          }
+                        </Typography>
+                      </Box>
+                    )}
+
+                    {aiResults && aiAnalysisMode === 'document' && (
+                      <Box>
+                        <Grid container spacing={2}>
+                          <Grid item xs={6}>
+                            <Paper sx={{ p: 2, textAlign: 'center' }}>
+                              <Typography variant="body2" color="text.secondary">Confidence</Typography>
+                              <Typography variant="h4" color={getConfidenceColor(aiResults.confidence)}>
+                                {(aiResults.confidence * 100).toFixed(1)}%
+                              </Typography>
+                            </Paper>
+                          </Grid>
+                          <Grid item xs={6}>
+                            <Paper sx={{ p: 2, textAlign: 'center' }}>
+                              <Typography variant="body2" color="text.secondary">Document Type</Typography>
+                              <Typography variant="h6" sx={{ textTransform: 'capitalize' }}>
+                                {aiResults.documentType.replace('_', ' ')}
+                              </Typography>
+                            </Paper>
+                          </Grid>
+                          <Grid item xs={12}>
+                            <Chip
+                              label={aiResults.isValid ? "✅ Valid Document" : "❌ Invalid Document"}
+                              color={aiResults.isValid ? 'success' : 'error'}
+                              sx={{ mb: 2 }}
+                            />
+                          </Grid>
+                        </Grid>
+
+                        <Divider sx={{ my: 2 }} />
+
+                        <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 600 }}>
+                          Extracted Information:
+                        </Typography>
+                        {Object.entries(aiResults.extractedData).map(([key, value]) => (
+                          <Box key={key} sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                            <Typography variant="body2" color="text.secondary" sx={{ textTransform: 'capitalize' }}>
+                              {key.replace(/([A-Z])/g, ' $1').trim()}:
+                            </Typography>
+                            <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                              {value}
+                            </Typography>
+                          </Box>
+                        ))}
+
+                        <Divider sx={{ my: 2 }} />
+
+                        <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 600 }}>
+                          AI Recommendations:
+                        </Typography>
+                        {aiResults.recommendations.map((rec, index) => (
+                          <Typography key={index} variant="body2" sx={{ mb: 1, pl: 2 }}>
+                            • {rec}
+                          </Typography>
+                        ))}
+                      </Box>
+                    )}
+
+                    {aiResults && aiAnalysisMode === 'grievance' && (
+                      <Box>
+                        <Grid container spacing={2}>
+                          <Grid item xs={6}>
+                            <Paper sx={{ p: 2, textAlign: 'center' }}>
+                              <Typography variant="body2" color="text.secondary">Sentiment</Typography>
+                              <Chip
+                                label={aiResults.sentiment.label}
+                                color={getSentimentColor(aiResults.sentiment.label)}
+                                sx={{ mt: 1 }}
+                              />
+                            </Paper>
+                          </Grid>
+                          <Grid item xs={6}>
+                            <Paper sx={{ p: 2, textAlign: 'center' }}>
+                              <Typography variant="body2" color="text.secondary">Urgency</Typography>
+                              <Chip
+                                label={aiResults.urgency.level}
+                                color={getUrgencyColor(aiResults.urgency.level)}
+                                sx={{ mt: 1 }}
+                              />
+                            </Paper>
+                          </Grid>
+                        </Grid>
+
+                        <Divider sx={{ my: 2 }} />
+
+                        <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 600 }}>
+                          AI Suggestions:
+                        </Typography>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                          <Typography variant="body2" color="text.secondary">Category:</Typography>
+                          <Chip label={aiResults.suggestedCategory} size="small" color="primary" />
+                        </Box>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                          <Typography variant="body2" color="text.secondary">Priority:</Typography>
+                          <Chip label={aiResults.suggestedPriority} size="small" color="secondary" />
+                        </Box>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                          <Typography variant="body2" color="text.secondary">Similar Cases:</Typography>
+                          <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                            {aiResults.similarCases} found
+                          </Typography>
+                        </Box>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                          <Typography variant="body2" color="text.secondary">Est. Resolution:</Typography>
+                          <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                            {aiResults.estimatedResolutionTime}
+                          </Typography>
+                        </Box>
+
+                        {aiResults.keywords.length > 0 && (
+                          <>
+                            <Divider sx={{ my: 2 }} />
+                            <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 600 }}>
+                              Key Topics:
+                            </Typography>
+                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                              {aiResults.keywords.map((keyword, index) => (
+                                <Chip key={index} label={keyword} size="small" variant="outlined" />
+                              ))}
+                            </Box>
+                          </>
+                        )}
+                      </Box>
+                    )}
+                  </CardContent>
+                </Card>
+              </Grid>
+
+              {/* Analysis History */}
+              {aiAnalysisHistory.length > 0 && (
+                <Grid item xs={12}>
+                  <Card>
+                    <CardContent>
+                      <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <TimelineIcon color="primary" />
+                        Analysis History
+                      </Typography>
+                      <Grid container spacing={2}>
+                        {aiAnalysisHistory.slice(0, 6).map((analysis, index) => (
+                          <Grid item xs={12} sm={6} md={4} key={analysis.id}>
+                            <Card 
+                              sx={{ 
+                                cursor: 'pointer',
+                                '&:hover': { boxShadow: 4 }
+                              }}
+                              onClick={() => {
+                                setSelectedAnalysis(analysis);
+                                setAnalysisDetailOpen(true);
+                              }}
+                            >
+                              <CardContent sx={{ p: 2 }}>
+                                <Typography variant="subtitle2" gutterBottom>
+                                  {analysis.fileName || 'Text Analysis'}
+                                </Typography>
+                                <Typography variant="caption" color="text.secondary">
+                                  {new Date(analysis.analysisDate).toLocaleString()}
+                                </Typography>
+                                <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
+                                  <Chip 
+                                    label={analysis.fileName ? 'Document' : 'Grievance'} 
+                                    size="small" 
+                                    color="primary" 
+                                  />
+                                  {analysis.confidence && (
+                                    <Typography variant="caption">
+                                      {(analysis.confidence * 100).toFixed(0)}%
+                                    </Typography>
+                                  )}
+                                </Box>
+                              </CardContent>
+                            </Card>
+                          </Grid>
+                        ))}
+                      </Grid>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              )}
+            </Grid>
+          </motion.div>
+
+          {/* Analysis Detail Dialog */}
+          <Dialog open={analysisDetailOpen} onClose={() => setAnalysisDetailOpen(false)} maxWidth="md" fullWidth>
+            <DialogTitle>
+              <Typography variant="h5" sx={{ fontWeight: 600 }}>
+                📊 Detailed Analysis Results
+              </Typography>
+            </DialogTitle>
+            <DialogContent sx={{ pt: 2 }}>
+              {selectedAnalysis && (
+                <Grid container spacing={3}>
+                  <Grid item xs={12}>
+                    <Typography variant="h6" gutterBottom>
+                      {selectedAnalysis.fileName || 'Text Analysis'}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Analyzed on {new Date(selectedAnalysis.analysisDate).toLocaleString()}
+                    </Typography>
+                  </Grid>
+                  
+                  {selectedAnalysis.fileName && (
+                    <>
+                      <Grid item xs={12} sm={6}>
+                        <Paper sx={{ p: 2 }}>
+                          <Typography variant="subtitle2" color="text.secondary">Document Type</Typography>
+                          <Typography variant="h6" sx={{ textTransform: 'capitalize' }}>
+                            {selectedAnalysis.documentType?.replace('_', ' ')}
+                          </Typography>
+                        </Paper>
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <Paper sx={{ p: 2 }}>
+                          <Typography variant="subtitle2" color="text.secondary">Confidence Score</Typography>
+                          <Typography variant="h6" color={getConfidenceColor(selectedAnalysis.confidence)}>
+                            {(selectedAnalysis.confidence * 100).toFixed(1)}%
+                          </Typography>
+                        </Paper>
+                      </Grid>
+                    </>
+                  )}
+
+                  {selectedAnalysis.sentiment && (
+                    <>
+                      <Grid item xs={12} sm={6}>
+                        <Paper sx={{ p: 2 }}>
+                          <Typography variant="subtitle2" color="text.secondary">Sentiment</Typography>
+                          <Chip
+                            label={selectedAnalysis.sentiment.label}
+                            color={getSentimentColor(selectedAnalysis.sentiment.label)}
+                          />
+                        </Paper>
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <Paper sx={{ p: 2 }}>
+                          <Typography variant="subtitle2" color="text.secondary">Urgency Level</Typography>
+                          <Chip
+                            label={selectedAnalysis.urgency.level}
+                            color={getUrgencyColor(selectedAnalysis.urgency.level)}
+                          />
+                        </Paper>
+                      </Grid>
+                    </>
+                  )}
+
+                  <Grid item xs={12}>
+                    <Paper sx={{ p: 2 }}>
+                      <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                        Processing Details
+                      </Typography>
+                      <Typography variant="body2">
+                        • Processing Time: {selectedAnalysis.processingTime}
+                      </Typography>
+                      <Typography variant="body2">
+                        • AI Model: {selectedAnalysis.aiModel || 'BharatChain-AI-v2.1'}
+                      </Typography>
+                      <Typography variant="body2">
+                        • Analysis ID: {selectedAnalysis.id}
+                      </Typography>
+                    </Paper>
+                  </Grid>
+                </Grid>
+              )}
+            </DialogContent>
+            <DialogActions sx={{ p: 3 }}>
+              <Button onClick={() => setAnalysisDetailOpen(false)}>
+                Close
+              </Button>
+            </DialogActions>
+          </Dialog>
         </TabPanel>
       </AnimatePresence>
     </Container>
