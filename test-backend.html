@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BharatChain API Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .endpoint {
+            margin: 10px 0;
+            padding: 10px;
+            background: #ecf0f1;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .endpoint:hover {
+            background: #d5dbdb;
+        }
+        .method {
+            font-weight: bold;
+            color: #e74c3c;
+            margin-right: 10px;
+        }
+        .method.get { color: #27ae60; }
+        .method.post { color: #e74c3c; }
+        .response {
+            margin-top: 15px;
+            padding: 15px;
+            background: #2c3e50;
+            color: white;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .loading {
+            color: #f39c12;
+        }
+        .success {
+            color: #27ae60;
+        }
+        .error {
+            color: #e74c3c;
+        }
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <h1>🇮🇳 BharatChain Governance Platform API Test</h1>
+    
+    <div class="container">
+        <h2>Backend Server Status</h2>
+        <button onclick="testAPI()">Test All Endpoints</button>
+        <button onclick="clearResults()">Clear Results</button>
+        
+        <div class="endpoint" onclick="testEndpoint('GET', '/')">
+            <span class="method get">GET</span> / - Root endpoint
+        </div>
+        
+        <div class="endpoint" onclick="testEndpoint('GET', '/api/health')">
+            <span class="method get">GET</span> /api/health - Health check
+        </div>
+        
+        <div class="endpoint" onclick="testEndpoint('GET', '/api/health/detailed')">
+            <span class="method get">GET</span> /api/health/detailed - Detailed health
+        </div>
+        
+        <div class="endpoint" onclick="testEndpoint('GET', '/api/citizens')">
+            <span class="method get">GET</span> /api/citizens - List citizens
+        </div>
+        
+        <div class="endpoint" onclick="testEndpoint('GET', '/api/documents')">
+            <span class="method get">GET</span> /api/documents - List documents
+        </div>
+        
+        <div class="endpoint" onclick="testEndpoint('GET', '/api/grievances')">
+            <span class="method get">GET</span> /api/grievances - List grievances
+        </div>
+        
+        <div class="endpoint" onclick="testEndpoint('POST', '/api/auth/message', {address: '0x1234567890123456789012345678901234567890'})">
+            <span class="method post">POST</span> /api/auth/message - Get signing message
+        </div>
+    </div>
+    
+    <div class="container">
+        <h2>API Response</h2>
+        <div id="response" class="response">Click an endpoint above to test it...</div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3001';
+        
+        async function testEndpoint(method, path, data = null) {
+            const responseDiv = document.getElementById('response');
+            responseDiv.className = 'response loading';
+            responseDiv.textContent = `Testing ${method} ${path}...`;
+            
+            try {
+                const options = {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                };
+                
+                if (data && method === 'POST') {
+                    options.body = JSON.stringify(data);
+                }
+                
+                const response = await fetch(API_BASE + path, options);
+                const result = await response.json();
+                
+                responseDiv.className = 'response success';
+                responseDiv.textContent = `Status: ${response.status} ${response.statusText}\n\n` +
+                    JSON.stringify(result, null, 2);
+                    
+            } catch (error) {
+                responseDiv.className = 'response error';
+                responseDiv.textContent = `Error: ${error.message}`;
+            }
+        }
+        
+        async function testAPI() {
+            const endpoints = [
+                { method: 'GET', path: '/' },
+                { method: 'GET', path: '/api/health' },
+                { method: 'GET', path: '/api/health/detailed' },
+                { method: 'GET', path: '/api/citizens' },
+                { method: 'GET', path: '/api/documents' },
+                { method: 'GET', path: '/api/grievances' }
+            ];
+            
+            const responseDiv = document.getElementById('response');
+            responseDiv.className = 'response loading';
+            responseDiv.textContent = 'Testing all endpoints...\n\n';
+            
+            for (const endpoint of endpoints) {
+                try {
+                    const response = await fetch(API_BASE + endpoint.path);
+                    const result = await response.json();
+                    
+                    responseDiv.textContent += `✅ ${endpoint.method} ${endpoint.path}: ${response.status}\n`;
+                } catch (error) {
+                    responseDiv.textContent += `❌ ${endpoint.method} ${endpoint.path}: ${error.message}\n`;
+                }
+            }
+            
+            responseDiv.className = 'response success';
+            responseDiv.textContent += '\nAPI test completed!';
+        }
+        
+        function clearResults() {
+            document.getElementById('response').textContent = 'Results cleared. Click an endpoint above to test it...';
+            document.getElementById('response').className = 'response';
+        }
+        
+        // Auto-test health endpoint on load
+        window.onload = () => {
+            testEndpoint('GET', '/api/health');
+        };
+    </script>
+</body>
+</html>
