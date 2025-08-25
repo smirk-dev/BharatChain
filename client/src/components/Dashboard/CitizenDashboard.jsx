@@ -550,7 +550,7 @@ const CitizenDashboard = () => {
     }
 
     try {
-      const response = await fetch(`/api/documents/${documentId}?address=${account}`, {
+      const response = await fetch(`${API_BASE_URL}/api/documents/${documentId}?address=${account}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
