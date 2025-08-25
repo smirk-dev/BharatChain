@@ -114,6 +114,52 @@ const CitizenDashboard = () => {
     setCurrentTab(newValue);
   };
 
+  // Profile functions
+  const handleProfileEdit = () => {
+    setIsEditingProfile(true);
+  };
+
+  const handleProfileSave = async () => {
+    setProfileLoading(true);
+    try {
+      // Simulate API call to save profile
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      setIsEditingProfile(false);
+      // In real app, would call API to save profile data
+      console.log('Profile saved:', profile);
+    } catch (error) {
+      console.error('Error saving profile:', error);
+    } finally {
+      setProfileLoading(false);
+    }
+  };
+
+  const handleProfileCancel = () => {
+    setIsEditingProfile(false);
+    // Reset profile to original state if needed
+  };
+
+  const handleProfileChange = (field, value) => {
+    setProfile(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setProfile(prev => ({
+          ...prev,
+          profileImage: e.target.result
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   // Mock data loading
   useEffect(() => {
     if (isConnected) {
@@ -126,6 +172,27 @@ const CitizenDashboard = () => {
           pendingGrievances: 2,
           resolvedGrievances: 8
         });
+        
+        // Load mock profile data
+        setProfile({
+          name: 'Rajesh Kumar',
+          email: 'rajesh.kumar@email.com',
+          phone: '+91 9876543210',
+          address: '123 MG Road, Sector 15',
+          city: 'New Delhi',
+          state: 'Delhi',
+          pincode: '110001',
+          aadharNumber: '1234 5678 9012',
+          panNumber: 'ABCDE1234F',
+          occupation: 'Software Engineer',
+          education: 'B.Tech Computer Science',
+          dateOfBirth: '1990-05-15',
+          gender: 'Male',
+          emergencyContact: '+91 9876543211',
+          isVerified: true,
+          profileImage: null
+        });
+        
         setIsLoading(false);
       }, 1000);
     }
