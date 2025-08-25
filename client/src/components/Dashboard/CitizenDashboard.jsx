@@ -250,10 +250,10 @@ const CitizenDashboard = () => {
                     sx={{ 
                       p: 2, 
                       height: '100%',
-                      background: `linear-gradient(135deg, ${stat.color}.main 0%, ${stat.color}.dark 100%)`,
+                      background: `linear-gradient(135deg, ${stat.color}.dark 0%, ${stat.color}.main 30%, #1a1a1a 100%)`,
                       color: 'white',
                       '& .MuiTypography-root': {
-                        textShadow: '0 1px 2px rgba(0,0,0,0.3)'
+                        textShadow: '0 2px 4px rgba(0,0,0,0.6)'
                       }
                     }}
                   >
