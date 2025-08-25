@@ -686,7 +686,7 @@ const CitizenDashboard = () => {
       {/* Tab Panels */}
       <AnimatePresence mode="wait">
         {/* Dashboard Tab */}
-        <TabPanel value={currentTab} index={0}>
+        <TabPanel key="dashboard" value={currentTab} index={0}>
           <Grid container spacing={3}>
             {/* Statistics Cards */}
             <Grid item xs={12}>
@@ -883,7 +883,7 @@ const CitizenDashboard = () => {
         </TabPanel>
 
         {/* Profile Tab */}
-        <TabPanel value={currentTab} index={1}>
+        <TabPanel key="profile" value={currentTab} index={1}>
           <Grid container spacing={3}>
             {/* Profile Header */}
             <Grid item xs={12}>
