@@ -250,43 +250,27 @@ const CitizenDashboard = () => {
                     sx={{ 
                       p: 2, 
                       height: '100%',
-                      background: `linear-gradient(135deg, ${stat.color}.main 0%, ${stat.color}.dark 100%)`,
+                      background: `linear-gradient(135deg, ${stat.color}.light 0%, ${stat.color}.main 100%)`,
                       color: 'white'
                     }}
                   >
                     <CardContent>
                       <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                        <Box sx={{ 
-                          color: 'white',
-                          filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.3))'
-                        }}>
-                          {stat.icon}
-                        </Box>
+                        {stat.icon}
                         <Chip 
                           label={stat.trend} 
                           size="small" 
                           sx={{ 
                             ml: 'auto',
-                            backgroundColor: 'rgba(255,255,255,0.25)',
-                            color: 'white',
-                            fontWeight: 600,
-                            border: '1px solid rgba(255,255,255,0.2)'
+                            backgroundColor: 'rgba(255,255,255,0.2)',
+                            color: 'white'
                           }} 
                         />
                       </Box>
-                      <Typography variant="h3" sx={{ 
-                        fontWeight: 700, 
-                        mb: 1,
-                        textShadow: '0 1px 3px rgba(0,0,0,0.3)',
-                        color: 'white'
-                      }}>
+                      <Typography variant="h3" sx={{ fontWeight: 700, mb: 1 }}>
                         {stat.value}
                       </Typography>
-                      <Typography variant="body2" sx={{ 
-                        opacity: 0.95,
-                        textShadow: '0 1px 2px rgba(0,0,0,0.2)',
-                        color: 'white'
-                      }}>
+                      <Typography variant="body2" sx={{ opacity: 0.9 }}>
                         {stat.title}
                       </Typography>
                     </CardContent>
