@@ -36,7 +36,7 @@ import {
   CircularProgress,
   Badge
 } from '@mui/material';
-import '../../../styles/BharatTheme.css';
+import '../../styles/BharatTheme.css';
 import {
   Dashboard as DashboardIcon,
   Person as PersonIcon,
