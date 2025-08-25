@@ -113,7 +113,9 @@ router.get('/', async (req, res) => {
 router.post('/upload', upload.single('document'), [
   body('type').isIn(['AADHAR', 'PAN', 'DRIVING_LICENSE', 'PASSPORT', 'VOTER_ID', 'BIRTH_CERTIFICATE', 'OTHER'])
     .withMessage('Invalid document type'),
-  body('description').optional().isLength({ max: 500 }).withMessage('Description too long')
+  body('title').optional().isLength({ max: 100 }).withMessage('Title too long'),
+  body('description').optional().isLength({ max: 500 }).withMessage('Description too long'),
+  body('walletAddress').notEmpty().withMessage('Wallet address required')
 ], async (req, res) => {
   try {
     // Check for validation errors
@@ -133,7 +135,19 @@ router.post('/upload', upload.single('document'), [
       });
     }
 
-    const { type, description } = req.body;
+    const { type, title, description, isPublic, walletAddress } = req.body;
+
+    // Find or create user
+    let user = await User.findOne({ 
+      where: { walletAddress: walletAddress.toLowerCase() } 
+    });
+
+    if (!user) {
+      // Create user if doesn't exist
+      user = await User.create({
+        walletAddress: walletAddress.toLowerCase()
+      });
+    }
 
     // Mock AI analysis (in real implementation, this would call ML service)
     const mockAiAnalysis = {
@@ -143,7 +157,7 @@ router.post('/upload', upload.single('document'), [
       documentType: type,
       quality: 'Good',
       extractedData: {
-        name: 'John Doe',
+        name: 'Sample Name',
         number: '****-****-' + Math.floor(Math.random() * 9999),
         issuedDate: '2020-01-01',
         expiryDate: '2030-01-01'
@@ -159,24 +173,44 @@ router.post('/upload', upload.single('document'), [
     // Mock IPFS upload
     const mockIpfsHash = 'Qm' + Math.random().toString(36).substring(2, 15);
 
-    const uploadResult = {
-      id: Date.now(),
+    // Save document to database
+    const document = await Document.create({
+      userId: user.id,
+      title: title || `${type} Document`,
       type,
-      filename: req.file.originalname,
+      filename: req.file.filename,
+      originalName: req.file.originalname,
       filePath: req.file.path,
-      fileSize: (req.file.size / (1024 * 1024)).toFixed(2) + 'MB',
-      uploadDate: new Date().toISOString(),
-      status: 'PENDING',
+      fileSize: req.file.size,
+      mimeType: req.file.mimetype,
       description: description || '',
+      status: 'PENDING',
+      isPublic: isPublic === 'true',
       ipfsHash: mockIpfsHash,
       aiAnalysis: mockAiAnalysis,
-      owner: req.body.address || '0x1234567890123456789012345678901234567890'
+      extractedData: mockAiAnalysis.extractedData
+    });
+
+    // Format response
+    const responseData = {
+      id: document.id,
+      title: document.title,
+      type: document.type,
+      filename: document.originalName,
+      fileSize: (document.fileSize / (1024 * 1024)).toFixed(2) + 'MB',
+      uploadDate: document.uploadDate.toISOString(),
+      status: document.status,
+      description: document.description,
+      isPublic: document.isPublic,
+      ipfsHash: document.ipfsHash,
+      aiAnalysis: document.aiAnalysis,
+      owner: walletAddress
     };
 
     res.status(201).json({
       success: true,
       message: 'Document uploaded and analyzed successfully',
-      data: uploadResult
+      data: responseData
     });
 
   } catch (error) {
