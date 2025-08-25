@@ -1271,90 +1271,127 @@ const CitizenDashboard = () => {
       <AnimatePresence mode="wait">
         {/* Dashboard Tab */}
         <TabPanel key="dashboard" value={currentTab} index={0}>
-          <Grid container spacing={3}>
-            {/* Statistics Cards */}
+          <div className="bharat-rangoli"></div>
+          <Grid container spacing={4}>
+            {/* Sanskrit Welcome Message */}
             <Grid item xs={12}>
-              <Typography variant="h5" gutterBottom sx={{ fontWeight: 600, mb: 3, color: 'black' }}>
-                📊 Overview Statistics
+              <Typography className="bharat-sanskrit">
+                सर्वे भवन्तु सुखिनः सर्वे सन्तु निरामयाः • May All Be Happy and Healthy
+              </Typography>
+            </Grid>
+
+            {/* Statistics Cards with Indian Theme */}
+            <Grid item xs={12}>
+              <Typography variant="h4" gutterBottom sx={{ 
+                fontWeight: 700, 
+                mb: 4, 
+                color: '#000080',
+                textAlign: 'center',
+                fontSize: '2.5rem',
+                fontFamily: '"Playfair Display", serif'
+              }}>
+                📊 आंकड़ों की झलक • Dashboard Statistics
               </Typography>
             </Grid>
 
             {[
               {
-                title: 'Total Documents',
+                title: 'कुल दस्तावेज़',
+                subtitle: 'Total Documents',
                 value: stats.totalDocuments,
-                icon: <DocumentIcon sx={{ fontSize: 40 }} />,
-                color: 'primary',
-                trend: '+12%'
+                icon: '📜',
+                gradient: 'linear-gradient(135deg, #FF6B35 0%, #F7931E 50%, #FFD700 100%)',
+                trend: '+12%',
+                description: 'सभी अपलोड किए गए दस्तावेज़'
               },
               {
-                title: 'Verified Documents',
+                title: 'सत्यापित दस्तावेज़',
+                subtitle: 'Verified Documents', 
                 value: stats.verifiedDocuments,
-                icon: <Verified sx={{ fontSize: 40 }} />,
-                color: 'success',
-                trend: '+8%'
+                icon: '✅',
+                gradient: 'linear-gradient(135deg, #138808 0%, #50C878 100%)',
+                trend: '+8%',
+                description: 'प्रमाणित और स्वीकृत'
               },
               {
-                title: 'Pending Grievances',
+                title: 'लंबित शिकायतें',
+                subtitle: 'Pending Grievances',
                 value: stats.pendingGrievances,
-                icon: <GrievanceIcon sx={{ fontSize: 40 }} />,
-                color: 'warning',
-                trend: '-5%'
+                icon: '⏳',
+                gradient: 'linear-gradient(135deg, #E49B0F 0%, #FFA500 100%)', 
+                trend: '-5%',
+                description: 'समाधान की प्रतीक्षा में'
               },
               {
-                title: 'Resolved Issues',
+                title: 'हल की गई समस्याएं',
+                subtitle: 'Resolved Issues',
                 value: stats.resolvedGrievances,
-                icon: <TrendingUp sx={{ fontSize: 40 }} />,
-                color: 'info',
-                trend: '+25%'
+                icon: '🎯',
+                gradient: 'linear-gradient(135deg, #005A5B 0%, #4169E1 100%)',
+                trend: '+25%',
+                description: 'सफलतापूर्वक हल किया गया'
               }
             ].map((stat, index) => (
               <Grid item xs={12} sm={6} md={3} key={index}>
                 <motion.div
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  transition={{ duration: 0.6, delay: index * 0.15 }}
+                  whileHover={{ scale: 1.05, rotateY: 5 }}
+                  style={{ height: '100%' }}
                 >
                   <Card 
+                    className="bharat-card bharat-glow"
                     sx={{ 
-                      p: 2, 
+                      p: 3, 
                       height: '100%',
-                      background: `linear-gradient(135deg, ${stat.color}.light 0%, ${stat.color}.main 50%, ${stat.color}.light 100%)`,
-                      color: 'black',
-                      '& .MuiTypography-root': {
-                        color: 'black',
-                        textShadow: 'none'
-                      },
-                      '& .MuiSvgIcon-root': {
-                        color: 'black'
-                      }
+                      background: stat.gradient,
+                      color: 'white',
+                      position: 'relative',
+                      overflow: 'hidden',
+                      minHeight: '220px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'space-between'
                     }}
                   >
-                    <CardContent>
+                    <Box sx={{ position: 'absolute', top: -20, right: -20, fontSize: '6rem', opacity: 0.1 }}>
+                      {stat.icon}
+                    </Box>
+                    <CardContent sx={{ position: 'relative', zIndex: 2 }}>
                       <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                        {stat.icon}
+                        <Typography sx={{ fontSize: '3rem', mr: 2 }}>
+                          {stat.icon}
+                        </Typography>
                         <Chip 
                           label={stat.trend} 
                           size="small" 
                           sx={{ 
                             ml: 'auto',
-                            backgroundColor: 'rgba(0,0,0,0.1)',
-                            color: 'black',
-                            fontWeight: 600
+                            backgroundColor: 'rgba(255,255,255,0.2)',
+                            color: 'white',
+                            fontWeight: 700,
+                            border: '1px solid rgba(255,255,255,0.3)'
                           }} 
                         />
                       </Box>
-                      <Typography variant="h3" sx={{ fontWeight: 700, mb: 1 }}>
+                      <Typography variant="h2" sx={{ fontWeight: 900, mb: 1, textShadow: '2px 2px 4px rgba(0,0,0,0.3)' }}>
                         {stat.value}
                       </Typography>
-                      <Typography variant="body2" sx={{ opacity: 0.9 }}>
+                      <Typography variant="h6" sx={{ fontWeight: 600, opacity: 0.95, fontFamily: '"Playfair Display", serif' }}>
                         {stat.title}
+                      </Typography>
+                      <Typography variant="body2" sx={{ opacity: 0.8, fontWeight: 500 }}>
+                        {stat.subtitle}
+                      </Typography>
+                      <Typography variant="caption" sx={{ opacity: 0.7, mt: 1, display: 'block', fontStyle: 'italic' }}>
+                        {stat.description}
                       </Typography>
                     </CardContent>
                   </Card>
                 </motion.div>
               </Grid>
-            ))}
+            ))}}
 
             {/* Quick Actions */}
             <Grid item xs={12}>
