@@ -874,14 +874,15 @@ const CitizenDashboard = () => {
                         disabled={!isEditingProfile}
                         variant={isEditingProfile ? "outlined" : "filled"}
                         required
-                        error={isEditingProfile && (!profile.phone || (profile.phone && !/^[+]?[0-9\s\-()]{10,}$/.test(profile.phone)))}
+                        error={isEditingProfile && (!profile.phone || (profile.phone && !/^(\+91|91)?[6-9]\d{9}$/.test(profile.phone.replace(/[\s\-()]/g, ''))))}
                         helperText={
                           isEditingProfile && !profile.phone 
                             ? "Phone number is required" 
-                            : isEditingProfile && profile.phone && !/^[+]?[0-9\s\-()]{10,}$/.test(profile.phone)
-                            ? "Please enter a valid phone number"
-                            : "Include country code if international"
+                            : isEditingProfile && profile.phone && !/^(\+91|91)?[6-9]\d{9}$/.test(profile.phone.replace(/[\s\-()]/g, ''))
+                            ? "Enter valid Indian mobile number (10 digits, starting with 6-9)"
+                            : "Format: +91XXXXXXXXXX or 10 digits starting with 6-9"
                         }
+                        placeholder="+91XXXXXXXXXX"
                         InputProps={{
                           startAdornment: <Phone sx={{ mr: 1, color: 'text.secondary' }} />
                         }}
