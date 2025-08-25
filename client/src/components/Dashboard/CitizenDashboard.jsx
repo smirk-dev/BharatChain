@@ -1675,88 +1675,144 @@ const CitizenDashboard = () => {
           </Grid>
         </TabPanel>
 
-        {/* Profile Tab */}
+        {/* Profile Tab with Indian Heritage Theme */}
         <TabPanel key="profile" value={currentTab} index={1}>
-          <Grid container spacing={3}>
-            {/* Profile Header */}
+          <Grid container spacing={4}>
+            {/* Profile Header with Indian Design */}
             <Grid item xs={12}>
-              <Card>
-                <CardContent>
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-                    <Typography variant="h5" sx={{ fontWeight: 600, flexGrow: 1 }}>
-                      👤 Citizen Profile
+              <Card className="bharat-card">
+                <CardContent sx={{ p: 4 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
+                    <Typography variant="h4" sx={{ 
+                      fontWeight: 700, 
+                      flexGrow: 1,
+                      color: '#000080',
+                      fontFamily: '"Playfair Display", serif'
+                    }}>
+                      👤 नागरिक प्रोफ़ाइल • Citizen Profile
                     </Typography>
                     {!isEditingProfile ? (
                       <Button
                         variant="contained"
                         startIcon={<EditIcon />}
                         onClick={handleProfileEdit}
-                        sx={{ ml: 2 }}
+                        className="bharat-button"
+                        sx={{ 
+                          ml: 2,
+                          background: 'linear-gradient(135deg, #FF6B35 0%, #F7931E 100%)',
+                          px: 3,
+                          py: 1.5,
+                          borderRadius: '25px',
+                          fontWeight: 700
+                        }}
                       >
-                        Edit Profile
+                        संपादित करें • Edit Profile
                       </Button>
                     ) : (
-                      <Box sx={{ display: 'flex', gap: 1 }}>
+                      <Box sx={{ display: 'flex', gap: 2 }}>
                         <Button
                           variant="contained"
                           color="success"
                           startIcon={<SaveIcon />}
                           onClick={handleProfileSave}
                           disabled={profileLoading}
+                          sx={{
+                            background: 'linear-gradient(135deg, #138808 0%, #50C878 100%)',
+                            px: 3,
+                            py: 1.5,
+                            borderRadius: '25px',
+                            fontWeight: 700
+                          }}
                         >
-                          Save
+                          सेव करें • Save
                         </Button>
                         <Button
                           variant="outlined"
                           startIcon={<CancelIcon />}
                           onClick={handleProfileCancel}
                           disabled={profileLoading}
+                          sx={{
+                            borderColor: '#FF9933',
+                            color: '#FF9933',
+                            px: 3,
+                            py: 1.5,
+                            borderRadius: '25px',
+                            fontWeight: 700,
+                            '&:hover': {
+                              borderColor: '#FF6B35',
+                              backgroundColor: 'rgba(255, 153, 51, 0.1)'
+                            }
+                          }}
                         >
-                          Cancel
+                          रद्द करें • Cancel
                         </Button>
                       </Box>
                     )}
                   </Box>
 
                   {profileLoading && (
-                    <Box sx={{ mb: 2 }}>
-                      <LinearProgress />
+                    <Box sx={{ mb: 3 }}>
+                      <div className="bharat-progress">
+                        <div className="bharat-progress-fill" style={{ width: '100%' }}></div>
+                      </div>
                     </Box>
                   )}
 
                   {profileError && (
-                    <Alert severity="error" sx={{ mb: 2 }} onClose={() => setProfileError(null)}>
-                      {profileError}
+                    <Alert severity="error" className="bharat-alert bharat-alert-error" sx={{ mb: 3 }} onClose={() => setProfileError(null)}>
+                      <strong>त्रुटि • Error:</strong> {profileError}
                     </Alert>
                   )}
 
                   {profileSuccess && (
-                    <Alert severity="success" sx={{ mb: 2 }} onClose={() => setProfileSuccess(null)}>
-                      {profileSuccess}
+                    <Alert severity="success" className="bharat-alert bharat-alert-success" sx={{ mb: 3 }} onClose={() => setProfileSuccess(null)}>
+                      <strong>सफलता • Success:</strong> {profileSuccess}
                     </Alert>
                   )}
 
-                  {/* Profile Picture Section */}
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
-                    <Avatar
-                      src={profile.profileImage}
-                      sx={{ width: 100, height: 100, mr: 3 }}
-                    >
-                      {profile.name ? profile.name.charAt(0).toUpperCase() : account ? account.charAt(2).toUpperCase() : '?'}
-                    </Avatar>
-                    <Box>
-                      <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                        {profile.name || 'New User'}
+                  {/* Profile Picture Section with Indian Theme */}
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 4, flexDirection: { xs: 'column', sm: 'row' } }}>
+                    <Box className="bharat-avatar" sx={{ mr: { xs: 0, sm: 4 }, mb: { xs: 3, sm: 0 } }}>
+                      {profile.profileImage ? (
+                        <img 
+                          src={profile.profileImage} 
+                          alt="Profile" 
+                          style={{ 
+                            width: '100%', 
+                            height: '100%', 
+                            objectFit: 'cover', 
+                            borderRadius: '50%' 
+                          }} 
+                        />
+                      ) : (
+                        <Typography sx={{ fontSize: '3rem', fontWeight: 700 }}>
+                          {profile.name ? profile.name.charAt(0).toUpperCase() : account ? account.charAt(2).toUpperCase() : '🙏'}
+                        </Typography>
+                      )}
+                    </Box>
+                    <Box sx={{ textAlign: { xs: 'center', sm: 'left' } }}>
+                      <Typography variant="h4" sx={{ 
+                        fontWeight: 700,
+                        color: '#000080',
+                        fontFamily: '"Playfair Display", serif',
+                        mb: 1
+                      }}>
+                        {profile.name || 'नया उपयोगकर्ता • New User'}
                       </Typography>
-                      <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                        Wallet: {formatAddress(account)}
+                      <Typography variant="body1" color="text.secondary" sx={{ mb: 2, fontWeight: 500 }}>
+                        वॉलेट • Wallet: {formatAddress(account)}
                       </Typography>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap', justifyContent: { xs: 'center', sm: 'flex-start' } }}>
                         <Chip
-                          label={profile.isVerified ? "Verified Citizen" : profile.name ? "Pending Verification" : "Profile Incomplete"}
+                          label={profile.isVerified ? "✅ सत्यापित नागरिक • Verified Citizen" : profile.name ? "⏳ सत्यापन लंबित • Pending Verification" : "❗ प्रोफ़ाइल अधूरी • Profile Incomplete"}
                           color={profile.isVerified ? "success" : profile.name ? "warning" : "error"}
-                          size="small"
+                          size="medium"
                           icon={<Verified />}
+                          sx={{ 
+                            fontWeight: 600,
+                            fontSize: '0.9rem',
+                            px: 2
+                          }}
                         />
                         {isEditingProfile && (
                           <Button
@@ -1764,8 +1820,18 @@ const CitizenDashboard = () => {
                             size="small"
                             component="label"
                             startIcon={<PhotoCamera />}
+                            sx={{
+                              borderColor: '#FF9933',
+                              color: '#FF9933',
+                              borderRadius: '20px',
+                              fontWeight: 600,
+                              '&:hover': {
+                                borderColor: '#FF6B35',
+                                backgroundColor: 'rgba(255, 153, 51, 0.1)'
+                              }
+                            }}
                           >
-                            Upload Photo
+                            फोटो अपलोड • Upload Photo
                             <input
                               hidden
                               accept="image/*"
@@ -1778,10 +1844,20 @@ const CitizenDashboard = () => {
                     </Box>
                   </Box>
 
-                  {/* New User Welcome Message */}
+                  {/* New User Welcome Message with Indian Styling */}
                   {!profile.name && !isEditingProfile && (
-                    <Alert severity="info" sx={{ mb: 3 }}>
-                      <strong>Welcome to BharatChain!</strong> Please click "Edit Profile" to complete your citizen registration and unlock all platform features.
+                    <Alert severity="info" className="bharat-alert bharat-alert-info" sx={{ mb: 4 }}>
+                      <Box>
+                        <Typography sx={{ fontWeight: 700, mb: 1 }}>
+                          🙏 भारत चेन में आपका स्वागत है! • Welcome to BharatChain!
+                        </Typography>
+                        <Typography>
+                          कृपया अपना नागरिक पंजीकरण पूरा करने और सभी प्लेटफॉर्म सुविधाओं को अनलॉक करने के लिए "प्रोफ़ाइल संपादित करें" पर क्लिक करें।
+                        </Typography>
+                        <Typography sx={{ fontStyle: 'italic', mt: 1, opacity: 0.8 }}>
+                          Please click "Edit Profile" to complete your citizen registration and unlock all platform features.
+                        </Typography>
+                      </Box>
                     </Alert>
                   )}
                 </CardContent>
