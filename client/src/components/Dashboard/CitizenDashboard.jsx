@@ -1408,46 +1408,138 @@ const CitizenDashboard = () => {
               </Typography>
             </Grid>
 
-            {quickActions.map((action, index) => (
+            {[
+              {
+                title: 'दस्तावेज़ अपलोड',
+                subtitle: 'Upload Document',
+                description: 'नए दस्तावेज़ सत्यापन के लिए जोड़ें',
+                englishDesc: 'Add new documents for verification',
+                icon: '📤',
+                action: () => setCurrentTab(2),
+                gradient: 'linear-gradient(135deg, #FF6B35 0%, #F7931E 100%)',
+                bgPattern: '🏛️'
+              },
+              {
+                title: 'शिकायत दर्ज करें',
+                subtitle: 'Submit Grievance', 
+                description: 'समस्याओं या शिकायतों की रिपोर्ट करें',
+                englishDesc: 'Report issues or complaints',
+                icon: '📝',
+                action: () => setCurrentTab(3),
+                gradient: 'linear-gradient(135deg, #138808 0%, #50C878 100%)',
+                bgPattern: '⚖️'
+              },
+              {
+                title: 'AI दस्तावेज़ विश्लेषण',
+                subtitle: 'AI Document Analysis',
+                description: 'उन्नत दस्तावेज़ प्रसंस्करण',
+                englishDesc: 'Advanced document processing',
+                icon: '🤖',
+                action: () => setCurrentTab(4),
+                gradient: 'linear-gradient(135deg, #005A5B 0%, #4169E1 100%)',
+                bgPattern: '🔬'
+              },
+              {
+                title: 'प्रोफ़ाइल अपडेट',
+                subtitle: 'Update Profile',
+                description: 'अपनी जानकारी प्रबंधित करें',
+                englishDesc: 'Manage your information', 
+                icon: '👤',
+                action: () => setCurrentTab(1),
+                gradient: 'linear-gradient(135deg, #E49B0F 0%, #FFA500 100%)',
+                bgPattern: '🎭'
+              }
+            ].map((action, index) => (
               <Grid item xs={12} sm={6} md={3} key={index}>
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
+                  initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  whileHover={{ scale: 1.08, rotateY: 8 }}
+                  whileTap={{ scale: 0.95 }}
+                  style={{ height: '100%' }}
                 >
                   <Card 
+                    className="bharat-action-card bharat-glow"
                     sx={{ 
-                      p: 2, 
                       height: '100%', 
                       cursor: 'pointer',
+                      background: 'rgba(255, 255, 255, 0.95)',
                       border: '2px solid transparent',
+                      position: 'relative',
+                      overflow: 'hidden',
+                      minHeight: '280px',
+                      backdropFilter: 'blur(20px)',
                       '&:hover': {
-                        borderColor: `${action.color}.main`,
-                        boxShadow: 6
+                        borderColor: '#FF9933',
+                        boxShadow: '0 20px 60px rgba(255, 153, 51, 0.3)',
+                        '& .action-button': {
+                          background: action.gradient,
+                          transform: 'translateY(-2px)'
+                        }
                       }
                     }}
                     onClick={action.action}
                   >
-                    <CardContent sx={{ textAlign: 'center' }}>
-                      <Box sx={{ color: `${action.color}.main`, mb: 2 }}>
+                    <Box sx={{ position: 'absolute', top: -10, right: -10, fontSize: '5rem', opacity: 0.08, color: '#FF9933' }}>
+                      {action.bgPattern}
+                    </Box>
+                    <CardContent sx={{ textAlign: 'center', p: 4, position: 'relative', zIndex: 2 }}>
+                      <Box sx={{ 
+                        fontSize: '4rem', 
+                        mb: 3,
+                        filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.1))'
+                      }}>
                         {action.icon}
                       </Box>
-                      <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
+                      <Typography variant="h5" gutterBottom sx={{ 
+                        fontWeight: 700,
+                        color: '#000080',
+                        fontFamily: '"Playfair Display", serif',
+                        mb: 1
+                      }}>
                         {action.title}
                       </Typography>
-                      <Typography variant="body2" color="text.secondary">
+                      <Typography variant="h6" gutterBottom sx={{ 
+                        fontWeight: 600,
+                        color: '#7B3F00',
+                        mb: 2
+                      }}>
+                        {action.subtitle}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary" sx={{ 
+                        mb: 1,
+                        fontWeight: 500,
+                        color: '#7B3F00'
+                      }}>
                         {action.description}
                       </Typography>
+                      <Typography variant="body2" color="text.secondary" sx={{ 
+                        mb: 3,
+                        fontStyle: 'italic',
+                        opacity: 0.8
+                      }}>
+                        {action.englishDesc}
+                      </Typography>
                       <Button
-                        variant="outlined"
-                        color={action.color}
-                        size="small"
-                        sx={{ mt: 2 }}
-                        startIcon={<AddIcon />}
+                        className="action-button"
+                        variant="contained"
+                        size="large"
+                        sx={{ 
+                          mt: 2,
+                          borderRadius: '25px',
+                          px: 4,
+                          py: 1.5,
+                          fontWeight: 700,
+                          textTransform: 'none',
+                          background: 'linear-gradient(135deg, #FF9933 0%, #FFD700 100%)',
+                          color: 'white',
+                          transition: 'all 0.3s ease',
+                          boxShadow: '0 4px 16px rgba(255, 153, 51, 0.3)'
+                        }}
+                        startIcon={<span style={{ fontSize: '1.2rem' }}>🚀</span>}
                       >
-                        Get Started
+                        शुरू करें • Start
                       </Button>
                     </CardContent>
                   </Card>
