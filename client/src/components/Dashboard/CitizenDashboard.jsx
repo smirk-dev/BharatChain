@@ -1173,68 +1173,92 @@ const CitizenDashboard = () => {
   ];
 
   return (
-    <Container maxWidth="xl">
-      {/* Welcome Section */}
+    <div className="bharat-container">
+      {/* Indian Heritage Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <Box sx={{ mb: 4 }}>
-          <Typography variant="h4" gutterBottom sx={{ fontWeight: 700 }}>
-            Welcome to BharatChain Dashboard
+        <Box sx={{ mb: 4, textAlign: 'center' }}>
+          <div className="bharat-chakra"></div>
+          <Typography variant="h3" className="bharat-title" gutterBottom>
+            🇮🇳 भारत चेन डैशबोर्ड 🇮🇳
           </Typography>
-          <Typography variant="subtitle1" color="text.secondary">
-            Connected as: {formatAddress(account)} 
-            <Chip 
-              label="Verified" 
-              size="small" 
-              icon={<Verified />}
-              color="success" 
-              sx={{ ml: 2 }} 
-            />
+          <Typography variant="h4" className="bharat-title" gutterBottom sx={{ color: '#FF9933', mt: 1 }}>
+            BharatChain Digital Identity Platform
           </Typography>
+          <Typography variant="subtitle1" className="bharat-subtitle">
+            🪔 डिजिटल भारत की शक्ति से जुड़ें • Connected as: {formatAddress(account)} 🪔
+          </Typography>
+          <div className="bharat-decorative-border"></div>
+          <Chip 
+            label="🛡️ सत्यापित नागरिक • Verified Citizen" 
+            size="medium" 
+            icon={<Verified />}
+            className="bharat-status-verified"
+            sx={{ 
+              fontSize: '1rem', 
+              fontWeight: 600,
+              background: 'linear-gradient(135deg, #138808 0%, #50C878 100%)',
+              color: 'white',
+              '& .MuiChip-icon': { color: 'white' }
+            }} 
+          />
         </Box>
       </motion.div>
 
-      {/* Loading Progress */}
+      {/* Loading Progress with Indian Theme */}
       {isLoading && (
         <Box sx={{ mb: 2 }}>
-          <LinearProgress />
+          <div className="bharat-progress">
+            <div className="bharat-progress-fill" style={{ width: '100%' }}></div>
+          </div>
         </Box>
       )}
 
-      {/* Tabs */}
-      <Card sx={{ mb: 3 }}>
-        <Tabs
-          value={currentTab}
-          onChange={handleTabChange}
-          variant="scrollable"
-          scrollButtons="auto"
-          sx={{
-            borderBottom: 1,
-            borderColor: 'divider',
-            '& .MuiTab-root': {
-              minHeight: 64,
-              fontWeight: 500
-            }
-          }}
-        >
-          {tabs.map((tab, index) => (
-            <Tab
-              key={index}
-              label={tab.label}
-              icon={tab.icon}
-              iconPosition="start"
-              sx={{
-                '&.Mui-selected': {
-                  color: 'primary.main',
-                  fontWeight: 600
+      {/* Indian-styled Tabs */}
+      <Card className="bharat-card" sx={{ mb: 3 }}>
+        <div className="bharat-tabs">
+          <Tabs
+            value={currentTab}
+            onChange={handleTabChange}
+            variant="scrollable"
+            scrollButtons="auto"
+            sx={{
+              '& .MuiTab-root': {
+                minHeight: 64,
+                fontWeight: 600,
+                fontSize: '1rem',
+                textTransform: 'none',
+                borderRadius: '25px',
+                margin: '0 8px',
+                color: '#7B3F00',
+                '&:hover': {
+                  backgroundColor: 'rgba(255, 153, 51, 0.1)',
+                  color: '#FF9933'
                 }
-              }}
-            />
-          ))}
-        </Tabs>
+              },
+              '& .Mui-selected': {
+                background: 'linear-gradient(135deg, #FF6B35 0%, #F7931E 50%, #FFD700 100%)',
+                color: 'white !important',
+                boxShadow: '0 4px 16px rgba(255, 153, 51, 0.3)',
+                fontWeight: 700
+              },
+              '& .MuiTabs-indicator': {
+                display: 'none'
+              }
+            }}
+          >
+            {tabs.map((tab, index) => (
+              <Tab
+                key={index}
+                label={`${getTabEmoji(index)} ${tab.label}`}
+                iconPosition="start"
+              />
+            ))}
+          </Tabs>
+        </div>
       </Card>
 
       {/* Tab Panels */}
