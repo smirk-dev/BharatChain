@@ -10,71 +10,66 @@ const { User, Grievance } = require('../models');
  */
 router.get('/', async (req, res) => {
   try {
-    // TODO: Add JWT middleware to get user address
-    const mockGrievances = [
-      {
-        id: 1,
-        title: 'Water Supply Issue',
-        description: 'No water supply for the past 3 days in my area. This is causing major inconvenience.',
-        category: 'WATER_SUPPLY',
-        priority: 'HIGH',
-        status: 'IN_PROGRESS',
-        submitDate: '2024-01-15T09:30:00.000Z',
-        resolvedDate: null,
-        location: 'Sector 15, Gurgaon, Haryana',
-        assignedOfficer: '0xofficer123',
-        citizen: '0x1234567890123456789012345678901234567890',
-        attachments: ['QmWater123', 'QmPhoto456'],
-        comments: [
-          {
-            author: '0x1234567890123456789012345678901234567890',
-            content: 'This issue is urgent, please resolve quickly.',
-            timestamp: '2024-01-15T10:00:00.000Z',
-            isOfficial: false
-          },
-          {
-            author: '0xofficer123',
-            content: 'We have received your complaint and assigned a team to investigate.',
-            timestamp: '2024-01-16T14:30:00.000Z',
-            isOfficial: true
-          }
-        ],
-        satisfactionRating: 0
-      },
-      {
-        id: 2,
-        title: 'Street Light Not Working',
-        description: 'Street lights in our locality have been non-functional for over a week.',
-        category: 'INFRASTRUCTURE',
-        priority: 'MEDIUM',
-        status: 'RESOLVED',
-        submitDate: '2024-01-10T18:45:00.000Z',
-        resolvedDate: '2024-01-14T12:00:00.000Z',
-        location: 'MG Road, Bangalore, Karnataka',
-        assignedOfficer: '0xofficer456',
-        citizen: '0x1234567890123456789012345678901234567890',
-        resolution: 'Street lights have been repaired and are now functional.',
-        attachments: ['QmLight789'],
-        comments: [
-          {
-            author: '0xofficer456',
-            content: 'Issue has been resolved. New LED lights installed.',
-            timestamp: '2024-01-14T12:00:00.000Z',
-            isOfficial: true
-          }
-        ],
-        satisfactionRating: 5
+    const { address } = req.query;
+    
+    if (!address) {
+      return res.status(400).json({
+        error: 'Validation Error',
+        message: 'Wallet address is required'
+      });
+    }
+
+    // Find or create user
+    const [user] = await User.findOrCreate({
+      where: { walletAddress: address.toLowerCase() },
+      defaults: {
+        walletAddress: address.toLowerCase(),
+        name: `User ${address.slice(0, 6)}...${address.slice(-4)}`,
+        isVerified: false,
+        verificationLevel: 'BASIC'
       }
-    ];
+    });
+
+    // Get user's grievances
+    const grievances = await Grievance.findAll({
+      where: { 
+        userId: user.id,
+        deletedAt: null 
+      },
+      order: [['submissionDate', 'DESC']]
+    });
+
+    // Format grievances for frontend
+    const formattedGrievances = grievances.map(grievance => ({
+      id: grievance.id,
+      title: grievance.title,
+      description: grievance.description,
+      category: grievance.category,
+      priority: grievance.priority,
+      status: grievance.status,
+      department: grievance.department,
+      assignedTo: grievance.assignedTo,
+      resolution: grievance.resolution,
+      submissionDate: grievance.submissionDate,
+      resolutionDate: grievance.resolutionDate,
+      lastUpdated: grievance.lastUpdated
+    }));
+
+    // Calculate stats
+    const stats = {
+      total: formattedGrievances.length,
+      open: formattedGrievances.filter(g => g.status === 'OPEN').length,
+      inProgress: formattedGrievances.filter(g => g.status === 'IN_PROGRESS').length,
+      resolved: formattedGrievances.filter(g => g.status === 'RESOLVED').length,
+      closed: formattedGrievances.filter(g => g.status === 'CLOSED').length
+    };
 
     res.json({
       success: true,
       message: 'Grievances retrieved successfully',
       data: {
-        grievances: mockGrievances,
-        total: mockGrievances.length,
-        resolved: mockGrievances.filter(g => g.status === 'RESOLVED').length,
-        pending: mockGrievances.filter(g => g.status !== 'RESOLVED').length
+        grievances: formattedGrievances,
+        stats
       }
     });
 
