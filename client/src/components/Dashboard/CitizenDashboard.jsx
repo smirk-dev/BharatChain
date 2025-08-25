@@ -23,7 +23,18 @@ import {
   Select,
   MenuItem,
   Switch,
-  FormControlLabel
+  FormControlLabel,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemAvatar,
+  ListItemSecondaryAction,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  CircularProgress,
+  Badge
 } from '@mui/material';
 import {
   Dashboard as DashboardIcon,
@@ -46,7 +57,20 @@ import {
   Phone,
   Work,
   School,
-  AccountBalance
+  AccountBalance,
+  CloudUpload,
+  GetApp as DownloadIcon,
+  Visibility as ViewIcon,
+  Delete as DeleteIcon,
+  CheckCircle,
+  Error as ErrorIcon,
+  Schedule as PendingIcon,
+  AttachFile,
+  PictureAsPdf,
+  Image as ImageIcon,
+  InsertDriveFile,
+  Close as CloseIcon,
+  CloudDownload
 } from '@mui/icons-material';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useWeb3 } from '../../context/Web3Context';
