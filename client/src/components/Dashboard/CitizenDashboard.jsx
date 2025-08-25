@@ -1273,7 +1273,7 @@ const CitizenDashboard = () => {
         </TabPanel>
 
         {/* Documents Tab */}
-        <TabPanel value={currentTab} index={2}>
+        <TabPanel key="documents" value={currentTab} index={2}>
           <Grid container spacing={3}>
             {/* Documents Header */}
             <Grid item xs={12}>
@@ -1719,7 +1719,7 @@ const CitizenDashboard = () => {
         </TabPanel>
 
         {/* Grievances Tab */}
-        <TabPanel value={currentTab} index={3}>
+        <TabPanel key="grievances" value={currentTab} index={3}>
           <Card>
             <CardContent>
               <Typography variant="h5" gutterBottom>
