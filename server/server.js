@@ -12,6 +12,7 @@ const citizenRoutes = require('./routes/citizens');
 const documentRoutes = require('./routes/documents');
 const grievanceRoutes = require('./routes/grievances');
 const healthRoutes = require('./routes/health');
+const aiAnalysisRoutes = require('./routes/ai-analysis');
 
 // Import database and models
 const { sequelize } = require('../config/database');
