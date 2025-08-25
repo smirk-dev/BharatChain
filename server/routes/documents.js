@@ -191,6 +191,9 @@ router.post('/upload', upload.single('document'), [
       extractedData: mockAiAnalysis.extractedData
     });
 
+    // Reload document to get fresh data with proper dates
+    await document.reload();
+
     // Format response
     const responseData = {
       id: document.id,
@@ -198,7 +201,7 @@ router.post('/upload', upload.single('document'), [
       type: document.type,
       filename: document.originalName,
       fileSize: (document.fileSize / (1024 * 1024)).toFixed(2) + 'MB',
-      uploadDate: new Date(document.uploadDate || document.createdAt).toISOString(),
+      uploadDate: document.createdAt.toISOString(),
       status: document.status,
       description: document.description,
       isPublic: document.isPublic,
