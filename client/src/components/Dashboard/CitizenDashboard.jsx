@@ -1498,7 +1498,7 @@ const CitizenDashboard = () => {
                                 
                                 <Tooltip title="Download">
                                   <IconButton
-                                    onClick={() => window.open(document.url, '_blank')}
+                                    onClick={() => handleDownloadDocument(document)}
                                     size="small"
                                   >
                                     <DownloadIcon />
