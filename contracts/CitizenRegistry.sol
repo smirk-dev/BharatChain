@@ -45,7 +45,7 @@ contract CitizenRegistry is Ownable, ReentrancyGuard {
         _;
     }
     
-    constructor() {
+    constructor() Ownable(msg.sender) {
         verifiers[msg.sender] = true; // Owner is default verifier
     }
     
