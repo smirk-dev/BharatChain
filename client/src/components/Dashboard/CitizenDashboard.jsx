@@ -821,12 +821,21 @@ const CitizenDashboard = () => {
                     <Grid item xs={12}>
                       <TextField
                         fullWidth
-                        label="Email Address"
+                        label="Email Address *"
                         type="email"
                         value={profile.email}
                         onChange={(e) => handleProfileChange('email', e.target.value)}
                         disabled={!isEditingProfile}
                         variant={isEditingProfile ? "outlined" : "filled"}
+                        required
+                        error={isEditingProfile && (!profile.email || (profile.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(profile.email)))}
+                        helperText={
+                          isEditingProfile && !profile.email 
+                            ? "Email is required" 
+                            : isEditingProfile && profile.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(profile.email)
+                            ? "Please enter a valid email address"
+                            : ""
+                        }
                         InputProps={{
                           startAdornment: <Email sx={{ mr: 1, color: 'text.secondary' }} />
                         }}
