@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import {
   Container,
   Typography,
@@ -1274,16 +1274,448 @@ const CitizenDashboard = () => {
 
         {/* Documents Tab */}
         <TabPanel value={currentTab} index={2}>
-          <Card>
-            <CardContent>
-              <Typography variant="h5" gutterBottom>
-                📄 Document Management
-              </Typography>
-              <Alert severity="info" sx={{ mb: 3 }}>
-                Document upload and management functionality will be implemented here.
-              </Alert>
-            </CardContent>
-          </Card>
+          <Grid container spacing={3}>
+            {/* Documents Header */}
+            <Grid item xs={12}>
+              <Card>
+                <CardContent>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                    <Typography variant="h5" sx={{ fontWeight: 600, flexGrow: 1 }}>
+                      📄 Document Management
+                    </Typography>
+                    <Button
+                      variant="contained"
+                      startIcon={<CloudUpload />}
+                      onClick={handleUploadDialog}
+                      sx={{ ml: 2 }}
+                    >
+                      Upload Document
+                    </Button>
+                  </Box>
+
+                  {documentsLoading && (
+                    <Box sx={{ mb: 2 }}>
+                      <LinearProgress />
+                    </Box>
+                  )}
+
+                  {documentsError && (
+                    <Alert severity="error" sx={{ mb: 2 }} onClose={() => setDocumentsError(null)}>
+                      {documentsError}
+                    </Alert>
+                  )}
+
+                  {documentsSuccess && (
+                    <Alert severity="success" sx={{ mb: 2 }} onClose={() => setDocumentsSuccess(null)}>
+                      {documentsSuccess}
+                    </Alert>
+                  )}
+
+                  <Typography variant="body1" color="text.secondary">
+                    Securely store and manage your government documents on the blockchain. 
+                    All documents are encrypted and verified for authenticity.
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+
+            {/* Document Statistics */}
+            <Grid item xs={12}>
+              <Grid container spacing={2}>
+                {[
+                  {
+                    title: 'Total Documents',
+                    value: documents.length,
+                    icon: <DocumentIcon />,
+                    color: 'primary'
+                  },
+                  {
+                    title: 'Verified',
+                    value: documents.filter(doc => doc.status === 'verified').length,
+                    icon: <CheckCircle />,
+                    color: 'success'
+                  },
+                  {
+                    title: 'Pending',
+                    value: documents.filter(doc => doc.status === 'pending').length,
+                    icon: <PendingIcon />,
+                    color: 'warning'
+                  },
+                  {
+                    title: 'Storage Used',
+                    value: `${(documents.reduce((acc, doc) => acc + (doc.size || 0), 0) / (1024 * 1024)).toFixed(1)}MB`,
+                    icon: <CloudDownload />,
+                    color: 'info'
+                  }
+                ].map((stat, index) => (
+                  <Grid item xs={12} sm={6} md={3} key={index}>
+                    <Card>
+                      <CardContent>
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                          <Box sx={{ color: `${stat.color}.main`, mr: 2 }}>
+                            {stat.icon}
+                          </Box>
+                          <Box>
+                            <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                              {stat.value}
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                              {stat.title}
+                            </Typography>
+                          </Box>
+                        </Box>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                ))}
+              </Grid>
+            </Grid>
+
+            {/* Documents List */}
+            <Grid item xs={12}>
+              <Card>
+                <CardContent>
+                  <Typography variant="h6" sx={{ fontWeight: 600, mb: 3 }}>
+                    📋 Your Documents
+                  </Typography>
+
+                  {documents.length === 0 ? (
+                    <Box sx={{ textAlign: 'center', py: 6 }}>
+                      <DocumentIcon sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
+                      <Typography variant="h6" color="text.secondary" gutterBottom>
+                        No Documents Found
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                        Upload your first document to get started with BharatChain
+                      </Typography>
+                      <Button
+                        variant="contained"
+                        startIcon={<CloudUpload />}
+                        onClick={handleUploadDialog}
+                      >
+                        Upload Your First Document
+                      </Button>
+                    </Box>
+                  ) : (
+                    <List>
+                      {documents.map((document, index) => (
+                        <React.Fragment key={document.id || index}>
+                          <ListItem
+                            sx={{
+                              border: '1px solid',
+                              borderColor: 'divider',
+                              borderRadius: 2,
+                              mb: 2,
+                              '&:hover': {
+                                backgroundColor: 'action.hover'
+                              }
+                            }}
+                          >
+                            <ListItemAvatar>
+                              <Avatar sx={{ bgcolor: 'background.paper' }}>
+                                {getDocumentIcon(document.type, document.mimeType)}
+                              </Avatar>
+                            </ListItemAvatar>
+                            
+                            <ListItemText
+                              primary={
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                  <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                                    {document.title}
+                                  </Typography>
+                                  <Chip
+                                    label={document.status}
+                                    size="small"
+                                    color={getStatusColor(document.status)}
+                                    icon={getStatusIcon(document.status)}
+                                  />
+                                </Box>
+                              }
+                              secondary={
+                                <Box>
+                                  <Typography variant="body2" color="text.secondary">
+                                    Type: {document.type} • Size: {((document.size || 0) / 1024).toFixed(1)}KB
+                                  </Typography>
+                                  <Typography variant="body2" color="text.secondary">
+                                    Uploaded: {new Date(document.uploadDate || Date.now()).toLocaleDateString()}
+                                  </Typography>
+                                  {document.description && (
+                                    <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                                      {document.description}
+                                    </Typography>
+                                  )}
+                                </Box>
+                              }
+                            />
+                            
+                            <ListItemSecondaryAction>
+                              <Box sx={{ display: 'flex', gap: 1 }}>
+                                <Tooltip title="View Document">
+                                  <IconButton
+                                    onClick={() => handleViewDocument(document)}
+                                    size="small"
+                                  >
+                                    <ViewIcon />
+                                  </IconButton>
+                                </Tooltip>
+                                
+                                <Tooltip title="Download">
+                                  <IconButton
+                                    onClick={() => window.open(document.url, '_blank')}
+                                    size="small"
+                                  >
+                                    <DownloadIcon />
+                                  </IconButton>
+                                </Tooltip>
+                                
+                                <Tooltip title="Delete">
+                                  <IconButton
+                                    onClick={() => handleDeleteDocument(document.id)}
+                                    size="small"
+                                    color="error"
+                                  >
+                                    <DeleteIcon />
+                                  </IconButton>
+                                </Tooltip>
+                              </Box>
+                            </ListItemSecondaryAction>
+                          </ListItem>
+                        </React.Fragment>
+                      ))}
+                    </List>
+                  )}
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
+
+          {/* Upload Dialog */}
+          <Dialog 
+            open={uploadDialogOpen} 
+            onClose={handleCloseUploadDialog}
+            maxWidth="md"
+            fullWidth
+          >
+            <DialogTitle>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Typography variant="h6">Upload Document</Typography>
+                <IconButton onClick={handleCloseUploadDialog}>
+                  <CloseIcon />
+                </IconButton>
+              </Box>
+            </DialogTitle>
+            
+            <DialogContent>
+              <Grid container spacing={3} sx={{ mt: 1 }}>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Document Title *"
+                    value={uploadData.title}
+                    onChange={(e) => setUploadData(prev => ({ ...prev, title: e.target.value }))}
+                    placeholder="e.g., Aadhar Card, PAN Card, Passport"
+                  />
+                </Grid>
+                
+                <Grid item xs={12} sm={6}>
+                  <FormControl fullWidth>
+                    <InputLabel>Document Type *</InputLabel>
+                    <Select
+                      value={uploadData.type}
+                      label="Document Type *"
+                      onChange={(e) => setUploadData(prev => ({ ...prev, type: e.target.value }))}
+                    >
+                      <MenuItem value="aadhar">Aadhar Card</MenuItem>
+                      <MenuItem value="pan">PAN Card</MenuItem>
+                      <MenuItem value="passport">Passport</MenuItem>
+                      <MenuItem value="driving_license">Driving License</MenuItem>
+                      <MenuItem value="voter_id">Voter ID</MenuItem>
+                      <MenuItem value="birth_certificate">Birth Certificate</MenuItem>
+                      <MenuItem value="education">Education Certificate</MenuItem>
+                      <MenuItem value="income">Income Certificate</MenuItem>
+                      <MenuItem value="other">Other</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+                
+                <Grid item xs={12} sm={6}>
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={uploadData.isPublic}
+                        onChange={(e) => setUploadData(prev => ({ ...prev, isPublic: e.target.checked }))}
+                      />
+                    }
+                    label="Make Public"
+                  />
+                </Grid>
+                
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Description (Optional)"
+                    value={uploadData.description}
+                    onChange={(e) => setUploadData(prev => ({ ...prev, description: e.target.value }))}
+                    multiline
+                    rows={3}
+                    placeholder="Add any additional notes about this document"
+                  />
+                </Grid>
+                
+                <Grid item xs={12}>
+                  <Paper
+                    variant="outlined"
+                    sx={{
+                      p: 3,
+                      textAlign: 'center',
+                      border: '2px dashed',
+                      borderColor: uploadData.file ? 'success.main' : 'grey.300',
+                      bgcolor: uploadData.file ? 'success.light' : 'grey.50',
+                      cursor: 'pointer',
+                      '&:hover': {
+                        borderColor: 'primary.main',
+                        bgcolor: 'primary.light'
+                      }
+                    }}
+                    component="label"
+                  >
+                    <input
+                      hidden
+                      accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                      type="file"
+                      onChange={handleFileSelect}
+                    />
+                    <CloudUpload sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
+                    <Typography variant="h6" gutterBottom>
+                      {uploadData.file ? uploadData.file.name : 'Choose a file to upload'}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Supported: PDF, JPEG, PNG, DOC, DOCX (Max 10MB)
+                    </Typography>
+                    {uploadData.file && (
+                      <Chip
+                        label={`${(uploadData.file.size / 1024).toFixed(1)}KB`}
+                        color="success"
+                        size="small"
+                        sx={{ mt: 1 }}
+                      />
+                    )}
+                  </Paper>
+                </Grid>
+                
+                {isUploading && (
+                  <Grid item xs={12}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                      <LinearProgress 
+                        variant="determinate" 
+                        value={uploadProgress} 
+                        sx={{ flexGrow: 1 }}
+                      />
+                      <Typography variant="body2">{uploadProgress}%</Typography>
+                    </Box>
+                  </Grid>
+                )}
+              </Grid>
+            </DialogContent>
+            
+            <DialogActions sx={{ p: 3 }}>
+              <Button onClick={handleCloseUploadDialog} disabled={isUploading}>
+                Cancel
+              </Button>
+              <Button
+                onClick={handleUploadDocument}
+                variant="contained"
+                disabled={!uploadData.title || !uploadData.type || !uploadData.file || isUploading}
+                startIcon={isUploading ? <CircularProgress size={20} /> : <CloudUpload />}
+              >
+                {isUploading ? 'Uploading...' : 'Upload Document'}
+              </Button>
+            </DialogActions>
+          </Dialog>
+
+          {/* View Dialog */}
+          <Dialog
+            open={viewDialogOpen}
+            onClose={() => setViewDialogOpen(false)}
+            maxWidth="md"
+            fullWidth
+          >
+            <DialogTitle>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Typography variant="h6">Document Details</Typography>
+                <IconButton onClick={() => setViewDialogOpen(false)}>
+                  <CloseIcon />
+                </IconButton>
+              </Box>
+            </DialogTitle>
+            
+            {selectedDocument && (
+              <DialogContent>
+                <Grid container spacing={3}>
+                  <Grid item xs={12}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+                      {getDocumentIcon(selectedDocument.type, selectedDocument.mimeType)}
+                      <Box>
+                        <Typography variant="h6">{selectedDocument.title}</Typography>
+                        <Chip
+                          label={selectedDocument.status}
+                          size="small"
+                          color={getStatusColor(selectedDocument.status)}
+                          icon={getStatusIcon(selectedDocument.status)}
+                        />
+                      </Box>
+                    </Box>
+                  </Grid>
+                  
+                  <Grid item xs={12} sm={6}>
+                    <Typography variant="subtitle2" color="text.secondary">Type</Typography>
+                    <Typography variant="body1">{selectedDocument.type}</Typography>
+                  </Grid>
+                  
+                  <Grid item xs={12} sm={6}>
+                    <Typography variant="subtitle2" color="text.secondary">Size</Typography>
+                    <Typography variant="body1">{((selectedDocument.size || 0) / 1024).toFixed(1)}KB</Typography>
+                  </Grid>
+                  
+                  <Grid item xs={12} sm={6}>
+                    <Typography variant="subtitle2" color="text.secondary">Upload Date</Typography>
+                    <Typography variant="body1">
+                      {new Date(selectedDocument.uploadDate || Date.now()).toLocaleDateString()}
+                    </Typography>
+                  </Grid>
+                  
+                  <Grid item xs={12} sm={6}>
+                    <Typography variant="subtitle2" color="text.secondary">Visibility</Typography>
+                    <Typography variant="body1">
+                      {selectedDocument.isPublic ? 'Public' : 'Private'}
+                    </Typography>
+                  </Grid>
+                  
+                  {selectedDocument.description && (
+                    <Grid item xs={12}>
+                      <Typography variant="subtitle2" color="text.secondary">Description</Typography>
+                      <Typography variant="body1">{selectedDocument.description}</Typography>
+                    </Grid>
+                  )}
+                </Grid>
+              </DialogContent>
+            )}
+            
+            <DialogActions sx={{ p: 3 }}>
+              <Button onClick={() => setViewDialogOpen(false)}>
+                Close
+              </Button>
+              {selectedDocument && (
+                <Button
+                  variant="contained"
+                  startIcon={<DownloadIcon />}
+                  onClick={() => window.open(selectedDocument.url, '_blank')}
+                >
+                  Download
+                </Button>
+              )}
+            </DialogActions>
+          </Dialog>
         </TabPanel>
 
         {/* Grievances Tab */}
