@@ -348,18 +348,23 @@ const CitizenDashboard = () => {
       setDocumentsLoading(true);
       setDocumentsError(null);
       
-      const response = await fetch('http://localhost:3001/api/documents', {
+      if (!account) {
+        setDocumentsError('Please connect your wallet to view documents');
+        setDocuments([]);
+        return;
+      }
+      
+      const response = await fetch(`/api/documents?address=${account}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
         },
       });
 
       if (response.ok) {
         const data = await response.json();
         if (data.success) {
-          setDocuments(data.documents || []);
+          setDocuments(data.data.documents || []);
         } else {
           setDocuments([]);
         }
