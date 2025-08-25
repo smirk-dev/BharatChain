@@ -250,7 +250,7 @@ const CitizenDashboard = () => {
                     sx={{ 
                       p: 2, 
                       height: '100%',
-                      background: `linear-gradient(135deg, ${stat.color}.light 0%, ${stat.color}.main 100%)`,
+                      background: `linear-gradient(135deg, ${stat.color}.main 0%, ${stat.color}.dark 100%)`,
                       color: 'white'
                     }}
                   >
