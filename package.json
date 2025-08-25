@@ -16,16 +16,22 @@
     "node": "npx hardhat node",
     "setup": "npm install && cd client && npm install && cd ../server && npm install"
   },
-  "keywords": ["blockchain", "governance", "ethereum", "react", "nodejs"],
+  "keywords": [
+    "blockchain",
+    "governance",
+    "ethereum",
+    "react",
+    "nodejs"
+  ],
   "author": "BharatChain Team",
   "license": "MIT",
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^4.0.0",
-    "hardhat": "^2.19.4",
-    "concurrently": "^8.2.2"
+    "concurrently": "^8.2.2",
+    "hardhat": "^2.19.4"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^5.0.1",
+    "@openzeppelin/contracts": "^5.4.0",
     "dotenv": "^16.3.1"
   }
 }
