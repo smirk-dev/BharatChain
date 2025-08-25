@@ -87,6 +87,28 @@ const CitizenDashboard = () => {
     resolvedGrievances: 0
   });
 
+  // Profile state
+  const [profile, setProfile] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    address: '',
+    city: '',
+    state: '',
+    pincode: '',
+    aadharNumber: '',
+    panNumber: '',
+    occupation: '',
+    education: '',
+    dateOfBirth: '',
+    gender: '',
+    emergencyContact: '',
+    isVerified: false,
+    profileImage: null
+  });
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [profileLoading, setProfileLoading] = useState(false);
+
   // Handle tab change
   const handleTabChange = (event, newValue) => {
     setCurrentTab(newValue);
