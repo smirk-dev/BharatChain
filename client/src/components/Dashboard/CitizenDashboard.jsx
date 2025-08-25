@@ -211,12 +211,31 @@ const CitizenDashboard = () => {
         return;
       }
 
-      // Phone validation
-      const phoneRegex = /^[+]?[0-9\s\-()]{10,}$/;
-      if (!phoneRegex.test(profile.phone)) {
-        setProfileError('Please enter a valid phone number');
+      // Phone validation - format for isMobilePhone validation
+      let formattedPhone = profile.phone.replace(/[\s\-()]/g, '');
+      if (formattedPhone.startsWith('+91')) {
+        formattedPhone = formattedPhone.substring(3);
+      } else if (formattedPhone.startsWith('91')) {
+        formattedPhone = formattedPhone.substring(2);
+      }
+      
+      if (!/^[6-9]\d{9}$/.test(formattedPhone)) {
+        setProfileError('Please enter a valid Indian mobile number (10 digits starting with 6-9)');
         return;
       }
+
+      // Create aadharHash from aadharNumber (in real app, this would be properly hashed)
+      const aadharHash = profile.aadharNumber ? 
+        `hash_${profile.aadharNumber.replace(/\s/g, '')}` : 
+        `hash_${Date.now()}`;
+
+      const requestBody = {
+        walletAddress: account,
+        name: profile.name.trim(),
+        email: profile.email.trim(),
+        phone: `+91${formattedPhone}`, // Format as international number
+        aadharHash: aadharHash
+      };
 
       const response = await fetch('http://localhost:3001/api/citizens/register', {
         method: 'POST',
@@ -224,10 +243,7 @@ const CitizenDashboard = () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
         },
-        body: JSON.stringify({
-          walletAddress: account,
-          ...profile
-        }),
+        body: JSON.stringify(requestBody),
       });
 
       const data = await response.json();
