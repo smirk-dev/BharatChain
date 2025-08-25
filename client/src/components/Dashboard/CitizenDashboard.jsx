@@ -154,6 +154,23 @@ const CitizenDashboard = () => {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
 
+  // Grievances state
+  const [grievances, setGrievances] = useState([]);
+  const [grievancesLoading, setGrievancesLoading] = useState(false);
+  const [grievancesError, setGrievancesError] = useState(null);
+  const [grievancesSuccess, setGrievancesSuccess] = useState(null);
+  const [grievanceDialogOpen, setGrievanceDialogOpen] = useState(false);
+  const [grievanceViewDialogOpen, setGrievanceViewDialogOpen] = useState(false);
+  const [selectedGrievance, setSelectedGrievance] = useState(null);
+  const [grievanceData, setGrievanceData] = useState({
+    title: '',
+    description: '',
+    category: 'DOCUMENTATION',
+    priority: 'MEDIUM',
+    department: ''
+  });
+  const [isSubmittingGrievance, setIsSubmittingGrievance] = useState(false);
+
   // Handle tab change
   const handleTabChange = (event, newValue) => {
     setCurrentTab(newValue);
@@ -579,6 +596,207 @@ const CitizenDashboard = () => {
     }
   };
 
+  // Grievances functions
+  const loadGrievances = async () => {
+    try {
+      setGrievancesLoading(true);
+      setGrievancesError(null);
+      
+      if (!account) {
+        setGrievancesError('Please connect your wallet to view grievances');
+        setGrievances([]);
+        return;
+      }
+      
+      const response = await fetch(`/api/grievances?address=${account}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          setGrievances(data.data.grievances || []);
+          // Update stats
+          setStats(prev => ({
+            ...prev,
+            pendingGrievances: data.data.stats.open + data.data.stats.inProgress,
+            resolvedGrievances: data.data.stats.resolved + data.data.stats.closed
+          }));
+        } else {
+          setGrievances([]);
+        }
+      } else {
+        throw new Error('Failed to load grievances');
+      }
+    } catch (error) {
+      console.error('Error loading grievances:', error);
+      setGrievancesError('Failed to load grievances. Please try again.');
+      setGrievances([]);
+    } finally {
+      setGrievancesLoading(false);
+    }
+  };
+
+  const handleGrievanceDialog = () => {
+    setGrievanceDialogOpen(true);
+    setGrievanceData({
+      title: '',
+      description: '',
+      category: 'DOCUMENTATION',
+      priority: 'MEDIUM',
+      department: ''
+    });
+    setGrievancesError(null);
+    setGrievancesSuccess(null);
+  };
+
+  const handleGrievanceSubmit = async () => {
+    if (!account) {
+      setGrievancesError('Please connect your wallet to submit grievances');
+      return;
+    }
+
+    if (!grievanceData.title.trim() || !grievanceData.description.trim()) {
+      setGrievancesError('Please fill in all required fields');
+      return;
+    }
+
+    if (grievanceData.title.length < 5 || grievanceData.description.length < 20) {
+      setGrievancesError('Title must be at least 5 characters and description at least 20 characters');
+      return;
+    }
+
+    try {
+      setIsSubmittingGrievance(true);
+      setGrievancesError(null);
+
+      const response = await fetch('/api/grievances', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...grievanceData,
+          address: account
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setGrievancesSuccess('Grievance submitted successfully!');
+        setGrievanceDialogOpen(false);
+        loadGrievances(); // Reload grievances
+      } else {
+        throw new Error(data.message || 'Failed to submit grievance');
+      }
+    } catch (error) {
+      console.error('Error submitting grievance:', error);
+      setGrievancesError(error.message || 'Failed to submit grievance. Please try again.');
+    } finally {
+      setIsSubmittingGrievance(false);
+    }
+  };
+
+  const handleDeleteGrievance = async (grievanceId) => {
+    if (!account) {
+      setGrievancesError('Please connect your wallet to delete grievances');
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/grievances/${grievanceId}?address=${account}`, {
+        method: 'DELETE',
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setGrievancesSuccess('Grievance deleted successfully!');
+        loadGrievances(); // Reload grievances
+      } else {
+        throw new Error(data.message || 'Failed to delete grievance');
+      }
+    } catch (error) {
+      console.error('Error deleting grievance:', error);
+      setGrievancesError(error.message || 'Failed to delete grievance. Please try again.');
+    }
+  };
+
+  const handleViewGrievance = (grievance) => {
+    setSelectedGrievance(grievance);
+    setGrievanceViewDialogOpen(true);
+  };
+
+  const handleUpdateGrievanceStatus = async (grievanceId, status, resolution) => {
+    if (!account) {
+      setGrievancesError('Please connect your wallet to update grievance status');
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/grievances/${grievanceId}/status`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          status,
+          resolution,
+          address: account
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setGrievancesSuccess('Grievance status updated successfully!');
+        loadGrievances(); // Reload grievances
+        setGrievanceViewDialogOpen(false);
+      } else {
+        throw new Error(data.message || 'Failed to update grievance status');
+      }
+    } catch (error) {
+      console.error('Error updating grievance status:', error);
+      setGrievancesError(error.message || 'Failed to update grievance status. Please try again.');
+    }
+  };
+
+  const getGrievanceStatusColor = (status) => {
+    switch (status) {
+      case 'RESOLVED': return 'success';
+      case 'CLOSED': return 'info';
+      case 'IN_PROGRESS': return 'warning';
+      case 'ESCALATED': return 'error';
+      case 'OPEN': return 'default';
+      default: return 'default';
+    }
+  };
+
+  const getGrievanceStatusIcon = (status) => {
+    switch (status) {
+      case 'RESOLVED': return <CheckCircle />;
+      case 'CLOSED': return <CheckCircle />;
+      case 'IN_PROGRESS': return <PendingIcon />;
+      case 'ESCALATED': return <ErrorIcon />;
+      case 'OPEN': return <PendingIcon />;
+      default: return <PendingIcon />;
+    }
+  };
+
+  const getPriorityColor = (priority) => {
+    switch (priority) {
+      case 'URGENT': return 'error';
+      case 'HIGH': return 'warning';
+      case 'MEDIUM': return 'info';
+      case 'LOW': return 'success';
+      default: return 'default';
+    }
+  };
+
   // Mock data loading
   useEffect(() => {
     if (isConnected && account) {
@@ -600,7 +818,9 @@ const CitizenDashboard = () => {
         // Load real profile data
         loadProfile(),
         // Load documents
-        loadDocuments()
+        loadDocuments(),
+        // Load grievances
+        loadGrievances()
       ]).then(([statsData]) => {
         setStats(statsData);
         setIsLoading(false);

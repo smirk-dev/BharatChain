@@ -91,11 +91,10 @@ router.post('/', [
   body('title').isLength({ min: 5, max: 200 }).withMessage('Title must be 5-200 characters'),
   body('description').isLength({ min: 20, max: 2000 }).withMessage('Description must be 20-2000 characters'),
   body('category').isIn([
-    'INFRASTRUCTURE', 'WATER_SUPPLY', 'ELECTRICITY', 'SANITATION', 
-    'ROADS', 'HEALTHCARE', 'EDUCATION', 'CORRUPTION', 'OTHER'
+    'DOCUMENTATION', 'VERIFICATION', 'TECHNICAL', 'POLICY', 'OTHER'
   ]).withMessage('Invalid category'),
   body('priority').isIn(['LOW', 'MEDIUM', 'HIGH', 'URGENT']).withMessage('Invalid priority'),
-  body('location').isLength({ min: 5, max: 500 }).withMessage('Location must be 5-500 characters')
+  body('address').notEmpty().withMessage('Wallet address is required')
 ], async (req, res) => {
   try {
     // Check for validation errors
@@ -108,54 +107,62 @@ router.post('/', [
       });
     }
 
-    const { title, description, category, priority, location, attachments } = req.body;
+    const { title, description, category, priority, address, department } = req.body;
 
-    // Mock AI sentiment analysis
-    const sentimentAnalysis = {
-      sentiment: Math.random() > 0.7 ? 'negative' : 'neutral',
-      urgencyScore: Math.random(),
-      keywords: ['water', 'supply', 'urgent', 'days'],
-      suggestedCategory: category,
-      estimatedResolutionTime: priority === 'URGENT' ? '24 hours' : priority === 'HIGH' ? '72 hours' : '7 days'
+    // Find or create user
+    const [user] = await User.findOrCreate({
+      where: { walletAddress: address.toLowerCase() },
+      defaults: {
+        walletAddress: address.toLowerCase(),
+        name: `User ${address.slice(0, 6)}...${address.slice(-4)}`,
+        isVerified: false,
+        verificationLevel: 'BASIC'
+      }
+    });
+
+    // Auto-assign department based on category
+    const departmentMapping = {
+      'DOCUMENTATION': 'Document Services',
+      'VERIFICATION': 'Verification Department',
+      'TECHNICAL': 'IT Support',
+      'POLICY': 'Policy Department',
+      'OTHER': 'General Services'
     };
 
-    // Auto-assign to category officer (mock)
-    const mockOfficers = {
-      'WATER_SUPPLY': '0xwater_officer123',
-      'INFRASTRUCTURE': '0xinfra_officer456',
-      'ELECTRICITY': '0xpower_officer789',
-      'SANITATION': '0xsanitation_officer012',
-      'OTHER': '0xgeneral_officer345'
-    };
-
-    const newGrievance = {
-      id: Date.now(),
+    // Create new grievance
+    const newGrievance = await Grievance.create({
+      userId: user.id,
       title,
       description,
       category,
       priority,
-      status: 'SUBMITTED',
-      submitDate: new Date().toISOString(),
-      resolvedDate: null,
-      location,
-      citizen: req.body.address || '0x1234567890123456789012345678901234567890',
-      assignedOfficer: mockOfficers[category] || mockOfficers.OTHER,
-      attachments: attachments || [],
-      comments: [],
-      satisfactionRating: 0,
-      aiAnalysis: sentimentAnalysis
-    };
+      status: 'OPEN',
+      department: department || departmentMapping[category],
+      assignedTo: null,
+      resolution: null,
+      resolutionDate: null,
+      submissionDate: new Date(),
+      lastUpdated: new Date()
+    });
 
-    // TODO: Implement actual submission logic
-    // 1. Save to database
-    // 2. Call smart contract
-    // 3. Send notification to assigned officer
-    // 4. Upload attachments to IPFS
+    // Format response
+    const formattedGrievance = {
+      id: newGrievance.id,
+      title: newGrievance.title,
+      description: newGrievance.description,
+      category: newGrievance.category,
+      priority: newGrievance.priority,
+      status: newGrievance.status,
+      department: newGrievance.department,
+      assignedTo: newGrievance.assignedTo,
+      submissionDate: newGrievance.submissionDate,
+      lastUpdated: newGrievance.lastUpdated
+    };
 
     res.status(201).json({
       success: true,
       message: 'Grievance submitted successfully',
-      data: newGrievance
+      data: formattedGrievance
     });
 
   } catch (error) {
@@ -175,68 +182,63 @@ router.post('/', [
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
+    const { address } = req.query;
 
-    // Mock grievance details
-    const mockGrievance = {
-      id: parseInt(id),
-      title: 'Water Supply Issue',
-      description: 'No water supply for the past 3 days in my area. This is causing major inconvenience to all residents.',
-      category: 'WATER_SUPPLY',
-      priority: 'HIGH',
-      status: 'IN_PROGRESS',
-      submitDate: '2024-01-15T09:30:00.000Z',
-      resolvedDate: null,
-      location: 'Sector 15, Gurgaon, Haryana',
-      assignedOfficer: '0xofficer123',
-      citizen: '0x1234567890123456789012345678901234567890',
-      attachments: [
-        {
-          ipfsHash: 'QmWater123',
-          filename: 'water_shortage.jpg',
-          uploadDate: '2024-01-15T09:35:00.000Z'
-        }
-      ],
-      comments: [
-        {
-          id: 1,
-          author: '0x1234567890123456789012345678901234567890',
-          content: 'This issue is urgent, please resolve quickly.',
-          timestamp: '2024-01-15T10:00:00.000Z',
-          isOfficial: false
-        },
-        {
-          id: 2,
-          author: '0xofficer123',
-          content: 'We have received your complaint and assigned a team to investigate.',
-          timestamp: '2024-01-16T14:30:00.000Z',
-          isOfficial: true
-        }
-      ],
-      timeline: [
-        {
-          date: '2024-01-15T09:30:00.000Z',
-          event: 'Grievance submitted',
-          actor: 'Citizen'
-        },
-        {
-          date: '2024-01-15T11:00:00.000Z',
-          event: 'Assigned to Water Department',
-          actor: 'System'
-        },
-        {
-          date: '2024-01-16T14:30:00.000Z',
-          event: 'Officer acknowledged',
-          actor: 'Officer'
-        }
-      ],
-      satisfactionRating: 0,
-      estimatedResolution: '2024-01-18T00:00:00.000Z'
+    if (!address) {
+      return res.status(400).json({
+        error: 'Validation Error',
+        message: 'Wallet address is required'
+      });
+    }
+
+    // Find user
+    const user = await User.findOne({
+      where: { walletAddress: address.toLowerCase() }
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        error: 'Not Found',
+        message: 'User not found'
+      });
+    }
+
+    // Find grievance
+    const grievance = await Grievance.findOne({
+      where: { 
+        id: parseInt(id),
+        userId: user.id,
+        deletedAt: null 
+      }
+    });
+
+    if (!grievance) {
+      return res.status(404).json({
+        error: 'Not Found',
+        message: 'Grievance not found'
+      });
+    }
+
+    // Format grievance
+    const formattedGrievance = {
+      id: grievance.id,
+      title: grievance.title,
+      description: grievance.description,
+      category: grievance.category,
+      priority: grievance.priority,
+      status: grievance.status,
+      department: grievance.department,
+      assignedTo: grievance.assignedTo,
+      resolution: grievance.resolution,
+      submissionDate: grievance.submissionDate,
+      resolutionDate: grievance.resolutionDate,
+      lastUpdated: grievance.lastUpdated
     };
 
     res.json({
       success: true,
       message: 'Grievance details retrieved successfully',
-      data: mockGrievance
+      data: formattedGrievance
     });
 
   } catch (error) {
@@ -296,14 +298,77 @@ router.post('/:id/comments', [
 });
 
 /**
+ * @route DELETE /api/grievances/:id
+ * @desc Delete a grievance (soft delete)
+ * @access Private
+ */
+router.delete('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { address } = req.query;
+
+    if (!address) {
+      return res.status(400).json({
+        error: 'Validation Error',
+        message: 'Wallet address is required'
+      });
+    }
+
+    // Find user
+    const user = await User.findOne({
+      where: { walletAddress: address.toLowerCase() }
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        error: 'Not Found',
+        message: 'User not found'
+      });
+    }
+
+    // Find and delete grievance
+    const grievance = await Grievance.findOne({
+      where: { 
+        id: parseInt(id),
+        userId: user.id,
+        deletedAt: null 
+      }
+    });
+
+    if (!grievance) {
+      return res.status(404).json({
+        error: 'Not Found',
+        message: 'Grievance not found'
+      });
+    }
+
+    // Soft delete
+    await grievance.destroy();
+
+    res.json({
+      success: true,
+      message: 'Grievance deleted successfully'
+    });
+
+  } catch (error) {
+    console.error('Delete grievance error:', error);
+    res.status(500).json({
+      error: 'Internal Server Error',
+      message: 'Failed to delete grievance'
+    });
+  }
+});
+
+/**
  * @route PUT /api/grievances/:id/status
- * @desc Update grievance status (for officials)
- * @access Private (Officials only)
+ * @desc Update grievance status
+ * @access Private
  */
 router.put('/:id/status', [
-  body('status').isIn(['SUBMITTED', 'IN_PROGRESS', 'RESOLVED', 'CLOSED', 'ESCALATED'])
+  body('status').isIn(['OPEN', 'IN_PROGRESS', 'RESOLVED', 'CLOSED', 'ESCALATED'])
     .withMessage('Invalid status'),
-  body('resolution').optional().isLength({ max: 1000 }).withMessage('Resolution too long')
+  body('resolution').optional().isLength({ max: 1000 }).withMessage('Resolution too long'),
+  body('address').notEmpty().withMessage('Wallet address is required')
 ], async (req, res) => {
   try {
     // Check for validation errors
@@ -317,22 +382,62 @@ router.put('/:id/status', [
     }
 
     const { id } = req.params;
-    const { status, resolution } = req.body;
+    const { status, resolution, address } = req.body;
 
-    // TODO: Implement actual status update logic
-    const statusUpdate = {
-      id: parseInt(id),
+    // Find user
+    const user = await User.findOne({
+      where: { walletAddress: address.toLowerCase() }
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        error: 'Not Found',
+        message: 'User not found'
+      });
+    }
+
+    // Find grievance
+    const grievance = await Grievance.findOne({
+      where: { 
+        id: parseInt(id),
+        userId: user.id,
+        deletedAt: null 
+      }
+    });
+
+    if (!grievance) {
+      return res.status(404).json({
+        error: 'Not Found',
+        message: 'Grievance not found'
+      });
+    }
+
+    // Update status
+    const updateData = {
       status,
-      resolution: resolution || null,
-      updatedDate: new Date().toISOString(),
-      updatedBy: '0xofficer123',
-      resolvedDate: status === 'RESOLVED' ? new Date().toISOString() : null
+      lastUpdated: new Date()
     };
+
+    if (resolution) {
+      updateData.resolution = resolution;
+    }
+
+    if (status === 'RESOLVED' || status === 'CLOSED') {
+      updateData.resolutionDate = new Date();
+    }
+
+    await grievance.update(updateData);
 
     res.json({
       success: true,
       message: `Grievance status updated to ${status}`,
-      data: statusUpdate
+      data: {
+        id: grievance.id,
+        status: grievance.status,
+        resolution: grievance.resolution,
+        resolutionDate: grievance.resolutionDate,
+        lastUpdated: grievance.lastUpdated
+      }
     });
 
   } catch (error) {
