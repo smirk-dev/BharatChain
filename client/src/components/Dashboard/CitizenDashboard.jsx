@@ -85,6 +85,9 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { useWeb3 } from '../../context/Web3Context';
 
+// API Configuration
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+
 // Tab panel component
 function TabPanel({ children, value, index, ...other }) {
   return (
