@@ -33,93 +33,230 @@ Transform government services with transparency, security, and efficiency throug
 
 ---
 
-## 🏗️ **System Architecture**
+## 🚀 **Quick Start - One Click Launch**
 
-<div align="center">
+### **📋 Prerequisites**
+Before starting, ensure you have:
+- **Windows 10/11** (our launcher is optimized for Windows)
+- **Node.js 18+** installed ([Download here](https://nodejs.org/))
+- **Python 3.8+** installed ([Download here](https://python.org/))
+- **MetaMask Browser Extension** ([Install here](https://metamask.io/))
 
-| **Layer** | **Technology** | **Purpose** |
-|-----------|---------------|-------------|
-| **Frontend** | React 18 + Material-UI | Citizen dashboard & interfaces |
-| **Backend** | Node.js + Express | RESTful APIs & business logic |
-| **Blockchain** | Solidity + Hardhat | Smart contracts & immutable records |
-| **Database** | SQLite/PostgreSQL | Data persistence & caching |
-| **AI/ML** | Python + TensorFlow | Document analysis & fraud detection |
-| **Storage** | IPFS | Decentralized file storage |
-| **Auth** | MetaMask + JWT | Wallet-based authentication |
+### **⚡ Instant Launch (Easiest Method)**
 
-</div>
-
----
-
-## 🚀 **Key Features**
-
-### 👤 **Citizen Management**
-- **Blockchain Identity**: Ethereum wallet-based digital identity
-- **ENS-Free Integration**: Universal MetaMask compatibility
-- **Aadhar Verification**: Privacy-preserving citizen registration
-- **Profile Management**: Secure and updateable citizen profiles
-
-### 📄 **AI-Powered Document System**
-- **Smart Upload**: Drag & drop with real-time validation
-- **OCR Processing**: Automatic text extraction from documents
-- **Fraud Detection**: AI-powered authenticity verification
-- **Blockchain Storage**: IPFS + smart contract integration
-- **Multi-format Support**: PDF, JPG, PNG (up to 10MB)
-
-### 🎯 **Grievance Management**
-- **Smart Categorization**: AI-powered issue classification
-- **Priority Handling**: Urgent/High/Medium/Low priority system
-- **Real-time Tracking**: Live status updates and notifications
-- **Officer Dashboard**: Administrative interface for authorities
-- **Sentiment Analysis**: AI-driven urgency assessment
-
-### 🔐 **Security & Authentication**
-- **Wallet Authentication**: MetaMask signature-based login
-- **JWT Integration**: Secure session management
-- **Input Validation**: Comprehensive security measures
-- **Rate Limiting**: Protection against abuse
-- **CORS Security**: Production-ready security headers
-
----
-
-## 🛠️ **Quick Start**
-
-### **Prerequisites**
+**Option 1: Simple Double-Click Launch**
 ```bash
-Node.js 18+ | npm 9+ | Git | MetaMask Browser Extension
+# Navigate to your BharatChain folder and double-click:
+start.bat
 ```
 
-### **1. Clone & Install**
+**Option 2: Enhanced Launcher**
 ```bash
+# Double-click for smart launcher with fallback:
+bharatchain.bat
+```
+
+**Option 3: PowerShell Advanced**
+```powershell
+# Right-click folder → "Open PowerShell here" → Run:
+.\bharatchain.ps1
+```
+
+### **🎬 What Happens When You Launch**
+
+```
+========================================
+🇮🇳 BharatChain Launcher 🇮🇳
+Starting all services...
+========================================
+
+✅ Stopping existing services...
+🤖 Starting AI Service (Port 5001)...
+⚙️ Starting Backend (Port 3001)...
+🎨 Starting Frontend (Port 3000)...
+
+========================================
+🚀 All services are starting up!
+
+Services run in separate windows.
+Please wait 15-20 seconds for startup...
+
+🌐 Your BharatChain will open at:
+   http://localhost:3000
+
+📡 Backend API available at:
+   http://localhost:3001
+
+🧠 AI Service available at:
+   http://localhost:5001
+========================================
+
+🔥 Opening browser automatically...
+```
+
+### **✅ Verify Everything Works**
+
+After launch, you should see:
+- **3 terminal windows** opened (AI Service, Backend, Frontend)
+- **Browser opens automatically** to http://localhost:3000
+- **Beautiful Indian-themed interface** loads
+- **"Connect MetaMask" button** appears on the homepage
+
+### **🛑 To Stop All Services**
+
+```bash
+# Method 1: Close terminal windows manually
+# Method 2: Use stop command
+bharatchain.bat stop
+
+# Method 3: Kill all Node.js processes
+taskkill /f /im node.exe
+taskkill /f /im python.exe
+```
+
+---
+
+## � **User Guide**
+
+### **🔐 Step 1: Connect Your Wallet**
+
+1. **Install MetaMask** browser extension if not already installed
+2. **Create/Import wallet** and set up your account
+3. **Visit** http://localhost:3000 
+4. **Click "Connect MetaMask"** on the homepage
+5. **Approve connection** in MetaMask popup
+6. **Sign message** to authenticate (no gas fees!)
+
+### **👤 Step 2: Citizen Registration**
+
+1. **After wallet connection**, you'll see the registration form
+2. **Fill required details**:
+   - Full Name
+   - Aadhar Number (12 digits)
+   - Phone Number
+   - Email Address
+   - Date of Birth
+3. **Submit registration** - your identity gets stored on blockchain
+4. **Success!** You're now a registered BharatChain citizen
+
+### **📄 Step 3: Document Management**
+
+**Upload Documents:**
+1. **Navigate to "Documents"** in the dashboard
+2. **Click "Upload Document"**
+3. **Select file** (PDF, JPG, PNG - max 10MB)
+4. **Choose document type** (Aadhar, PAN, etc.)
+5. **Wait for AI processing** - automatic text extraction & verification
+6. **Document stored** on blockchain with IPFS hash
+
+**View Documents:**
+- **Dashboard overview** shows all your documents
+- **Click any document** to view details
+- **Verification status** shown (Pending/Verified/Rejected)
+- **Download original** or processed version
+
+### **📝 Step 4: Submit Grievances**
+
+**File a Complaint:**
+1. **Go to "Grievances"** section
+2. **Click "Submit New Grievance"**
+3. **Fill the form**:
+   - **Subject**: Brief description
+   - **Description**: Detailed explanation
+   - **Category**: Select appropriate category
+   - **Urgency**: Select priority level
+4. **Submit** - AI automatically analyzes and categorizes
+5. **Track status** - real-time updates on progress
+
+**AI Analysis Features:**
+- **Sentiment Analysis**: Detects urgency and emotion
+- **Smart Categorization**: Auto-assigns to correct department
+- **Priority Scoring**: Urgent issues get higher priority
+- **Response Time**: Estimated resolution timeline
+
+### **📊 Step 5: Dashboard Overview**
+
+Your dashboard shows:
+- **Document Summary**: Total uploaded, verified, pending
+- **Grievance Status**: Active, resolved, in-progress
+- **Recent Activity**: Latest actions and updates
+- **Quick Actions**: Fast access to common tasks
+- **Notifications**: Important updates and alerts
+
+---
+
+## � **Developer Setup**
+
+### **🛠️ Manual Development Setup**
+
+If you want to run services individually for development:
+
+**Install Dependencies:**
+```bash
+# Clone repository
 git clone https://github.com/your-username/WHCL-Hackathon.git
 cd WHCL-Hackathon
-npm run setup  # Installs all dependencies
+
+# Install backend dependencies
+cd server && npm install
+
+# Install frontend dependencies  
+cd ../client && npm install
+
+# Install AI service dependencies
+cd ../ai-service && pip install -r requirements.txt
 ```
 
-### **2. Environment Setup**
+**Start Services Manually:**
 ```bash
-cp .env.example .env
-# Edit .env with your configuration
+# Terminal 1: AI Service
+cd ai-service
+python simple_app.py
+
+# Terminal 2: Backend
+cd server
+npm start
+
+# Terminal 3: Frontend
+cd client
+npm start
 ```
 
-### **3. Blockchain Setup**
-```bash
-# Start local blockchain
-npm run node
+### **🔗 System Architecture**
 
-# Deploy contracts (new terminal)
-npm run deploy
+| **Component** | **Technology** | **Port** | **Purpose** |
+|---------------|---------------|----------|-------------|
+| **Frontend** | React 18 + Material-UI | 3000 | User interface & dashboard |
+| **Backend** | Node.js + Express | 3001 | RESTful APIs & business logic |
+| **AI Service** | Python + Flask | 5001 | Document analysis & ML processing |
+| **Database** | SQLite | - | Data persistence & caching |
+| **Blockchain** | Local/Mumbai | 8545 | Smart contracts & immutable records |
+
+### **🗃️ Project Structure**
+
 ```
-
-### **4. Start Development**
-```bash
-npm run dev  # Starts both frontend & backend
+WHCL-Hackathon/
+├── 🎨 client/                 # React frontend
+│   ├── src/components/        # UI components
+│   ├── src/context/          # Web3 & app context
+│   └── public/               # Static assets
+├── ⚙️ server/                 # Node.js backend  
+│   ├── routes/               # API endpoints
+│   ├── database/             # DB models & config
+│   └── server.js             # Main server file
+├── 🤖 ai-service/             # Python AI service
+│   ├── simple_app.py         # Flask app
+│   └── requirements.txt      # Python dependencies
+├── 🔗 contracts/             # Smart contracts
+│   ├── CitizenRegistry.sol   # Citizen management
+│   ├── DocumentRegistry.sol  # Document storage
+│   └── GrievanceSystem.sol   # Grievance handling
+├── 🚀 Launchers/             # One-click launch files
+│   ├── start.bat             # Simple launcher
+│   ├── bharatchain.bat       # Enhanced launcher
+│   └── bharatchain.ps1       # PowerShell launcher
+└── 📚 docs/                  # Documentation
 ```
-
-**🌐 Access Points:**
-- **Frontend**: http://localhost:3000
-- **Backend API**: http://localhost:3001
-- **Blockchain**: http://localhost:8545
 
 ---
 
