@@ -1977,16 +1977,363 @@ const CitizenDashboard = () => {
 
         {/* Grievances Tab */}
         <TabPanel key="grievances" value={currentTab} index={3}>
-          <Card>
-            <CardContent>
-              <Typography variant="h5" gutterBottom>
-                📝 Grievance System
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+              <Typography variant="h4" sx={{ fontWeight: 600, color: 'black' }}>
+                📝 Grievance Management
               </Typography>
-              <Alert severity="info" sx={{ mb: 3 }}>
-                Grievance submission and tracking functionality will be implemented here.
+              <Button
+                variant="contained"
+                startIcon={<AddIcon />}
+                onClick={handleGrievanceDialog}
+                sx={{
+                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  '&:hover': {
+                    background: 'linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)',
+                  }
+                }}
+              >
+                Submit New Grievance
+              </Button>
+            </Box>
+
+            {grievancesError && (
+              <Alert severity="error" sx={{ mb: 3 }} onClose={() => setGrievancesError(null)}>
+                {grievancesError}
               </Alert>
-            </CardContent>
-          </Card>
+            )}
+
+            {grievancesSuccess && (
+              <Alert severity="success" sx={{ mb: 3 }} onClose={() => setGrievancesSuccess(null)}>
+                {grievancesSuccess}
+              </Alert>
+            )}
+
+            {grievancesLoading ? (
+              <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+                <CircularProgress />
+              </Box>
+            ) : (
+              <Grid container spacing={3}>
+                {grievances.length === 0 ? (
+                  <Grid item xs={12}>
+                    <Card sx={{ textAlign: 'center', py: 4 }}>
+                      <CardContent>
+                        <GrievanceIcon sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
+                        <Typography variant="h6" color="text.secondary" gutterBottom>
+                          No Grievances Found
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                          You haven't submitted any grievances yet. Submit your first grievance to get started.
+                        </Typography>
+                        <Button
+                          variant="contained"
+                          startIcon={<AddIcon />}
+                          onClick={handleGrievanceDialog}
+                        >
+                          Submit Your First Grievance
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                ) : (
+                  grievances.map((grievance, index) => (
+                    <Grid item xs={12} md={6} key={grievance.id}>
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.5, delay: index * 0.1 }}
+                      >
+                        <Card
+                          sx={{
+                            height: '100%',
+                            cursor: 'pointer',
+                            transition: 'all 0.3s ease',
+                            '&:hover': {
+                              transform: 'translateY(-4px)',
+                              boxShadow: 6
+                            }
+                          }}
+                          onClick={() => handleViewGrievance(grievance)}
+                        >
+                          <CardContent>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                              <Typography variant="h6" sx={{ fontWeight: 600, flex: 1, pr: 2 }}>
+                                {grievance.title}
+                              </Typography>
+                              <Box sx={{ display: 'flex', gap: 1 }}>
+                                <Chip
+                                  label={grievance.priority}
+                                  color={getPriorityColor(grievance.priority)}
+                                  size="small"
+                                />
+                                <Chip
+                                  icon={getGrievanceStatusIcon(grievance.status)}
+                                  label={grievance.status.replace('_', ' ')}
+                                  color={getGrievanceStatusColor(grievance.status)}
+                                  size="small"
+                                />
+                              </Box>
+                            </Box>
+
+                            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                              {grievance.description.length > 150
+                                ? `${grievance.description.substring(0, 150)}...`
+                                : grievance.description
+                              }
+                            </Typography>
+
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                              <Box>
+                                <Typography variant="caption" color="text.secondary">
+                                  Category: {grievance.category}
+                                </Typography>
+                                <br />
+                                <Typography variant="caption" color="text.secondary">
+                                  Department: {grievance.department || 'Not Assigned'}
+                                </Typography>
+                              </Box>
+                              <Typography variant="caption" color="text.secondary">
+                                {new Date(grievance.submissionDate).toLocaleDateString()}
+                              </Typography>
+                            </Box>
+
+                            <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
+                              <Button
+                                size="small"
+                                variant="outlined"
+                                startIcon={<VisibilityIcon />}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleViewGrievance(grievance);
+                                }}
+                              >
+                                View Details
+                              </Button>
+                              <Button
+                                size="small"
+                                variant="outlined"
+                                color="error"
+                                startIcon={<DeleteIcon />}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  if (window.confirm('Are you sure you want to delete this grievance?')) {
+                                    handleDeleteGrievance(grievance.id);
+                                  }
+                                }}
+                              >
+                                Delete
+                              </Button>
+                            </Box>
+                          </CardContent>
+                        </Card>
+                      </motion.div>
+                    </Grid>
+                  ))
+                )}
+              </Grid>
+            )}
+          </motion.div>
+
+          {/* Submit Grievance Dialog */}
+          <Dialog open={grievanceDialogOpen} onClose={() => setGrievanceDialogOpen(false)} maxWidth="md" fullWidth>
+            <DialogTitle>
+              <Typography variant="h5" sx={{ fontWeight: 600 }}>
+                📝 Submit New Grievance
+              </Typography>
+            </DialogTitle>
+            <DialogContent sx={{ pt: 2 }}>
+              <Grid container spacing={3}>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Title"
+                    value={grievanceData.title}
+                    onChange={(e) => setGrievanceData(prev => ({ ...prev, title: e.target.value }))}
+                    placeholder="Brief description of your grievance"
+                    required
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <FormControl fullWidth required>
+                    <InputLabel>Category</InputLabel>
+                    <Select
+                      value={grievanceData.category}
+                      label="Category"
+                      onChange={(e) => setGrievanceData(prev => ({ ...prev, category: e.target.value }))}
+                    >
+                      <MenuItem value="DOCUMENTATION">Documentation</MenuItem>
+                      <MenuItem value="VERIFICATION">Verification</MenuItem>
+                      <MenuItem value="TECHNICAL">Technical</MenuItem>
+                      <MenuItem value="POLICY">Policy</MenuItem>
+                      <MenuItem value="OTHER">Other</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <FormControl fullWidth required>
+                    <InputLabel>Priority</InputLabel>
+                    <Select
+                      value={grievanceData.priority}
+                      label="Priority"
+                      onChange={(e) => setGrievanceData(prev => ({ ...prev, priority: e.target.value }))}
+                    >
+                      <MenuItem value="LOW">Low</MenuItem>
+                      <MenuItem value="MEDIUM">Medium</MenuItem>
+                      <MenuItem value="HIGH">High</MenuItem>
+                      <MenuItem value="URGENT">Urgent</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Department (Optional)"
+                    value={grievanceData.department}
+                    onChange={(e) => setGrievanceData(prev => ({ ...prev, department: e.target.value }))}
+                    placeholder="Specific department if known"
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Description"
+                    value={grievanceData.description}
+                    onChange={(e) => setGrievanceData(prev => ({ ...prev, description: e.target.value }))}
+                    placeholder="Detailed description of your grievance (minimum 20 characters)"
+                    multiline
+                    rows={4}
+                    required
+                  />
+                </Grid>
+              </Grid>
+            </DialogContent>
+            <DialogActions sx={{ p: 3 }}>
+              <Button onClick={() => setGrievanceDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button
+                variant="contained"
+                onClick={handleGrievanceSubmit}
+                disabled={isSubmittingGrievance}
+                startIcon={isSubmittingGrievance ? <CircularProgress size={20} /> : <SendIcon />}
+              >
+                {isSubmittingGrievance ? 'Submitting...' : 'Submit Grievance'}
+              </Button>
+            </DialogActions>
+          </Dialog>
+
+          {/* View Grievance Dialog */}
+          <Dialog open={grievanceViewDialogOpen} onClose={() => setGrievanceViewDialogOpen(false)} maxWidth="md" fullWidth>
+            <DialogTitle>
+              <Typography variant="h5" sx={{ fontWeight: 600 }}>
+                📋 Grievance Details
+              </Typography>
+            </DialogTitle>
+            <DialogContent sx={{ pt: 2 }}>
+              {selectedGrievance && (
+                <Grid container spacing={3}>
+                  <Grid item xs={12}>
+                    <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
+                      {selectedGrievance.title}
+                    </Typography>
+                  </Grid>
+                  
+                  <Grid item xs={12} sm={6}>
+                    <Box>
+                      <Typography variant="subtitle2" color="text.secondary">Category</Typography>
+                      <Typography variant="body1">{selectedGrievance.category}</Typography>
+                    </Box>
+                  </Grid>
+                  
+                  <Grid item xs={12} sm={6}>
+                    <Box>
+                      <Typography variant="subtitle2" color="text.secondary">Priority</Typography>
+                      <Chip 
+                        label={selectedGrievance.priority} 
+                        color={getPriorityColor(selectedGrievance.priority)} 
+                        size="small" 
+                      />
+                    </Box>
+                  </Grid>
+
+                  <Grid item xs={12} sm={6}>
+                    <Box>
+                      <Typography variant="subtitle2" color="text.secondary">Status</Typography>
+                      <Chip 
+                        icon={getGrievanceStatusIcon(selectedGrievance.status)}
+                        label={selectedGrievance.status.replace('_', ' ')} 
+                        color={getGrievanceStatusColor(selectedGrievance.status)} 
+                        size="small" 
+                      />
+                    </Box>
+                  </Grid>
+
+                  <Grid item xs={12} sm={6}>
+                    <Box>
+                      <Typography variant="subtitle2" color="text.secondary">Department</Typography>
+                      <Typography variant="body1">{selectedGrievance.department || 'Not Assigned'}</Typography>
+                    </Box>
+                  </Grid>
+
+                  <Grid item xs={12}>
+                    <Box>
+                      <Typography variant="subtitle2" color="text.secondary">Description</Typography>
+                      <Typography variant="body1" sx={{ mt: 1 }}>{selectedGrievance.description}</Typography>
+                    </Box>
+                  </Grid>
+
+                  {selectedGrievance.resolution && (
+                    <Grid item xs={12}>
+                      <Box>
+                        <Typography variant="subtitle2" color="text.secondary">Resolution</Typography>
+                        <Typography variant="body1" sx={{ mt: 1 }}>{selectedGrievance.resolution}</Typography>
+                      </Box>
+                    </Grid>
+                  )}
+
+                  <Grid item xs={12} sm={6}>
+                    <Box>
+                      <Typography variant="subtitle2" color="text.secondary">Submitted On</Typography>
+                      <Typography variant="body1">
+                        {new Date(selectedGrievance.submissionDate).toLocaleString()}
+                      </Typography>
+                    </Box>
+                  </Grid>
+
+                  {selectedGrievance.resolutionDate && (
+                    <Grid item xs={12} sm={6}>
+                      <Box>
+                        <Typography variant="subtitle2" color="text.secondary">Resolved On</Typography>
+                        <Typography variant="body1">
+                          {new Date(selectedGrievance.resolutionDate).toLocaleString()}
+                        </Typography>
+                      </Box>
+                    </Grid>
+                  )}
+                </Grid>
+              )}
+            </DialogContent>
+            <DialogActions sx={{ p: 3 }}>
+              <Button onClick={() => setGrievanceViewDialogOpen(false)}>
+                Close
+              </Button>
+              {selectedGrievance && selectedGrievance.status === 'OPEN' && (
+                <Button
+                  variant="contained"
+                  color="success"
+                  startIcon={<CheckCircle />}
+                  onClick={() => handleUpdateGrievanceStatus(selectedGrievance.id, 'RESOLVED', 'Marked as resolved by user')}
+                >
+                  Mark as Resolved
+                </Button>
+              )}
+            </DialogActions>
+          </Dialog>
         </TabPanel>
 
         {/* AI Analysis Tab */}
