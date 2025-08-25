@@ -256,7 +256,13 @@ const CitizenDashboard = () => {
         // Auto-hide success message after 3 seconds
         setTimeout(() => setProfileSuccess(null), 3000);
       } else {
-        throw new Error(data.message || 'Failed to save profile');
+        // Handle validation errors from backend
+        if (data.details && Array.isArray(data.details)) {
+          const errorMessages = data.details.map(error => error.msg).join(', ');
+          setProfileError(`Validation Error: ${errorMessages}`);
+        } else {
+          setProfileError(data.message || 'Failed to save profile');
+        }
       }
     } catch (error) {
       console.error('Error saving profile:', error);
