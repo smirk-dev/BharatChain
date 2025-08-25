@@ -508,19 +508,351 @@ const CitizenDashboard = () => {
 
         {/* Profile Tab */}
         <TabPanel value={currentTab} index={1}>
-          <Card>
-            <CardContent>
-              <Typography variant="h5" gutterBottom>
-                👤 Citizen Profile
-              </Typography>
-              <Alert severity="info" sx={{ mb: 3 }}>
-                Profile management functionality will be implemented here.
-              </Alert>
-              <Typography variant="body1">
-                Connected wallet: {account}
-              </Typography>
-            </CardContent>
-          </Card>
+          <Grid container spacing={3}>
+            {/* Profile Header */}
+            <Grid item xs={12}>
+              <Card>
+                <CardContent>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                    <Typography variant="h5" sx={{ fontWeight: 600, flexGrow: 1 }}>
+                      👤 Citizen Profile
+                    </Typography>
+                    {!isEditingProfile ? (
+                      <Button
+                        variant="contained"
+                        startIcon={<EditIcon />}
+                        onClick={handleProfileEdit}
+                        sx={{ ml: 2 }}
+                      >
+                        Edit Profile
+                      </Button>
+                    ) : (
+                      <Box sx={{ display: 'flex', gap: 1 }}>
+                        <Button
+                          variant="contained"
+                          color="success"
+                          startIcon={<SaveIcon />}
+                          onClick={handleProfileSave}
+                          disabled={profileLoading}
+                        >
+                          Save
+                        </Button>
+                        <Button
+                          variant="outlined"
+                          startIcon={<CancelIcon />}
+                          onClick={handleProfileCancel}
+                          disabled={profileLoading}
+                        >
+                          Cancel
+                        </Button>
+                      </Box>
+                    )}
+                  </Box>
+
+                  {profileLoading && (
+                    <Box sx={{ mb: 2 }}>
+                      <LinearProgress />
+                    </Box>
+                  )}
+
+                  {/* Profile Picture Section */}
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
+                    <Avatar
+                      src={profile.profileImage}
+                      sx={{ width: 100, height: 100, mr: 3 }}
+                    >
+                      {profile.name.charAt(0)}
+                    </Avatar>
+                    <Box>
+                      <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                        {profile.name}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                        Wallet: {formatAddress(account)}
+                      </Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Chip
+                          label={profile.isVerified ? "Verified Citizen" : "Pending Verification"}
+                          color={profile.isVerified ? "success" : "warning"}
+                          size="small"
+                          icon={<Verified />}
+                        />
+                        {isEditingProfile && (
+                          <Button
+                            variant="outlined"
+                            size="small"
+                            component="label"
+                            startIcon={<PhotoCamera />}
+                          >
+                            Upload Photo
+                            <input
+                              hidden
+                              accept="image/*"
+                              type="file"
+                              onChange={handleImageUpload}
+                            />
+                          </Button>
+                        )}
+                      </Box>
+                    </Box>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Grid>
+
+            {/* Personal Information */}
+            <Grid item xs={12} md={6}>
+              <Card>
+                <CardContent>
+                  <Typography variant="h6" sx={{ fontWeight: 600, mb: 3, display: 'flex', alignItems: 'center' }}>
+                    <PersonIcon sx={{ mr: 1 }} />
+                    Personal Information
+                  </Typography>
+                  
+                  <Grid container spacing={3}>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Full Name"
+                        value={profile.name}
+                        onChange={(e) => handleProfileChange('name', e.target.value)}
+                        disabled={!isEditingProfile}
+                        variant={isEditingProfile ? "outlined" : "filled"}
+                      />
+                    </Grid>
+                    
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        fullWidth
+                        label="Date of Birth"
+                        type="date"
+                        value={profile.dateOfBirth}
+                        onChange={(e) => handleProfileChange('dateOfBirth', e.target.value)}
+                        disabled={!isEditingProfile}
+                        variant={isEditingProfile ? "outlined" : "filled"}
+                        InputLabelProps={{ shrink: true }}
+                      />
+                    </Grid>
+                    
+                    <Grid item xs={12} sm={6}>
+                      <FormControl fullWidth disabled={!isEditingProfile}>
+                        <InputLabel>Gender</InputLabel>
+                        <Select
+                          value={profile.gender}
+                          label="Gender"
+                          onChange={(e) => handleProfileChange('gender', e.target.value)}
+                          variant={isEditingProfile ? "outlined" : "filled"}
+                        >
+                          <MenuItem value="Male">Male</MenuItem>
+                          <MenuItem value="Female">Female</MenuItem>
+                          <MenuItem value="Other">Other</MenuItem>
+                          <MenuItem value="Prefer not to say">Prefer not to say</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Education"
+                        value={profile.education}
+                        onChange={(e) => handleProfileChange('education', e.target.value)}
+                        disabled={!isEditingProfile}
+                        variant={isEditingProfile ? "outlined" : "filled"}
+                        InputProps={{
+                          startAdornment: <School sx={{ mr: 1, color: 'text.secondary' }} />
+                        }}
+                      />
+                    </Grid>
+                    
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Occupation"
+                        value={profile.occupation}
+                        onChange={(e) => handleProfileChange('occupation', e.target.value)}
+                        disabled={!isEditingProfile}
+                        variant={isEditingProfile ? "outlined" : "filled"}
+                        InputProps={{
+                          startAdornment: <Work sx={{ mr: 1, color: 'text.secondary' }} />
+                        }}
+                      />
+                    </Grid>
+                  </Grid>
+                </CardContent>
+              </Card>
+            </Grid>
+
+            {/* Contact Information */}
+            <Grid item xs={12} md={6}>
+              <Card>
+                <CardContent>
+                  <Typography variant="h6" sx={{ fontWeight: 600, mb: 3, display: 'flex', alignItems: 'center' }}>
+                    <Phone sx={{ mr: 1 }} />
+                    Contact Information
+                  </Typography>
+                  
+                  <Grid container spacing={3}>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Email Address"
+                        type="email"
+                        value={profile.email}
+                        onChange={(e) => handleProfileChange('email', e.target.value)}
+                        disabled={!isEditingProfile}
+                        variant={isEditingProfile ? "outlined" : "filled"}
+                        InputProps={{
+                          startAdornment: <Email sx={{ mr: 1, color: 'text.secondary' }} />
+                        }}
+                      />
+                    </Grid>
+                    
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Phone Number"
+                        value={profile.phone}
+                        onChange={(e) => handleProfileChange('phone', e.target.value)}
+                        disabled={!isEditingProfile}
+                        variant={isEditingProfile ? "outlined" : "filled"}
+                        InputProps={{
+                          startAdornment: <Phone sx={{ mr: 1, color: 'text.secondary' }} />
+                        }}
+                      />
+                    </Grid>
+                    
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Emergency Contact"
+                        value={profile.emergencyContact}
+                        onChange={(e) => handleProfileChange('emergencyContact', e.target.value)}
+                        disabled={!isEditingProfile}
+                        variant={isEditingProfile ? "outlined" : "filled"}
+                      />
+                    </Grid>
+                  </Grid>
+                </CardContent>
+              </Card>
+            </Grid>
+
+            {/* Address Information */}
+            <Grid item xs={12}>
+              <Card>
+                <CardContent>
+                  <Typography variant="h6" sx={{ fontWeight: 600, mb: 3, display: 'flex', alignItems: 'center' }}>
+                    <LocationOn sx={{ mr: 1 }} />
+                    Address Information
+                  </Typography>
+                  
+                  <Grid container spacing={3}>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Street Address"
+                        value={profile.address}
+                        onChange={(e) => handleProfileChange('address', e.target.value)}
+                        disabled={!isEditingProfile}
+                        variant={isEditingProfile ? "outlined" : "filled"}
+                        multiline
+                        rows={2}
+                      />
+                    </Grid>
+                    
+                    <Grid item xs={12} sm={4}>
+                      <TextField
+                        fullWidth
+                        label="City"
+                        value={profile.city}
+                        onChange={(e) => handleProfileChange('city', e.target.value)}
+                        disabled={!isEditingProfile}
+                        variant={isEditingProfile ? "outlined" : "filled"}
+                      />
+                    </Grid>
+                    
+                    <Grid item xs={12} sm={4}>
+                      <TextField
+                        fullWidth
+                        label="State"
+                        value={profile.state}
+                        onChange={(e) => handleProfileChange('state', e.target.value)}
+                        disabled={!isEditingProfile}
+                        variant={isEditingProfile ? "outlined" : "filled"}
+                      />
+                    </Grid>
+                    
+                    <Grid item xs={12} sm={4}>
+                      <TextField
+                        fullWidth
+                        label="PIN Code"
+                        value={profile.pincode}
+                        onChange={(e) => handleProfileChange('pincode', e.target.value)}
+                        disabled={!isEditingProfile}
+                        variant={isEditingProfile ? "outlined" : "filled"}
+                      />
+                    </Grid>
+                  </Grid>
+                </CardContent>
+              </Card>
+            </Grid>
+
+            {/* Government IDs */}
+            <Grid item xs={12}>
+              <Card>
+                <CardContent>
+                  <Typography variant="h6" sx={{ fontWeight: 600, mb: 3, display: 'flex', alignItems: 'center' }}>
+                    <AccountBalance sx={{ mr: 1 }} />
+                    Government Identification
+                  </Typography>
+                  
+                  <Grid container spacing={3}>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        fullWidth
+                        label="Aadhar Number"
+                        value={profile.aadharNumber}
+                        onChange={(e) => handleProfileChange('aadharNumber', e.target.value)}
+                        disabled={!isEditingProfile}
+                        variant={isEditingProfile ? "outlined" : "filled"}
+                        helperText="12-digit Aadhar number"
+                      />
+                    </Grid>
+                    
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        fullWidth
+                        label="PAN Number"
+                        value={profile.panNumber}
+                        onChange={(e) => handleProfileChange('panNumber', e.target.value)}
+                        disabled={!isEditingProfile}
+                        variant={isEditingProfile ? "outlined" : "filled"}
+                        helperText="10-character PAN number"
+                      />
+                    </Grid>
+                  </Grid>
+
+                  <Divider sx={{ my: 3 }} />
+
+                  <Alert severity="info" sx={{ mb: 2 }}>
+                    <strong>Verification Status:</strong> Your identity documents are verified and secured on the blockchain.
+                  </Alert>
+
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Typography variant="body2" color="text.secondary">
+                      Last updated: {new Date().toLocaleDateString()}
+                    </Typography>
+                    <Chip
+                      label="Blockchain Verified"
+                      color="success"
+                      icon={<Verified />}
+                      variant="outlined"
+                    />
+                  </Box>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
         </TabPanel>
 
         {/* Documents Tab */}
