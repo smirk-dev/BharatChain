@@ -665,6 +665,18 @@ const CitizenDashboard = () => {
                     </Box>
                   )}
 
+                  {profileError && (
+                    <Alert severity="error" sx={{ mb: 2 }} onClose={() => setProfileError(null)}>
+                      {profileError}
+                    </Alert>
+                  )}
+
+                  {profileSuccess && (
+                    <Alert severity="success" sx={{ mb: 2 }} onClose={() => setProfileSuccess(null)}>
+                      {profileSuccess}
+                    </Alert>
+                  )}
+
                   {/* Profile Picture Section */}
                   <Box sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
                     <Avatar
