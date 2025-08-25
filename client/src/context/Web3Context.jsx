@@ -70,7 +70,8 @@ export const Web3Provider = ({ children }) => {
   // Authenticate with backend using signature
   const authenticateWithBackend = async (address, signature, nonce) => {
     try {
-      const response = await fetch('/api/auth/connect', {
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+      const response = await fetch(`${apiUrl}/api/auth/connect`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
