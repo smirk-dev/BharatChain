@@ -1,28 +1,35 @@
-# 🇮🇳 BharatChain | Digital Governance Platform
+# 🇮🇳 BharatChain - User Manual & Setup Guide
 
 <div align="center">
 
 ![BharatChain Logo](https://img.shields.io/badge/🇮🇳-BharatChain-blue?style=for-the-badge&labelColor=saffron)
 
-**India's First Blockchain-Powered Digital Governance Platform**
+**India's Blockchain-Powered Digital Governance Platform**  
+*Complete User Manual & Developer Guide*
 
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen?style=flat-square)](#)
-[![Coverage](https://img.shields.io/badge/coverage-98%25-brightgreen?style=flat-square)](#)
-[![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](#)
-[![Blockchain](https://img.shields.io/badge/blockchain-Ethereum-purple?style=flat-square)](#)
+[![Frontend](https://img.shields.io/badge/Frontend-Running-brightgreen?style=flat-square)](#quick-start)
+[![Backend](https://img.shields.io/badge/Backend-Running-brightgreen?style=flat-square)](#quick-start)
+[![AI Service](https://img.shields.io/badge/AI%20Service-Running-brightgreen?style=flat-square)](#quick-start)
+[![One-Click Launch](https://img.shields.io/badge/Launch-One%20Click-orange?style=flat-square)](#-quick-start-one-click-launch)
 
-[Live Demo](http://localhost:3000) • [Documentation](#documentation) • [API Reference](#api-endpoints) • [Contributing](#contributing)
+**🚀 [Quick Start](#-quick-start-one-click-launch) • 📱 [User Guide](#-user-guide) • 🔧 [Developer Setup](#-developer-setup) • 🛠️ [Troubleshooting](#-troubleshooting)**
 
 </div>
 
 ---
 
-## 📋 **Project Overview**
+## � **What is BharatChain?**
 
-**BharatChain** is a comprehensive blockchain-based digital governance platform designed to revolutionize citizen services and government operations in India. Built with cutting-edge technology, it provides secure, transparent, and efficient solutions for document verification, grievance management, and citizen registration.
+**BharatChain** is India's first comprehensive blockchain-powered digital governance platform that revolutionizes how citizens interact with government services. Built with cutting-edge technology, it provides:
 
-### 🎯 **Core Mission**
-To create a unified, transparent, and efficient digital governance ecosystem that empowers citizens and streamlines government operations through blockchain technology.
+- **🔐 Secure Document Management** - Upload, verify, and store official documents on blockchain
+- **📝 Smart Grievance System** - AI-powered complaint processing with real-time tracking  
+- **👤 Digital Identity** - Blockchain-based citizen registration and authentication
+- **🤖 AI-Powered Analysis** - Intelligent document verification and grievance categorization
+- **🌐 Modern Web Interface** - Beautiful, responsive Indian-themed user interface
+
+### 🎯 **Why BharatChain?**
+Transform government services with transparency, security, and efficiency through blockchain technology.
 
 ---
 
