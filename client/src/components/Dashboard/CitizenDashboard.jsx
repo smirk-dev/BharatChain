@@ -860,42 +860,79 @@ const CitizenDashboard = () => {
   };
 
   const mockAIGrievanceAnalysis = async (text) => {
-    // Simulate AI processing for grievance text
+    // Use real AI analysis instead of mock data
     const analysisSteps = [
-      { step: 'Analyzing text...', progress: 20 },
-      { step: 'Detecting sentiment...', progress: 50 },
-      { step: 'Categorizing issue...', progress: 80 },
-      { step: 'Generating insights...', progress: 100 }
+      { step: 'Analyzing text...', progress: 25 },
+      { step: 'Processing with AI...', progress: 50 },
+      { step: 'Generating insights...', progress: 75 },
+      { step: 'Finalizing results...', progress: 100 }
     ];
 
     for (const stepData of analysisSteps) {
       setAiProgress(stepData.progress);
-      await new Promise(resolve => setTimeout(resolve, 600));
+      await new Promise(resolve => setTimeout(resolve, 500));
     }
 
-    const sentimentScore = Math.random() * 2 - 1; // -1 to 1
-    const urgencyScore = Math.random();
+    try {
+      // Call the real enhanced AI service
+      const response = await fetch(`${API_BASE_URL}/ai/analyze/grievance`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text: text })
+      });
 
-    return {
-      id: Date.now(),
-      text: text,
-      analysisDate: new Date().toISOString(),
-      sentiment: {
-        score: sentimentScore,
-        label: sentimentScore < -0.3 ? 'Negative' : sentimentScore > 0.3 ? 'Positive' : 'Neutral',
-        confidence: 0.8 + Math.random() * 0.15
-      },
-      urgency: {
-        score: urgencyScore,
-        level: urgencyScore > 0.7 ? 'High' : urgencyScore > 0.4 ? 'Medium' : 'Low'
-      },
-      suggestedCategory: ['DOCUMENTATION', 'VERIFICATION', 'TECHNICAL', 'POLICY'][Math.floor(Math.random() * 4)],
-      suggestedPriority: urgencyScore > 0.7 ? 'HIGH' : urgencyScore > 0.4 ? 'MEDIUM' : 'LOW',
-      keywords: extractKeywords(text),
-      similarCases: Math.floor(Math.random() * 5),
-      estimatedResolutionTime: urgencyScore > 0.7 ? '24-48 hours' : urgencyScore > 0.4 ? '3-5 days' : '1-2 weeks',
-      processingTime: '1.8 seconds'
-    };
+      if (!response.ok) {
+        throw new Error('AI service error');
+      }
+
+      const data = await response.json();
+      
+      if (data.success && data.analysis) {
+        return {
+          id: Date.now(),
+          text: text,
+          analysisDate: new Date().toISOString(),
+          confidence: data.analysis.metadata?.confidence_score || 0.8,
+          isValid: true,
+          analysis: data.analysis, // Store the full enhanced AI analysis
+          sentiment: {
+            score: data.analysis.sentiment?.score || 0,
+            label: data.analysis.sentiment?.overall || 'Neutral',
+            confidence: data.analysis.sentiment?.confidence || 0.8
+          },
+          urgency: {
+            score: data.analysis.urgency?.score || 0.5,
+            level: data.analysis.urgency?.level || 'Medium'
+          },
+          processingTime: `${data.analysis.metadata?.processing_time_ms || 200}ms`
+        };
+      } else {
+        throw new Error('Invalid AI response');
+      }
+    } catch (error) {
+      console.error('AI Analysis Error:', error);
+      
+      // Fallback to basic analysis if AI service fails
+      return {
+        id: Date.now(),
+        text: text,
+        analysisDate: new Date().toISOString(),
+        confidence: 0.6,
+        isValid: false,
+        sentiment: {
+          score: 0,
+          label: 'Analysis Failed',
+          confidence: 0.3
+        },
+        urgency: {
+          score: 0.5,
+          level: 'Medium'
+        },
+        processingTime: 'Service unavailable'
+      };
+    }
   };
 
   const detectDocumentType = (fileName) => {
