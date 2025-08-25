@@ -251,7 +251,10 @@ const CitizenDashboard = () => {
                       p: 2, 
                       height: '100%',
                       background: `linear-gradient(135deg, ${stat.color}.main 0%, ${stat.color}.dark 100%)`,
-                      color: 'white'
+                      color: 'white',
+                      '& .MuiTypography-root': {
+                        textShadow: '0 1px 2px rgba(0,0,0,0.3)'
+                      }
                     }}
                   >
                     <CardContent>
@@ -360,9 +363,9 @@ const CitizenDashboard = () => {
                           display: 'flex', 
                           alignItems: 'center', 
                           p: 2, 
-                          backgroundColor: 'success.light',
+                          backgroundColor: 'success.main',
                           borderRadius: 2,
-                          color: 'success.contrastText'
+                          color: 'white'
                         }}>
                           {service.icon}
                           <Box sx={{ ml: 2 }}>
