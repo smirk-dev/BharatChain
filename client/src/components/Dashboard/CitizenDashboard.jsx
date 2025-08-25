@@ -3122,7 +3122,7 @@ const CitizenDashboard = () => {
           </Dialog>
         </TabPanel>
       </AnimatePresence>
-    </Container>
+    </div>
   );
 };
 
