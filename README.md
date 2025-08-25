@@ -260,209 +260,322 @@ WHCL-Hackathon/
 
 ---
 
-## 📡 **API Endpoints**
+## 📡 **API Reference**
 
-### **Authentication**
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `POST` | `/api/auth/message` | Get wallet signing message |
-| `POST` | `/api/auth/connect` | Authenticate with signature |
-| `POST` | `/api/auth/verify` | Verify JWT token |
+### **🔐 Authentication Endpoints**
 
-### **Citizen Management**
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET` | `/api/citizens/profile` | Retrieve citizen profile |
-| `POST` | `/api/citizens/register` | Register new citizen |
-| `PUT` | `/api/citizens/update` | Update citizen information |
+| Method | Endpoint | Description | Example |
+|--------|----------|-------------|---------|
+| `POST` | `/api/auth/message` | Get wallet signing message | `curl -X POST http://localhost:3001/api/auth/message` |
+| `POST` | `/api/auth/connect` | Authenticate with signature | `curl -X POST http://localhost:3001/api/auth/connect -d '{"address":"0x...", "signature":"0x..."}'` |
+| `POST` | `/api/auth/verify` | Verify JWT token | `curl -X POST http://localhost:3001/api/auth/verify -H "Authorization: Bearer TOKEN"` |
 
-### **Document Management**
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET` | `/api/documents` | List citizen documents |
-| `POST` | `/api/documents/upload` | Upload & analyze document |
-| `GET` | `/api/documents/:id` | Get document details |
-| `PUT` | `/api/documents/:id/verify` | Verify document (officials) |
+### **👤 Citizen Management**
 
-### **Grievance System**
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET` | `/api/grievances` | List grievances |
-| `POST` | `/api/grievances` | Submit new grievance |
-| `PUT` | `/api/grievances/:id` | Update grievance status |
-| `POST` | `/api/grievances/:id/comments` | Add comment |
+| Method | Endpoint | Description | Parameters |
+|--------|----------|-------------|------------|
+| `GET` | `/api/citizens/profile` | Get citizen profile | Requires JWT token |
+| `POST` | `/api/citizens/register` | Register new citizen | `fullName, aadharNumber, phoneNumber, email, dateOfBirth` |
+| `PUT` | `/api/citizens/update` | Update citizen information | Profile fields to update |
 
-### **System Health**
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET` | `/api/health` | System health check |
-| `GET` | `/api/health/blockchain` | Blockchain connectivity |
-| `GET` | `/api/health/database` | Database status |
+### **📄 Document Management**
 
----
+| Method | Endpoint | Description | Parameters |
+|--------|----------|-------------|------------|
+| `GET` | `/api/documents` | List citizen documents | Optional: `type`, `status` filters |
+| `POST` | `/api/documents/upload` | Upload & analyze document | `file` (multipart), `type`, `description` |
+| `GET` | `/api/documents/:id` | Get document details | Document ID |
+| `PUT` | `/api/documents/:id/verify` | Verify document (officials) | `status`, `comments` |
 
-## 🧪 **Testing**
+### **📝 Grievance System**
 
-### **Run All Tests**
-```bash
-npm test                    # Full test suite
-npm run test:contracts      # Smart contract tests
-npm run test:api           # Backend API tests
-npm run test:client        # Frontend component tests
-```
+| Method | Endpoint | Description | Parameters |
+|--------|----------|-------------|------------|
+| `GET` | `/api/grievances` | List grievances | Optional: `status`, `category` filters |
+| `POST` | `/api/grievances` | Submit new grievance | `subject`, `description`, `category`, `urgency` |
+| `PUT` | `/api/grievances/:id` | Update grievance status | `status`, `comments` |
+| `POST` | `/api/grievances/:id/comments` | Add comment | `comment`, `isOfficial` |
 
-### **Test Coverage**
-- **Smart Contracts**: 100%
-- **Backend APIs**: 95%
-- **Frontend Components**: 90%
-- **Integration Tests**: 85%
+### **🧠 AI Service Endpoints**
+
+| Method | Endpoint | Description | Parameters |
+|--------|----------|-------------|------------|
+| `GET` | `/health` | AI service health check | None |
+| `POST` | `/analyze/grievance` | Analyze grievance text | `{"text": "grievance description"}` |
+| `POST` | `/analyze/document` | Process document OCR | `file` (multipart form) |
+| `POST` | `/analyze/sentiment` | Sentiment analysis | `{"text": "text to analyze"}` |
+
+### **📊 System Health**
+
+| Method | Endpoint | Description | Response |
+|--------|----------|-------------|----------|
+| `GET` | `/api/health` | Overall system health | `{"status": "running", "timestamp": "..."}` |
+| `GET` | `/api/health/database` | Database connectivity | `{"database": "connected"}` |
+| `GET` | `/api/health/blockchain` | Blockchain connectivity | `{"blockchain": "connected"}` |
 
 ---
 
-## 🚀 **Deployment**
+## 🛠️ **Troubleshooting**
 
-### **Local Development**
+### **🚨 Common Issues & Solutions**
+
+#### **1. Services Won't Start**
+
+**Problem**: "Port already in use" or services fail to start
+
+**Solutions**:
 ```bash
-npm run dev        # Development with hot reload
-npm run build      # Production build
-npm run start      # Production server
+# Kill existing processes
+taskkill /f /im node.exe
+taskkill /f /im python.exe
+
+# Then restart
+.\start.bat
 ```
 
-### **Production Deployment**
+**Problem**: "Module not found" errors
+
+**Solutions**:
+```bash
+# Reinstall dependencies
+cd server && npm install
+cd ../client && npm install
+cd ../ai-service && pip install -r requirements.txt
+```
+
+#### **2. MetaMask Connection Issues**
+
+**Problem**: MetaMask doesn't connect or shows errors
+
+**Solutions**:
+- **Check MetaMask is unlocked** and account is selected
+- **Refresh the page** (Ctrl+F5) and try again
+- **Switch to correct network** (use local network for development)
+- **Clear browser cache** and restart browser
+
+#### **3. AI Service Not Working**
+
+**Problem**: AI analysis fails or returns errors
+
+**Solutions**:
+```bash
+# Check if Python dependencies are installed
+cd ai-service
+pip install -r requirements.txt
+
+# Check if service is running
+curl http://localhost:5001/health
+
+# Restart AI service
+python simple_app.py
+```
+
+#### **4. Frontend Not Loading**
+
+**Problem**: React app shows blank page or errors
+
+**Solutions**:
+```bash
+# Clear React cache and restart
+cd client
+npm start -- --reset-cache
+
+# Or delete node_modules and reinstall
+rm -rf node_modules package-lock.json
+npm install
+npm start
+```
+
+#### **5. Database Issues**
+
+**Problem**: "Database locked" or connection errors
+
+**Solutions**:
+```bash
+# Stop all services first
+taskkill /f /im node.exe
+
+# Delete database lock file
+del server\database\*.db-wal
+del server\database\*.db-shm
+
+# Restart backend
+cd server && npm start
+```
+
+### **🔍 Debugging Tips**
+
+#### **Check Service Status**
+```bash
+# Quick status check
+bharatchain.bat status
+
+# Manual health checks
+curl http://localhost:3000    # Frontend
+curl http://localhost:3001/api/health    # Backend  
+curl http://localhost:5001/health        # AI Service
+```
+
+#### **View Service Logs**
+- **Frontend**: Check browser console (F12 → Console)
+- **Backend**: Look at terminal running `npm start` in server folder
+- **AI Service**: Check terminal running `python simple_app.py`
+
+#### **Common Error Messages**
+
+| Error | Meaning | Solution |
+|-------|---------|----------|
+| `EADDRINUSE` | Port already in use | Kill existing processes with `taskkill` |
+| `MODULE_NOT_FOUND` | Missing dependencies | Run `npm install` or `pip install -r requirements.txt` |
+| `MetaMask not detected` | MetaMask not installed | Install MetaMask browser extension |
+| `Connection refused` | Service not running | Start the specific service |
+| `CORS error` | Cross-origin request blocked | Check backend CORS configuration |
+
+### **📞 Getting Help**
+
+If you're still having issues:
+
+1. **Check all services are running**: Use `bharatchain.bat status`
+2. **Review terminal outputs**: Look for error messages in service windows
+3. **Try clean restart**: Stop all services, wait 5 seconds, restart
+4. **Check prerequisites**: Ensure Node.js, Python, and MetaMask are installed
+5. **Create GitHub issue**: If problem persists, report it with error details
+
+### **🎯 Performance Tips**
+
+- **First startup takes 20-30 seconds** - be patient!
+- **Keep terminal windows open** - closing them stops services
+- **Use Chrome/Edge browsers** - better MetaMask compatibility
+- **Clear browser cache periodically** - prevents stale data issues
+- **Restart services daily** - keeps everything fresh during development
+
+---
+
+## 🚀 **Advanced Usage**
+
+### **🔧 Environment Configuration**
+
+Create `.env` file in server folder:
+```env
+# Database
+DATABASE_URL=sqlite:./database/bharatchain.db
+NODE_ENV=development
+
+# Security
+JWT_SECRET=your-super-secret-jwt-key-here
+SESSION_SECRET=your-session-secret-here
+
+# Services
+FRONTEND_URL=http://localhost:3000
+AI_SERVICE_URL=http://localhost:5001
+
+# Blockchain (for production)
+MUMBAI_RPC_URL=https://rpc-mumbai.maticvigil.com
+PRIVATE_KEY=your-wallet-private-key-for-deployment
+```
+
+### **🌐 Production Deployment**
 
 #### **Frontend (Vercel/Netlify)**
 ```bash
 cd client
 npm run build
-# Deploy dist/ folder
+# Deploy dist/ folder to your hosting service
 ```
 
-#### **Backend (Railway/Render)**
+#### **Backend (Railway/Render/Heroku)**
 ```bash
 cd server
-npm start
-# Configure environment variables
+# Configure environment variables on hosting platform
+# Deploy server folder
 ```
 
-#### **Blockchain (Mumbai Testnet)**
+#### **AI Service (PythonAnywhere/Railway)**
 ```bash
-npm run deploy:mumbai
-# Update contract addresses in frontend
+cd ai-service
+# Install requirements: pip install -r requirements.txt
+# Start with: python simple_app.py
 ```
-
-### **Environment Variables**
-```env
-# Backend
-NODE_ENV=production
-DATABASE_URL=postgresql://user:pass@host:port/db
-JWT_SECRET=your-super-secret-key
-MUMBAI_RPC_URL=https://rpc-mumbai.maticvigil.com
-
-# Frontend
-REACT_APP_API_URL=https://your-api.com
-REACT_APP_CITIZEN_REGISTRY_ADDRESS=0x...
-REACT_APP_DOCUMENT_REGISTRY_ADDRESS=0x...
-REACT_APP_GRIEVANCE_SYSTEM_ADDRESS=0x...
-```
-
----
-
-## 🧬 **Technology Stack**
-
-### **Frontend Technologies**
-- **React 18**: Modern UI framework with hooks
-- **Material-UI v5**: Google's design system
-- **Framer Motion**: Smooth animations
-- **Ethers.js v6**: Ethereum blockchain interaction
-- **Axios**: HTTP client for API calls
-
-### **Backend Technologies**
-- **Node.js**: JavaScript runtime
-- **Express.js**: Web application framework
-- **Sequelize**: SQL ORM with migrations
-- **JWT**: JSON Web Token authentication
-- **Multer**: File upload handling
-
-### **Blockchain Technologies**
-- **Solidity**: Smart contract programming
-- **Hardhat**: Development environment
-- **OpenZeppelin**: Security-audited contracts
-- **IPFS**: Decentralized file storage
-
-### **AI/ML Technologies**
-- **Python**: Machine learning runtime
-- **TensorFlow**: Deep learning framework
-- **OpenCV**: Computer vision library
-- **Tesseract**: OCR text extraction
-
----
-
-## 📊 **Project Statistics**
-
-<div align="center">
-
-| Metric | Value |
-|--------|-------|
-| **Total Files** | 150+ |
-| **Lines of Code** | 25,000+ |
-| **Smart Contracts** | 3 |
-| **API Endpoints** | 20+ |
-| **Components** | 30+ |
-| **Test Coverage** | 95%+ |
-
-</div>
 
 ---
 
 ## 🤝 **Contributing**
 
-We welcome contributions from the community! Please follow these steps:
+We welcome contributions! Here's how to get started:
 
-1. **Fork the repository**
-2. **Create feature branch**: `git checkout -b feature/amazing-feature`
-3. **Commit changes**: `git commit -m 'Add amazing feature'`
-4. **Push to branch**: `git push origin feature/amazing-feature`
-5. **Open Pull Request**
+### **🔨 Development Setup**
+1. **Fork the repository** on GitHub
+2. **Clone your fork**: `git clone https://github.com/your-username/WHCL-Hackathon.git`
+3. **Create feature branch**: `git checkout -b feature/amazing-feature`
+4. **Make changes** and test thoroughly
+5. **Commit changes**: `git commit -m 'Add amazing feature'`
+6. **Push to branch**: `git push origin feature/amazing-feature`
+7. **Open Pull Request**
 
-### **Development Guidelines**
-- Follow existing code style and conventions
-- Write comprehensive tests for new features
-- Update documentation for API changes
-- Ensure all tests pass before submitting
+### **📝 Contribution Guidelines**
+- **Write tests** for new features
+- **Follow existing code style**
+- **Update documentation** for API changes
+- **Test on Windows** (our primary platform)
+- **Include screenshots** for UI changes
+
+### **🧪 Testing Your Changes**
+```bash
+# Run all tests
+npm test                    # Backend tests
+cd client && npm test       # Frontend tests  
+cd ai-service && python -m pytest  # AI service tests
+
+# Manual testing
+.\start.bat                 # Test launcher
+bharatchain.bat status      # Test status check
+```
 
 ---
 
-## 📄 **License**
+## 📄 **License & Acknowledgments**
 
+### **📜 License**
 This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
 
----
-
-## 🙏 **Acknowledgments**
-
-- **Government of India** - Digital India Initiative
+### **🙏 Acknowledgments**
+- **Government of India** - Digital India Initiative inspiration
 - **Ethereum Foundation** - Blockchain infrastructure
-- **OpenZeppelin** - Smart contract security
-- **Material-UI Team** - Design system
-- **IPFS Protocol Labs** - Decentralized storage
+- **OpenZeppelin** - Smart contract security standards
+- **Material-UI Team** - Beautiful React component library
+- **MetaMask Team** - Web3 wallet integration
+- **Flask & React Communities** - Excellent documentation and support
 
----
-
-## 📞 **Support & Contact**
-
-- **Email**: support@bharatchain.gov.in
-- **Documentation**: [docs.bharatchain.gov.in](http://localhost:3000)
-- **Issues**: [GitHub Issues](https://github.com/your-username/WHCL-Hackathon/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/your-username/WHCL-Hackathon/discussions)
+### **🌟 Built With Love For**
+- **Digital India** 🇮🇳
+- **Transparent Governance** 🏛️
+- **Citizen Empowerment** 👥
+- **Blockchain Innovation** ⛓️
 
 ---
 
 <div align="center">
 
-**Made with ❤️ for Digital India**
+**🇮🇳 Made with ❤️ for Digital India 🇮🇳**
 
-[![Government of India](https://img.shields.io/badge/Government-of%20India-orange?style=for-the-badge)](#)
-[![Digital India](https://img.shields.io/badge/Digital-India-green?style=for-the-badge)](#)
-[![Blockchain](https://img.shields.io/badge/Powered%20by-Blockchain-blue?style=for-the-badge)](#)
+[![One-Click Launch](https://img.shields.io/badge/Launch-start.bat-orange?style=for-the-badge)](start.bat)
+[![Documentation](https://img.shields.io/badge/Docs-Complete-green?style=for-the-badge)](#-user-guide)
+[![Support](https://img.shields.io/badge/Support-24%2F7-blue?style=for-the-badge)](#-troubleshooting)
+
+**Ready to revolutionize digital governance? Just double-click `start.bat` and let's go! 🚀**
+
+*Transform India's digital future, one blockchain transaction at a time.* ✨
 
 </div>
+
+---
+
+## 📞 **Support & Contact**
+
+- **📧 Email**: support@bharatchain.gov.in
+- **💬 Discussions**: [GitHub Discussions](https://github.com/your-username/WHCL-Hackathon/discussions)
+- **🐛 Issues**: [GitHub Issues](https://github.com/your-username/WHCL-Hackathon/issues)
+- **📚 Documentation**: Complete user manual above
+- **🚀 Quick Start**: Just run `start.bat` or `bharatchain.bat`
+
+**Happy coding! 🎉 Let's build the future of digital governance together! 🇮🇳**
