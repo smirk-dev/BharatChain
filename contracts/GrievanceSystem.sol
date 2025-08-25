@@ -137,7 +137,7 @@ contract GrievanceSystem is Ownable, ReentrancyGuard {
         _;
     }
     
-    constructor() {
+    constructor() Ownable(msg.sender) {
         officers[msg.sender] = true; // Owner is default officer
     }
     
