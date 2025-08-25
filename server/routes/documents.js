@@ -110,14 +110,9 @@ router.post('/upload', upload.single('document'), [
   body('description').optional().isLength({ max: 500 }).withMessage('Description too long')
 ], async (req, res) => {
   try {
-    // Debug logging
-    console.log('Upload request body:', req.body);
-    console.log('Upload request file:', req.file);
-    
     // Check for validation errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      console.log('Validation errors:', errors.array());
       return res.status(400).json({
         error: 'Validation Error',
         message: 'Invalid input data',
