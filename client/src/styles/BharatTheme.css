@@ -1,0 +1,682 @@
+/* BharatChain - Indian Theme Styles */
+
+/* Import Google Fonts for Indian Typography */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=Mukti:wght@400;500;600&display=swap');
+
+:root {
+  /* Traditional Indian Color Palette */
+  --saffron: #FF9933;
+  --deep-saffron: #FF6B35;
+  --white: #FFFFFF;
+  --green: #138808;
+  --dark-green: #0F6A02;
+  --navy-blue: #000080;
+  --royal-blue: #4169E1;
+  
+  /* Extended Indian Colors */
+  --lotus-pink: #F8BBD9;
+  --marigold: #FFA500;
+  --turmeric: #E49B0F;
+  --henna: #7B3F00;
+  --peacock-blue: #005A5B;
+  --emerald: #50C878;
+  --rajah: #FBAB60;
+  --vermillion: #E34234;
+  --gold: #FFD700;
+  --sandalwood: #F4A460;
+  
+  /* Gradients */
+  --indian-flag-gradient: linear-gradient(135deg, #FF9933 0%, #FFFFFF 33%, #138808 66%);
+  --sunset-gradient: linear-gradient(135deg, #FF6B35 0%, #F7931E 50%, #FFD700 100%);
+  --peacock-gradient: linear-gradient(135deg, #005A5B 0%, #4169E1 100%);
+  --lotus-gradient: linear-gradient(135deg, #F8BBD9 0%, #FF69B4 100%);
+  --heritage-gradient: linear-gradient(135deg, #7B3F00 0%, #D2691E 50%, #FFD700 100%);
+  
+  /* Traditional Patterns */
+  --mandala-pattern: radial-gradient(circle, rgba(255, 153, 51, 0.1) 2px, transparent 2px);
+  --paisley-pattern: conic-gradient(from 45deg, rgba(255, 153, 51, 0.05), rgba(19, 136, 8, 0.05), rgba(255, 153, 51, 0.05));
+}
+
+/* Global Styles */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', 'Mukti', sans-serif;
+  background: var(--indian-flag-gradient);
+  background-attachment: fixed;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+/* Overlay pattern for traditional feel */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--mandala-pattern);
+  background-size: 30px 30px;
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Main Container */
+.bharat-container {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+  margin: 20px;
+  padding: 30px;
+  border: 2px solid var(--gold);
+  position: relative;
+  overflow: hidden;
+}
+
+.bharat-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background: var(--indian-flag-gradient);
+  z-index: 1;
+}
+
+/* Typography */
+.bharat-title {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  color: var(--navy-blue);
+  text-align: center;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.bharat-title::after {
+  content: '🇮🇳';
+  position: absolute;
+  right: -50px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.7em;
+}
+
+.bharat-subtitle {
+  font-family: 'Inter', sans-serif;
+  color: var(--henna);
+  text-align: center;
+  margin-bottom: 30px;
+  font-weight: 500;
+}
+
+/* Card Styles */
+.bharat-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 187, 217, 0.1) 100%);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 153, 51, 0.2);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.bharat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--sunset-gradient);
+  opacity: 0.8;
+}
+
+.bharat-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 16px 48px rgba(255, 153, 51, 0.2);
+  border-color: var(--saffron);
+}
+
+/* Stat Cards */
+.bharat-stat-card {
+  background: var(--sunset-gradient);
+  color: white;
+  text-align: center;
+  padding: 25px;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(255, 107, 53, 0.3);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.bharat-stat-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+  animation: float 20s infinite linear;
+}
+
+.bharat-stat-card:nth-child(2) {
+  background: var(--peacock-gradient);
+  box-shadow: 0 8px 32px rgba(0, 90, 91, 0.3);
+}
+
+.bharat-stat-card:nth-child(3) {
+  background: var(--heritage-gradient);
+  box-shadow: 0 8px 32px rgba(123, 63, 0, 0.3);
+}
+
+.bharat-stat-card:nth-child(4) {
+  background: var(--lotus-gradient);
+  box-shadow: 0 8px 32px rgba(248, 187, 217, 0.3);
+}
+
+@keyframes float {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+.bharat-stat-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.bharat-stat-label {
+  font-size: 0.9rem;
+  opacity: 0.9;
+  font-weight: 500;
+}
+
+/* Buttons */
+.bharat-button {
+  background: var(--sunset-gradient);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 25px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 16px rgba(255, 153, 51, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+}
+
+.bharat-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transition: left 0.5s;
+}
+
+.bharat-button:hover::before {
+  left: 100%;
+}
+
+.bharat-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(255, 153, 51, 0.4);
+}
+
+.bharat-button-secondary {
+  background: var(--peacock-gradient);
+  box-shadow: 0 4px 16px rgba(0, 90, 91, 0.3);
+}
+
+.bharat-button-secondary:hover {
+  box-shadow: 0 8px 24px rgba(0, 90, 91, 0.4);
+}
+
+/* Action Cards */
+.bharat-action-card {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 20px;
+  padding: 30px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.bharat-action-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--paisley-pattern);
+  background-size: 50px 50px;
+  opacity: 0.05;
+}
+
+.bharat-action-card:hover {
+  transform: scale(1.05);
+  border-color: var(--saffron);
+  box-shadow: 0 16px 48px rgba(255, 153, 51, 0.2);
+}
+
+.bharat-action-icon {
+  font-size: 3rem;
+  margin-bottom: 15px;
+  color: var(--saffron);
+  filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.bharat-action-title {
+  font-family: 'Playfair Display', serif;
+  font-weight: 600;
+  color: var(--navy-blue);
+  margin-bottom: 10px;
+}
+
+.bharat-action-description {
+  color: var(--henna);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+/* Tab Styles */
+.bharat-tabs {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50px;
+  padding: 8px;
+  margin-bottom: 30px;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.bharat-tab {
+  background: transparent;
+  border: none;
+  padding: 15px 25px;
+  border-radius: 25px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: var(--henna);
+  margin: 0 5px;
+}
+
+.bharat-tab.active {
+  background: var(--sunset-gradient);
+  color: white;
+  box-shadow: 0 4px 16px rgba(255, 153, 51, 0.3);
+}
+
+.bharat-tab:hover:not(.active) {
+  background: rgba(255, 153, 51, 0.1);
+  color: var(--saffron);
+}
+
+/* Form Styles */
+.bharat-input {
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid rgba(255, 153, 51, 0.2);
+  border-radius: 12px;
+  padding: 15px;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.bharat-input:focus {
+  outline: none;
+  border-color: var(--saffron);
+  box-shadow: 0 0 0 3px rgba(255, 153, 51, 0.1);
+}
+
+/* Status Indicators */
+.bharat-status-verified {
+  background: var(--green);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.bharat-status-pending {
+  background: var(--turmeric);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.bharat-status-error {
+  background: var(--vermillion);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Progress Bar */
+.bharat-progress {
+  background: rgba(255, 153, 51, 0.2);
+  border-radius: 10px;
+  height: 8px;
+  overflow: hidden;
+}
+
+.bharat-progress-fill {
+  background: var(--sunset-gradient);
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.3s ease;
+  position: relative;
+}
+
+.bharat-progress-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.3) 50%, transparent 100%);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* Alerts */
+.bharat-alert {
+  padding: 16px 20px;
+  border-radius: 12px;
+  margin: 16px 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 500;
+}
+
+.bharat-alert-success {
+  background: linear-gradient(135deg, rgba(19, 136, 8, 0.1) 0%, rgba(80, 200, 120, 0.1) 100%);
+  border: 1px solid var(--green);
+  color: var(--dark-green);
+}
+
+.bharat-alert-warning {
+  background: linear-gradient(135deg, rgba(228, 155, 15, 0.1) 0%, rgba(255, 165, 0, 0.1) 100%);
+  border: 1px solid var(--turmeric);
+  color: var(--henna);
+}
+
+.bharat-alert-error {
+  background: linear-gradient(135deg, rgba(227, 66, 52, 0.1) 0%, rgba(255, 0, 0, 0.1) 100%);
+  border: 1px solid var(--vermillion);
+  color: var(--vermillion);
+}
+
+.bharat-alert-info {
+  background: linear-gradient(135deg, rgba(65, 105, 225, 0.1) 0%, rgba(0, 90, 91, 0.1) 100%);
+  border: 1px solid var(--peacock-blue);
+  color: var(--navy-blue);
+}
+
+/* Document Cards */
+.bharat-document-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  padding: 20px;
+  margin: 16px 0;
+  border: 1px solid rgba(255, 153, 51, 0.2);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.bharat-document-card:hover {
+  box-shadow: 0 8px 32px rgba(255, 153, 51, 0.15);
+  border-color: var(--saffron);
+}
+
+/* Profile Picture */
+.bharat-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 4px solid var(--gold);
+  box-shadow: 0 8px 32px rgba(255, 215, 0, 0.3);
+  background: var(--sunset-gradient);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0 auto 20px;
+}
+
+/* Loading Animation */
+.bharat-loading {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(255, 153, 51, 0.2);
+  border-radius: 50%;
+  border-top-color: var(--saffron);
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* AI Analysis Styles */
+.bharat-ai-container {
+  background: linear-gradient(135deg, rgba(0, 90, 91, 0.05) 0%, rgba(65, 105, 225, 0.05) 100%);
+  border-radius: 20px;
+  padding: 30px;
+  border: 2px solid var(--peacock-blue);
+  position: relative;
+  overflow: hidden;
+}
+
+.bharat-ai-container::before {
+  content: '🤖';
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 2rem;
+  opacity: 0.3;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .bharat-container {
+    margin: 10px;
+    padding: 20px;
+    border-radius: 16px;
+  }
+  
+  .bharat-stat-value {
+    font-size: 2rem;
+  }
+  
+  .bharat-action-card {
+    padding: 20px;
+  }
+  
+  .bharat-tab {
+    padding: 12px 20px;
+    margin: 0 2px;
+  }
+  
+  .bharat-avatar {
+    width: 100px;
+    height: 100px;
+    font-size: 2rem;
+  }
+}
+
+/* Traditional Indian Decorative Elements */
+.bharat-decorative-border {
+  background: repeating-linear-gradient(
+    90deg,
+    var(--saffron) 0px,
+    var(--saffron) 5px,
+    white 5px,
+    white 10px,
+    var(--green) 10px,
+    var(--green) 15px,
+    white 15px,
+    white 20px
+  );
+  height: 6px;
+  border-radius: 3px;
+  margin: 20px 0;
+}
+
+.bharat-lotus-pattern {
+  background-image: radial-gradient(circle at 25% 25%, rgba(255, 153, 51, 0.1) 2px, transparent 2px),
+                    radial-gradient(circle at 75% 75%, rgba(19, 136, 8, 0.1) 2px, transparent 2px);
+  background-size: 40px 40px;
+  background-position: 0 0, 20px 20px;
+}
+
+/* Sanskrit-inspired Typography */
+.bharat-sanskrit {
+  font-family: 'Playfair Display', serif;
+  font-weight: 600;
+  color: var(--henna);
+  text-align: center;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  margin: 20px 0;
+}
+
+.bharat-sanskrit::before {
+  content: '🕉️ ';
+}
+
+.bharat-sanskrit::after {
+  content: ' 🕉️';
+}
+
+/* Chakra-inspired circular elements */
+.bharat-chakra {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, var(--saffron), var(--white), var(--green), var(--saffron));
+  position: relative;
+  margin: 0 auto 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.bharat-chakra::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--navy-blue);
+}
+
+.bharat-chakra::after {
+  content: '☸️';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 20px;
+  color: white;
+}
+
+/* Diwali-inspired glow effect */
+.bharat-glow {
+  position: relative;
+}
+
+.bharat-glow::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, var(--saffron), var(--gold), var(--green), var(--peacock-blue));
+  border-radius: inherit;
+  z-index: -1;
+  opacity: 0.7;
+  filter: blur(8px);
+  animation: glow 3s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from {
+    filter: blur(8px);
+    opacity: 0.7;
+  }
+  to {
+    filter: blur(12px);
+    opacity: 0.9;
+  }
+}
+
+/* Rangoli-inspired patterns */
+.bharat-rangoli {
+  background: radial-gradient(circle, 
+    var(--saffron) 0%, 
+    transparent 2px, 
+    transparent 8px,
+    var(--green) 10px,
+    transparent 12px,
+    transparent 18px,
+    var(--saffron) 20px,
+    transparent 22px
+  );
+  background-size: 40px 40px;
+  opacity: 0.1;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
