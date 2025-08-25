@@ -382,46 +382,96 @@ function App() {
               </motion.div>
             </Box>
 
-            {/* Features Grid */}
-            <Grid container spacing={3} sx={{ mb: 4 }}>
+            {/* Features Grid with Indian Heritage Design */}
+            <Grid container spacing={4} sx={{ mb: 6 }}>
               {[
                 {
-                  icon: <Security sx={{ fontSize: 40 }} />,
-                  title: 'Secure & Transparent',
-                  description: 'Blockchain-based document storage with immutable verification'
+                  icon: '🔒',
+                  title: 'सुरक्षित और पारदर्शी',
+                  subtitle: 'Secure & Transparent',
+                  description: 'अपरिवर्तनीय सत्यापन के साथ ब्लॉकचेन-आधारित दस्तावेज़ भंडारण',
+                  englishDesc: 'Blockchain-based document storage with immutable verification',
+                  gradient: 'linear-gradient(135deg, #138808 0%, #50C878 100%)'
                 },
                 {
-                  icon: <Speed sx={{ fontSize: 40 }} />,
-                  title: 'Fast Processing',
-                  description: 'AI-powered document analysis and instant verification'
+                  icon: '⚡',
+                  title: 'तेज़ प्रसंस्करण',
+                  subtitle: 'Fast Processing',
+                  description: 'AI-संचालित दस्तावेज़ विश्लेषण और तुरंत सत्यापन',
+                  englishDesc: 'AI-powered document analysis and instant verification',
+                  gradient: 'linear-gradient(135deg, #FF6B35 0%, #F7931E 100%)'
                 },
                 {
-                  icon: <Verified sx={{ fontSize: 40 }} />,
-                  title: 'Government Verified',
-                  description: 'Official government platform with authorized access'
+                  icon: '✅',
+                  title: 'सरकार द्वारा सत्यापित',
+                  subtitle: 'Government Verified',
+                  description: 'अधिकृत पहुंच के साथ आधिकारिक सरकारी प्लेटफॉर्म',
+                  englishDesc: 'Official government platform with authorized access',
+                  gradient: 'linear-gradient(135deg, #E49B0F 0%, #FFA500 100%)'
                 },
                 {
-                  icon: <DashboardIcon sx={{ fontSize: 40 }} />,
-                  title: 'Unified Dashboard',
-                  description: 'Single platform for all citizen services and grievances'
+                  icon: '📊',
+                  title: 'एकीकृत डैशबोर्ड',
+                  subtitle: 'Unified Dashboard',
+                  description: 'सभी नागरिक सेवाओं और शिकायतों के लिए एकल प्लेटफॉर्म',
+                  englishDesc: 'Single platform for all citizen services and grievances',
+                  gradient: 'linear-gradient(135deg, #005A5B 0%, #4169E1 100%)'
                 }
               ].map((feature, index) => (
                 <Grid item xs={12} sm={6} md={3} key={index}>
                   <motion.div
-                    initial={{ y: 20, opacity: 0 }}
+                    initial={{ y: 30, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
-                    transition={{ duration: 0.5, delay: 0.1 * index }}
+                    transition={{ duration: 0.6, delay: 0.1 * index }}
+                    whileHover={{ scale: 1.05, rotateY: 5 }}
                   >
-                    <Card sx={{ height: '100%', textAlign: 'center', p: 2 }}>
-                      <CardContent>
-                        <Box sx={{ color: 'primary.main', mb: 2 }}>
+                    <Card className="bharat-card bharat-glow" sx={{ 
+                      height: '100%', 
+                      textAlign: 'center', 
+                      p: 3,
+                      background: feature.gradient,
+                      color: 'white',
+                      minHeight: '280px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'space-between'
+                    }}>
+                      <CardContent sx={{ flexGrow: 1 }}>
+                        <Box sx={{ 
+                          fontSize: '4rem', 
+                          mb: 3,
+                          filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))'
+                        }}>
                           {feature.icon}
                         </Box>
-                        <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
+                        <Typography variant="h5" gutterBottom sx={{ 
+                          fontWeight: 700,
+                          fontFamily: '"Playfair Display", serif',
+                          textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
+                          mb: 1
+                        }}>
                           {feature.title}
                         </Typography>
-                        <Typography variant="body2" color="text.secondary">
+                        <Typography variant="h6" gutterBottom sx={{ 
+                          fontWeight: 600,
+                          opacity: 0.9,
+                          mb: 2
+                        }}>
+                          {feature.subtitle}
+                        </Typography>
+                        <Typography variant="body2" sx={{ 
+                          opacity: 0.85,
+                          mb: 2,
+                          lineHeight: 1.6
+                        }}>
                           {feature.description}
+                        </Typography>
+                        <Typography variant="body2" sx={{ 
+                          opacity: 0.75,
+                          fontStyle: 'italic',
+                          fontSize: '0.9rem'
+                        }}>
+                          {feature.englishDesc}
                         </Typography>
                       </CardContent>
                     </Card>
