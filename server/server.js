@@ -311,6 +311,9 @@ async function startServer() {
       console.log('   ├── PUT  /api/notifications/:id/read - Mark notification as read');
       console.log('   ├── GET  /api/dashboard/status      - System status dashboard');
       console.log('   ├── GET  /api/dashboard/health-check - Comprehensive health check');
+      console.log('   ├── GET  /api/chat/rooms            - Get chat rooms');
+      console.log('   ├── POST /api/broadcasts            - Create system broadcasts');
+      console.log('   ├── GET  /api/broadcasts/public     - Get public announcements');
       console.log('   ├── GET  /api/ai/health            - AI service health');
       console.log('   ├── POST /api/ai/analyze/document  - AI document analysis');
       console.log('   ├── POST /api/ai/analyze/grievance - AI grievance analysis');
