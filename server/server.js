@@ -4,7 +4,12 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const path = require('path');
+const http = require('http');
 require('dotenv').config();
+
+// Import blockchain and real-time services
+const blockchainService = require('./services/blockchain');
+const realtimeEventService = require('./services/realtime-events');
 
 // Import routes
 const authRoutes = require('./routes/auth');
@@ -77,20 +82,72 @@ app.use('/api/documents', documentRoutes);
 app.use('/api/grievances', grievanceRoutes);
 app.use('/api/ai', aiAnalysisRoutes);
 
+// Blockchain status endpoint
+app.get('/api/blockchain/status', (req, res) => {
+  try {
+    const stats = {
+      isInitialized: blockchainService.isInitialized,
+      network: process.env.BLOCKCHAIN_NETWORK || 'localhost',
+      contractsLoaded: Object.keys(blockchainService.contracts).length,
+      realtimeConnections: realtimeEventService.getStatistics().totalClients
+    };
+    
+    res.json({
+      success: true,
+      message: 'Blockchain service status',
+      data: stats
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: 'Internal Server Error',
+      message: 'Failed to get blockchain status'
+    });
+  }
+});
+
+// WebSocket status endpoint
+app.get('/api/websocket/status', (req, res) => {
+  try {
+    const stats = realtimeEventService.getStatistics();
+    
+    res.json({
+      success: true,
+      message: 'WebSocket service status',
+      data: stats
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: 'Internal Server Error',
+      message: 'Failed to get WebSocket status'
+    });
+  }
+});
+
 // Root endpoint
 app.get('/', (req, res) => {
   res.json({
     message: 'BharatChain Governance Platform API',
-    version: '1.0.0',
+    version: '2.0.0',
     status: 'running',
     timestamp: new Date().toISOString(),
+    blockchain: {
+      enabled: true,
+      network: process.env.BLOCKCHAIN_NETWORK || 'localhost',
+      isInitialized: blockchainService.isInitialized
+    },
+    realtime: {
+      enabled: true,
+      connections: realtimeEventService.getStatistics().totalClients
+    },
     endpoints: {
       health: '/api/health',
       auth: '/api/auth',
       citizens: '/api/citizens',
       documents: '/api/documents',
       grievances: '/api/grievances',
-      ai_analysis: '/api/ai'
+      ai_analysis: '/api/ai',
+      blockchain_status: '/api/blockchain/status',
+      websocket_status: '/api/websocket/status'
     }
   });
 });
