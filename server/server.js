@@ -30,6 +30,7 @@ const governmentAPIsRoutes = require('./routes/government-apis');
 const governmentServicesRoutes = require('./routes/government-services');
 const governmentPaymentsRoutes = require('./routes/government-payments');
 const openDataRoutes = require('./routes/open-data');
+const secureExchangeRoutes = require('./routes/secure-data-exchange');
 
 // Import database and models
 const { sequelize } = require('../config/database');
