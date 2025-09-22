@@ -99,6 +99,7 @@ app.use('/api/qr', qrCodeRoutes);
 app.use('/api/mobile-auth', mobileAuthRoutes);
 app.use('/api/mobile-config', mobileConfigRoutes);
 app.use('/api/government', governmentAPIsRoutes);
+app.use('/api/gov-services', governmentServicesRoutes);
 
 // Blockchain status endpoint
 app.get('/api/blockchain/status', (req, res) => {
