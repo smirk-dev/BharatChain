@@ -10,12 +10,14 @@ require('dotenv').config();
 // Import blockchain and real-time services
 const blockchainService = require('./services/blockchain');
 const realtimeEventService = require('./services/realtime-events');
+const notificationService = require('./services/notification');
 
 // Import routes
 const authRoutes = require('./routes/auth');
 const citizenRoutes = require('./routes/citizens');
 const documentRoutes = require('./routes/documents');
 const grievanceRoutes = require('./routes/grievances');
+const notificationRoutes = require('./routes/notifications');
 const healthRoutes = require('./routes/health');
 const aiAnalysisRoutes = require('./routes/ai-analysis');
 
@@ -80,6 +82,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/citizens', citizenRoutes);
 app.use('/api/documents', documentRoutes);
 app.use('/api/grievances', grievanceRoutes);
+app.use('/api/notifications', notificationRoutes);
 app.use('/api/ai', aiAnalysisRoutes);
 
 // Blockchain status endpoint
