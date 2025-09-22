@@ -80,18 +80,24 @@ class DocumentProcessor:
                 HAS_TRANSFORMERS = False
             
             # Try to load text similarity model if available
-            try:
-                with warnings.catch_warnings():
-                    warnings.simplefilter("ignore")
-                    from sentence_transformers import SentenceTransformer
-                global HAS_SENTENCE_TRANSFORMERS
-                HAS_SENTENCE_TRANSFORMERS = True
-                self.similarity_model = SentenceTransformer('all-MiniLM-L6-v2')
-                logger.info("Sentence transformer loaded successfully")
-            except Exception as e:
-                logger.info("Sentence transformer not available, using basic similarity")
-                self.similarity_model = None
-                HAS_SENTENCE_TRANSFORMERS = False
+            # Temporarily disabled due to TensorFlow dependency issues
+            # try:
+            #     with warnings.catch_warnings():
+            #         warnings.simplefilter("ignore")
+            #         from sentence_transformers import SentenceTransformer
+            #     global HAS_SENTENCE_TRANSFORMERS
+            #     HAS_SENTENCE_TRANSFORMERS = True
+            #     self.similarity_model = SentenceTransformer('all-MiniLM-L6-v2')
+            #     logger.info("Sentence transformer loaded successfully")
+            # except Exception as e:
+            #     logger.info("Sentence transformer not available, using basic similarity")
+            #     self.similarity_model = None
+            #     HAS_SENTENCE_TRANSFORMERS = False
+            
+            # For now, disable sentence transformers completely
+            logger.info("Sentence transformer disabled to avoid TensorFlow conflicts")
+            self.similarity_model = None
+            HAS_SENTENCE_TRANSFORMERS = False
             
             # Document type patterns
             self.document_patterns = {
