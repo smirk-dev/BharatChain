@@ -4488,6 +4488,569 @@ const CitizenDashboard = () => {
             </Grid>
           </Grid>
         </TabPanel>
+
+        {/* Open Data Portal Tab */}
+        <TabPanel key="open-data" value={currentTab} index={9}>
+          <Grid container spacing={4}>
+            {/* Header */}
+            <Grid item xs={12}>
+              <Card className="bharat-card">
+                <CardContent sx={{ p: 4 }}>
+                  <Typography variant="h4" sx={{ 
+                    fontWeight: 700,
+                    color: '#000080',
+                    fontFamily: '"Playfair Display", serif',
+                    mb: 2
+                  }}>
+                    📊 खुला डेटा पोर्टल • Open Data Portal
+                  </Typography>
+                  <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+                    RTI आवेदन, बजट पारदर्शिता, और सरकारी डेटासेट तक पहुंच
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic' }}>
+                    RTI applications, budget transparency, and government datasets access
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+
+            {/* RTI Application */}
+            <Grid item xs={12} md={8}>
+              <Card className="bharat-card">
+                <CardContent sx={{ p: 4 }}>
+                  <Typography variant="h5" sx={{ fontWeight: 700, mb: 3, color: '#000080' }}>
+                    📋 RTI आवेदन • RTI Application
+                  </Typography>
+                  <Typography variant="body1" sx={{ mb: 3 }}>
+                    सूचना का अधिकार अधिनियम के तहत आवेदन करें
+                  </Typography>
+                  <Grid container spacing={3}>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        fullWidth
+                        label="आवेदक का नाम • Applicant Name"
+                        variant="outlined"
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        fullWidth
+                        label="संपर्क नंबर • Contact Number"
+                        variant="outlined"
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <FormControl fullWidth>
+                        <InputLabel>सरकारी विभाग • Government Department</InputLabel>
+                        <Select defaultValue="">
+                          <MenuItem value="education">शिक्षा विभाग • Education Dept</MenuItem>
+                          <MenuItem value="health">स्वास्थ्य विभाग • Health Dept</MenuItem>
+                          <MenuItem value="transport">परिवहन विभाग • Transport Dept</MenuItem>
+                          <MenuItem value="revenue">राजस्व विभाग • Revenue Dept</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        multiline
+                        rows={4}
+                        label="सूचना विवरण • Information Required"
+                        placeholder="कृपया बताएं कि आपको क्या जानकारी चाहिए • Please specify what information you need"
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Button
+                        variant="contained"
+                        size="large"
+                        sx={{
+                          background: 'linear-gradient(135deg, #138808 0%, #50C878 100%)',
+                          py: 1.5,
+                          px: 4
+                        }}
+                        onClick={() => alert('RTI application submitted!')}
+                      >
+                        RTI आवेदन जमा करें • Submit RTI Application
+                      </Button>
+                    </Grid>
+                  </Grid>
+                </CardContent>
+              </Card>
+            </Grid>
+
+            {/* RTI Status */}
+            <Grid item xs={12} md={4}>
+              <Card className="bharat-card">
+                <CardContent sx={{ p: 4 }}>
+                  <Typography variant="h5" sx={{ fontWeight: 700, mb: 3, color: '#000080' }}>
+                    📈 RTI स्थिति • RTI Status
+                  </Typography>
+                  <Box sx={{ textAlign: 'center', py: 3 }}>
+                    <Typography sx={{ fontSize: '3rem', mb: 2 }}>
+                      📋
+                    </Typography>
+                    <Typography variant="h6" color="text.secondary" gutterBottom>
+                      कोई सक्रिय आवेदन नहीं
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                      No active applications
+                    </Typography>
+                    <Button
+                      variant="outlined"
+                      sx={{
+                        borderColor: '#FF9933',
+                        color: '#7B3F00'
+                      }}
+                      onClick={() => alert('View RTI history coming soon!')}
+                    >
+                      इतिहास देखें • View History
+                    </Button>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Grid>
+
+            {/* Government Datasets */}
+            <Grid item xs={12}>
+              <Typography variant="h5" sx={{ fontWeight: 700, mb: 3, color: '#000080' }}>
+                💾 सरकारी डेटासेट • Government Datasets
+              </Typography>
+            </Grid>
+
+            {[
+              {
+                category: 'जनसांख्यिकी',
+                englishCategory: 'Demographics',
+                datasets: '125',
+                icon: '👥',
+                gradient: 'linear-gradient(135deg, #FF6B35 0%, #F7931E 100%)',
+                description: 'जनसंख्या और जनसांख्यिकी डेटा'
+              },
+              {
+                category: 'अर्थव्यवस्था',
+                englishCategory: 'Economy',
+                datasets: '89',
+                icon: '💰',
+                gradient: 'linear-gradient(135deg, #138808 0%, #50C878 100%)',
+                description: 'आर्थिक संकेतक और बजट डेटा'
+              },
+              {
+                category: 'स्वास्थ्य',
+                englishCategory: 'Healthcare',
+                datasets: '67',
+                icon: '🏥',
+                gradient: 'linear-gradient(135deg, #005A5B 0%, #4169E1 100%)',
+                description: 'स्वास्थ्य आंकड़े और चिकित्सा डेटा'
+              },
+              {
+                category: 'शिक्षा',
+                englishCategory: 'Education',
+                datasets: '43',
+                icon: '📚',
+                gradient: 'linear-gradient(135deg, #E49B0F 0%, #FFA500 100%)',
+                description: 'शैक्षणिक आंकड़े और संस्थान डेटा'
+              }
+            ].map((dataset, index) => (
+              <Grid item xs={12} sm={6} md={3} key={index}>
+                <Card className="bharat-card bharat-glow" sx={{ 
+                  height: '100%',
+                  cursor: 'pointer',
+                  background: dataset.gradient,
+                  color: 'white',
+                  '&:hover': {
+                    transform: 'translateY(-4px)',
+                    boxShadow: '0 12px 40px rgba(0,0,0,0.2)'
+                  }
+                }} onClick={() => alert(`Browse ${dataset.category} datasets coming soon!`)}>
+                  <CardContent sx={{ p: 3, textAlign: 'center' }}>
+                    <Typography sx={{ fontSize: '3rem', mb: 2 }}>
+                      {dataset.icon}
+                    </Typography>
+                    <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
+                      {dataset.category}
+                    </Typography>
+                    <Typography variant="body2" sx={{ mb: 1, opacity: 0.9 }}>
+                      {dataset.englishCategory}
+                    </Typography>
+                    <Typography variant="h4" sx={{ fontWeight: 700, mb: 2 }}>
+                      {dataset.datasets}
+                    </Typography>
+                    <Typography variant="caption" sx={{ opacity: 0.8 }}>
+                      {dataset.description}
+                    </Typography>
+                    <Button
+                      fullWidth
+                      variant="contained"
+                      sx={{
+                        mt: 2,
+                        backgroundColor: 'rgba(255,255,255,0.2)',
+                        color: 'white',
+                        '&:hover': {
+                          backgroundColor: 'rgba(255,255,255,0.3)'
+                        }
+                      }}
+                    >
+                      ब्राउज़ करें • Browse
+                    </Button>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+
+            {/* Budget Transparency */}
+            <Grid item xs={12}>
+              <Card className="bharat-card">
+                <CardContent sx={{ p: 4 }}>
+                  <Typography variant="h5" sx={{ fontWeight: 700, mb: 3, color: '#000080' }}>
+                    💎 बजट पारदर्शिता • Budget Transparency
+                  </Typography>
+                  <Grid container spacing={3}>
+                    <Grid item xs={12} md={4}>
+                      <Box sx={{ textAlign: 'center', p: 3, border: '2px solid #FF9933', borderRadius: 2 }}>
+                        <Typography variant="h3" sx={{ fontWeight: 700, color: '#FF9933', mb: 1 }}>
+                          ₹12.5L Cr
+                        </Typography>
+                        <Typography variant="h6" sx={{ color: '#000080' }}>
+                          कुल बजट • Total Budget
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          2024-25 वार्षिक बजट
+                        </Typography>
+                      </Box>
+                    </Grid>
+                    <Grid item xs={12} md={4}>
+                      <Box sx={{ textAlign: 'center', p: 3, border: '2px solid #138808', borderRadius: 2 }}>
+                        <Typography variant="h3" sx={{ fontWeight: 700, color: '#138808', mb: 1 }}>
+                          68%
+                        </Typography>
+                        <Typography variant="h6" sx={{ color: '#000080' }}>
+                          उपयोग दर • Utilization Rate
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          अप्रैल-नवंबर 2024
+                        </Typography>
+                      </Box>
+                    </Grid>
+                    <Grid item xs={12} md={4}>
+                      <Box sx={{ textAlign: 'center', p: 3, border: '2px solid #4169E1', borderRadius: 2 }}>
+                        <Typography variant="h3" sx={{ fontWeight: 700, color: '#4169E1', mb: 1 }}>
+                          234
+                        </Typography>
+                        <Typography variant="h6" sx={{ color: '#000080' }}>
+                          योजनाएं • Schemes
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          सक्रिय सरकारी योजनाएं
+                        </Typography>
+                      </Box>
+                    </Grid>
+                  </Grid>
+                  <Button
+                    fullWidth
+                    variant="outlined"
+                    size="large"
+                    sx={{
+                      mt: 3,
+                      borderColor: '#FF9933',
+                      color: '#7B3F00',
+                      py: 1.5
+                    }}
+                    onClick={() => alert('Detailed budget analysis coming soon!')}
+                  >
+                    विस्तृत बजट विश्लेषण देखें • View Detailed Budget Analysis
+                  </Button>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
+        </TabPanel>
+
+        {/* Compliance & Audit Tab */}
+        <TabPanel key="compliance" value={currentTab} index={10}>
+          <Grid container spacing={4}>
+            {/* Header */}
+            <Grid item xs={12}>
+              <Card className="bharat-card">
+                <CardContent sx={{ p: 4 }}>
+                  <Typography variant="h4" sx={{ 
+                    fontWeight: 700,
+                    color: '#000080',
+                    fontFamily: '"Playfair Display", serif',
+                    mb: 2
+                  }}>
+                    🔍 अनुपालन और ऑडिट • Compliance & Audit
+                  </Typography>
+                  <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+                    अनुपालन ट्रैकिंग, ऑडिट रिपोर्ट, और नियामक आवश्यकताएं
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic' }}>
+                    Compliance tracking, audit reports, and regulatory requirements
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+
+            {/* Compliance Overview */}
+            <Grid item xs={12}>
+              <Typography variant="h5" sx={{ fontWeight: 700, mb: 3, color: '#000080' }}>
+                📊 अनुपालन सिंहावलोकन • Compliance Overview
+              </Typography>
+            </Grid>
+
+            {[
+              {
+                category: 'डेटा सुरक्षा',
+                englishCategory: 'Data Security',
+                status: '95%',
+                level: 'उच्च • High',
+                icon: '🔒',
+                gradient: 'linear-gradient(135deg, #138808 0%, #50C878 100%)',
+                description: 'व्यक्तिगत डेटा सुरक्षा अनुपालन'
+              },
+              {
+                category: 'पारदर्शिता',
+                englishCategory: 'Transparency',
+                status: '88%',
+                level: 'उच्च • High',
+                icon: '👁️',
+                gradient: 'linear-gradient(135deg, #4169E1 0%, #00BFFF 100%)',
+                description: 'सूचना पारदर्शिता अनुपालन'
+              },
+              {
+                category: 'वित्तीय ऑडिट',
+                englishCategory: 'Financial Audit',
+                status: '92%',
+                level: 'उच्च • High',
+                icon: '💰',
+                gradient: 'linear-gradient(135deg, #FF6B35 0%, #F7931E 100%)',
+                description: 'वित्तीय पारदर्शिता और ऑडिट'
+              },
+              {
+                category: 'कानूनी अनुपालन',
+                englishCategory: 'Legal Compliance',
+                status: '78%',
+                level: 'मध्यम • Medium',
+                icon: '⚖️',
+                gradient: 'linear-gradient(135deg, #E49B0F 0%, #FFA500 100%)',
+                description: 'कानूनी नियमों का अनुपालन'
+              }
+            ].map((compliance, index) => (
+              <Grid item xs={12} sm={6} md={3} key={index}>
+                <Card className="bharat-card bharat-glow" sx={{ 
+                  height: '100%',
+                  cursor: 'pointer',
+                  background: compliance.gradient,
+                  color: 'white',
+                  '&:hover': {
+                    transform: 'translateY(-4px)',
+                    boxShadow: '0 12px 40px rgba(0,0,0,0.2)'
+                  }
+                }} onClick={() => alert(`View ${compliance.category} details coming soon!`)}>
+                  <CardContent sx={{ p: 3, textAlign: 'center' }}>
+                    <Typography sx={{ fontSize: '3rem', mb: 2 }}>
+                      {compliance.icon}
+                    </Typography>
+                    <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
+                      {compliance.category}
+                    </Typography>
+                    <Typography variant="body2" sx={{ mb: 1, opacity: 0.9 }}>
+                      {compliance.englishCategory}
+                    </Typography>
+                    <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
+                      {compliance.status}
+                    </Typography>
+                    <Chip 
+                      label={compliance.level}
+                      size="small"
+                      sx={{
+                        backgroundColor: 'rgba(255,255,255,0.2)',
+                        color: 'white',
+                        mb: 2
+                      }}
+                    />
+                    <Typography variant="caption" sx={{ opacity: 0.8, display: 'block' }}>
+                      {compliance.description}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+
+            {/* Audit Reports */}
+            <Grid item xs={12} md={8}>
+              <Card className="bharat-card">
+                <CardContent sx={{ p: 4 }}>
+                  <Typography variant="h5" sx={{ fontWeight: 700, mb: 3, color: '#000080' }}>
+                    📋 ऑडिट रिपोर्ट • Audit Reports
+                  </Typography>
+                  <TableContainer>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell sx={{ fontWeight: 700 }}>रिपोर्ट प्रकार • Report Type</TableCell>
+                          <TableCell sx={{ fontWeight: 700 }}>दिनांक • Date</TableCell>
+                          <TableCell sx={{ fontWeight: 700 }}>स्थिति • Status</TableCell>
+                          <TableCell sx={{ fontWeight: 700 }}>कार्य • Action</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {[
+                          { type: 'वार्षिक वित्तीय ऑडिट • Annual Financial Audit', date: '2024-03-15', status: 'पूर्ण • Complete', action: 'देखें • View' },
+                          { type: 'डेटा सुरक्षा ऑडिट • Data Security Audit', date: '2024-02-28', status: 'पूर्ण • Complete', action: 'देखें • View' },
+                          { type: 'अनुपालन समीक्षा • Compliance Review', date: '2024-01-20', status: 'पूर्ण • Complete', action: 'देखें • View' },
+                          { type: 'प्रक्रिया ऑडिट • Process Audit', date: '2024-01-10', status: 'प्रगति में • In Progress', action: 'ट्रैक • Track' }
+                        ].map((report, index) => (
+                          <TableRow key={index}>
+                            <TableCell>{report.type}</TableCell>
+                            <TableCell>{report.date}</TableCell>
+                            <TableCell>
+                              <Chip 
+                                label={report.status}
+                                size="small"
+                                color={report.status.includes('पूर्ण') ? 'success' : 'warning'}
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <Button
+                                variant="outlined"
+                                size="small"
+                                sx={{
+                                  borderColor: '#FF9933',
+                                  color: '#7B3F00'
+                                }}
+                                onClick={() => alert(`${report.action} audit report coming soon!`)}
+                              >
+                                {report.action}
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </CardContent>
+              </Card>
+            </Grid>
+
+            {/* Compliance Score */}
+            <Grid item xs={12} md={4}>
+              <Card className="bharat-card">
+                <CardContent sx={{ p: 4, textAlign: 'center' }}>
+                  <Typography variant="h5" sx={{ fontWeight: 700, mb: 3, color: '#000080' }}>
+                    🏆 अनुपालन स्कोर • Compliance Score
+                  </Typography>
+                  <Box sx={{ 
+                    position: 'relative', 
+                    display: 'inline-flex',
+                    mb: 3
+                  }}>
+                    <CircularProgress
+                      variant="determinate"
+                      value={88}
+                      size={120}
+                      thickness={6}
+                      sx={{
+                        color: '#138808',
+                        '& .MuiCircularProgress-circle': {
+                          strokeLinecap: 'round',
+                        },
+                      }}
+                    />
+                    <Box sx={{
+                      top: 0,
+                      left: 0,
+                      bottom: 0,
+                      right: 0,
+                      position: 'absolute',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}>
+                      <Typography variant="h4" sx={{ fontWeight: 700, color: '#138808' }}>
+                        88%
+                      </Typography>
+                    </Box>
+                  </Box>
+                  <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
+                    उत्कृष्ट अनुपालन • Excellent Compliance
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                    सभी अनुपालन मापदंडों में उच्च स्कोर
+                  </Typography>
+                  <Button
+                    variant="contained"
+                    sx={{
+                      background: 'linear-gradient(135deg, #138808 0%, #50C878 100%)'
+                    }}
+                    onClick={() => alert('Detailed compliance report coming soon!')}
+                  >
+                    विस्तृत रिपोर्ट • Detailed Report
+                  </Button>
+                </CardContent>
+              </Card>
+            </Grid>
+
+            {/* Regulatory Requirements */}
+            <Grid item xs={12}>
+              <Card className="bharat-card">
+                <CardContent sx={{ p: 4 }}>
+                  <Typography variant="h5" sx={{ fontWeight: 700, mb: 3, color: '#000080' }}>
+                    📜 नियामक आवश्यकताएं • Regulatory Requirements
+                  </Typography>
+                  <Grid container spacing={3}>
+                    {[
+                      { 
+                        name: 'डिजिटल व्यक्तिगत डेटा संरक्षण अधिनियम • Digital Personal Data Protection Act', 
+                        status: 'Compliant', 
+                        deadline: '2024-12-31',
+                        description: 'व्यक्तिगत डेटा की सुरक्षा और गोपनीयता'
+                      },
+                      { 
+                        name: 'सूचना का अधिकार अधिनियम • Right to Information Act', 
+                        status: 'Compliant', 
+                        deadline: 'Ongoing',
+                        description: 'सूचना पारदर्शिता और नागरिक अधिकार'
+                      },
+                      { 
+                        name: 'साइबर सुरक्षा फ्रेमवर्क • Cybersecurity Framework', 
+                        status: 'Partial', 
+                        deadline: '2024-06-30',
+                        description: 'डिजिटल बुनियादी ढांचे की सुरक्षा'
+                      }
+                    ].map((requirement, index) => (
+                      <Grid item xs={12} key={index}>
+                        <Box sx={{
+                          p: 3,
+                          border: '1px solid',
+                          borderColor: requirement.status === 'Compliant' ? 'success.main' : 'warning.main',
+                          borderRadius: 2,
+                          backgroundColor: requirement.status === 'Compliant' ? 'success.50' : 'warning.50'
+                        }}>
+                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                            <Typography variant="h6" sx={{ fontWeight: 600, flexGrow: 1 }}>
+                              {requirement.name}
+                            </Typography>
+                            <Chip 
+                              label={requirement.status}
+                              color={requirement.status === 'Compliant' ? 'success' : 'warning'}
+                              sx={{ ml: 2 }}
+                            />
+                          </Box>
+                          <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                            {requirement.description}
+                          </Typography>
+                          <Typography variant="caption" sx={{ fontWeight: 600 }}>
+                            समय सीमा • Deadline: {requirement.deadline}
+                          </Typography>
+                        </Box>
+                      </Grid>
+                    ))}
+                  </Grid>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
+        </TabPanel>
       </AnimatePresence>
     </div>
   );
