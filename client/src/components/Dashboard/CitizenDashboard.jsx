@@ -34,7 +34,13 @@ import {
   DialogContent,
   DialogActions,
   CircularProgress,
-  Badge
+  Badge,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow
 } from '@mui/material';
 import '../../styles/BharatTheme.css';
 import {
@@ -58,6 +64,9 @@ import {
   Phone,
   Work,
   School,
+  Send,
+  CloudDownload,
+  SettingsOutlined,
   AccountBalance,
   CloudUpload,
   GetApp as DownloadIcon,
