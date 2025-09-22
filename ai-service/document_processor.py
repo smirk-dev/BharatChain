@@ -14,21 +14,9 @@ try:
 except ImportError:
     HAS_PYMUPDF = False
     logging.warning("PyMuPDF not available, PDF processing will be limited")
-# Safe imports with fallbacks
-try:
-    import torch
-    from transformers import pipeline, AutoTokenizer, AutoModelForSequenceClassification
-    HAS_TRANSFORMERS = True
-except ImportError:
-    HAS_TRANSFORMERS = False
-    logging.warning("Transformers not available, using basic text analysis")
-
-try:
-    from sentence_transformers import SentenceTransformer
-    HAS_SENTENCE_TRANSFORMERS = True
-except ImportError:
-    HAS_SENTENCE_TRANSFORMERS = False
-    logging.warning("Sentence transformers not available")
+# Safe imports with fallbacks - moved to lazy loading
+HAS_TRANSFORMERS = False
+HAS_SENTENCE_TRANSFORMERS = False
 
 try:
     import magic
