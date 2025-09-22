@@ -218,6 +218,8 @@ app.use('*', (req, res) => {
 // Database connection and server startup
 async function startServer() {
   try {
+    console.log('🚀 Starting BharatChain Server...');
+    
     // Test database connection
     await sequelize.authenticate();
     console.log('✅ Database connection established successfully.');
@@ -229,51 +231,106 @@ async function startServer() {
     });
     console.log('✅ Database models synchronized.');
 
+    // Initialize blockchain service
+    try {
+      const network = process.env.BLOCKCHAIN_NETWORK || 'localhost';
+      const privateKey = process.env.PRIVATE_KEY;
+      
+      if (privateKey) {
+        await blockchainService.initialize(network, privateKey);
+        console.log('✅ Blockchain service initialized successfully.');
+      } else {
+        console.log('⚠️ Private key not provided, blockchain will run in read-only mode.');
+        await blockchainService.initialize(network);
+      }
+    } catch (blockchainError) {
+      console.error('❌ Blockchain initialization failed:', blockchainError.message);
+      console.log('⚠️ Server will continue without blockchain integration.');
+    }
+
+    // Create HTTP server
+    const server = http.createServer(app);
+
+    // Initialize real-time event service
+    try {
+      realtimeEventService.initialize(server);
+      console.log('✅ Real-time event service initialized successfully.');
+    } catch (realtimeError) {
+      console.error('❌ Real-time service initialization failed:', realtimeError.message);
+      console.log('⚠️ Server will continue without real-time events.');
+    }
+
     // Start server
-    const server = app.listen(PORT, () => {
-      console.log('🚀 BharatChain Server Status:');
+    server.listen(PORT, () => {
+      console.log('');
+      console.log('🎉 BharatChain Server Status:');
       console.log(`   ├── Environment: ${process.env.NODE_ENV || 'development'}`);
       console.log(`   ├── Port: ${PORT}`);
       console.log(`   ├── Database: ${process.env.NODE_ENV === 'production' ? 'PostgreSQL' : 'SQLite'}`);
       console.log(`   ├── CORS Origin: ${process.env.CORS_ORIGIN || 'http://localhost:3000'}`);
+      console.log(`   ├── Blockchain: ${blockchainService.isInitialized ? '✅ Connected' : '❌ Offline'}`);
+      console.log(`   ├── Real-time Events: ${realtimeEventService.isInitialized ? '✅ Active' : '❌ Offline'}`);
       console.log(`   └── API Base URL: http://localhost:${PORT}/api`);
       console.log('');
       console.log('📋 Available Endpoints:');
-      console.log('   ├── GET  /api/health           - Health check');
-      console.log('   ├── POST /api/auth/message     - Get signing message');
-      console.log('   ├── POST /api/auth/connect     - Authenticate with wallet');
-      console.log('   ├── GET  /api/citizens/profile - Get citizen profile');
-      console.log('   ├── POST /api/citizens/register- Register citizen');
-      console.log('   ├── GET  /api/documents        - List documents');
-      console.log('   ├── POST /api/documents/upload - Upload document');
-      console.log('   ├── GET  /api/grievances       - List grievances');
-      console.log('   ├── POST /api/grievances       - Submit grievance');
-      console.log('   ├── GET  /api/ai/health        - AI service health');
-      console.log('   ├── POST /api/ai/analyze/document - AI document analysis');
-      console.log('   └── POST /api/ai/analyze/grievance - AI grievance analysis');
+      console.log('   ├── GET  /api/health               - Health check');
+      console.log('   ├── POST /api/auth/message         - Get signing message');
+      console.log('   ├── POST /api/auth/connect         - Authenticate with wallet');
+      console.log('   ├── GET  /api/citizens/profile     - Get citizen profile');
+      console.log('   ├── POST /api/citizens/register    - Register citizen');
+      console.log('   ├── GET  /api/documents            - List documents');
+      console.log('   ├── POST /api/documents/upload     - Upload document');
+      console.log('   ├── GET  /api/grievances           - List grievances');
+      console.log('   ├── POST /api/grievances           - Submit grievance');
+      console.log('   ├── GET  /api/ai/health            - AI service health');
+      console.log('   ├── POST /api/ai/analyze/document  - AI document analysis');
+      console.log('   ├── POST /api/ai/analyze/grievance - AI grievance analysis');
+      console.log('   ├── GET  /api/blockchain/status    - Blockchain status');
+      console.log('   └── GET  /api/websocket/status     - WebSocket status');
       console.log('');
       console.log('🔗 Frontend URL: http://localhost:3000');
-      console.log('🔗 Backend URL: http://localhost:3001');
+      console.log('🔗 Backend API: http://localhost:3001');
+      console.log('🔗 WebSocket: ws://localhost:3001 (integrated)');
+      console.log('');
+      if (blockchainService.isInitialized) {
+        console.log('⛓️  Blockchain Integration:');
+        console.log(`   ├── Network: ${process.env.BLOCKCHAIN_NETWORK || 'localhost'}`);
+        console.log(`   ├── Contracts: ${Object.keys(blockchainService.contracts).length} loaded`);
+        console.log('   └── Events: Real-time monitoring active');
+      }
+      if (realtimeEventService.isInitialized) {
+        console.log('📡 Real-time Features:');
+        console.log('   ├── Document verification updates');
+        console.log('   ├── Grievance status changes');
+        console.log('   ├── Citizen registration notifications');
+        console.log('   └── Blockchain transaction confirmations');
+      }
+      console.log('');
     });
 
     // Graceful shutdown
-    process.on('SIGTERM', () => {
-      console.log('🛑 SIGTERM received, shutting down gracefully...');
+    const gracefulShutdown = () => {
+      console.log('🛑 Shutting down gracefully...');
+      
+      // Close real-time service
+      if (realtimeEventService.isInitialized) {
+        realtimeEventService.shutdown();
+      }
+      
+      // Close server
       server.close(() => {
-        console.log('✅ Server closed successfully.');
-        sequelize.close();
-        process.exit(0);
+        console.log('✅ HTTP server closed.');
+        
+        // Close database connection
+        sequelize.close().then(() => {
+          console.log('✅ Database connection closed.');
+          process.exit(0);
+        });
       });
-    });
+    };
 
-    process.on('SIGINT', () => {
-      console.log('🛑 SIGINT received, shutting down gracefully...');
-      server.close(() => {
-        console.log('✅ Server closed successfully.');
-        sequelize.close();
-        process.exit(0);
-      });
-    });
+    process.on('SIGTERM', gracefulShutdown);
+    process.on('SIGINT', gracefulShutdown);
 
   } catch (error) {
     console.error('❌ Unable to start server:', error);
