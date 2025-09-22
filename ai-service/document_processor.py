@@ -4,9 +4,16 @@ import numpy as np
 import pytesseract
 import easyocr
 from PIL import Image
-import fitz  # PyMuPDF
 import logging
 from typing import Dict, List, Any
+
+# Safe PyMuPDF import with fallback
+try:
+    import fitz  # PyMuPDF
+    HAS_PYMUPDF = True
+except ImportError:
+    HAS_PYMUPDF = False
+    logging.warning("PyMuPDF not available, PDF processing will be limited")
 import torch
 from transformers import pipeline, AutoTokenizer, AutoModelForSequenceClassification
 from sentence_transformers import SentenceTransformer
@@ -141,7 +148,11 @@ class DocumentProcessor:
             return 'unknown'
     
     def extract_text_from_pdf(self, filepath: str) -> str:
-        """Extract text from PDF using PyMuPDF"""
+        """Extract text from PDF using PyMuPDF with fallback"""
+        if not HAS_PYMUPDF:
+            logger.warning("PyMuPDF not available, cannot extract text from PDF")
+            return "PDF processing not available - PyMuPDF missing"
+        
         try:
             doc = fitz.open(filepath)
             text = ""
@@ -157,7 +168,11 @@ class DocumentProcessor:
             return ""
     
     def extract_images_from_pdf(self, filepath: str) -> List[str]:
-        """Extract images from PDF for OCR"""
+        """Extract images from PDF for OCR with fallback"""
+        if not HAS_PYMUPDF:
+            logger.warning("PyMuPDF not available, cannot extract images from PDF")
+            return []
+        
         try:
             doc = fitz.open(filepath)
             images = []
@@ -424,25 +439,42 @@ class DocumentProcessor:
     def detect_language(self, text: str) -> Dict[str, Any]:
         """Detect language of the document"""
         try:
-            from langdetect import detect, detect_langs
-            
-            if not text.strip():
-                return {'primary_language': 'unknown', 'confidence': 0.0}
-            
-            # Detect primary language
-            primary_lang = detect(text)
-            
-            # Get confidence scores for multiple languages
-            lang_probs = detect_langs(text)
-            
-            return {
-                'primary_language': primary_lang,
-                'confidence': lang_probs[0].prob if lang_probs else 0.0,
-                'detected_languages': [
-                    {'language': lang.lang, 'probability': lang.prob}
-                    for lang in lang_probs[:3]
-                ]
-            }
+            # Try to import langdetect with fallback
+            try:
+                from langdetect import detect, detect_langs
+                
+                if not text.strip():
+                    return {'primary_language': 'unknown', 'confidence': 0.0}
+                
+                # Detect primary language
+                primary_lang = detect(text)
+                
+                # Get confidence scores for multiple languages
+                lang_probs = detect_langs(text)
+                
+                return {
+                    'primary_language': primary_lang,
+                    'confidence': lang_probs[0].prob if lang_probs else 0.0,
+                    'detected_languages': [
+                        {'language': lang.lang, 'probability': lang.prob}
+                        for lang in lang_probs[:3]
+                    ]
+                }
+            except ImportError:
+                # Fallback - simple heuristic detection
+                if not text.strip():
+                    return {'primary_language': 'unknown', 'confidence': 0.0}
+                
+                # Simple check for Hindi vs English
+                hindi_chars = sum(1 for c in text if '\u0900' <= c <= '\u097f')
+                english_chars = sum(1 for c in text if c.isascii() and c.isalpha())
+                
+                if hindi_chars > english_chars:
+                    return {'primary_language': 'hi', 'confidence': 0.7}
+                elif english_chars > 0:
+                    return {'primary_language': 'en', 'confidence': 0.7}
+                else:
+                    return {'primary_language': 'unknown', 'confidence': 0.0}
             
         except Exception as e:
             logger.error(f"Error detecting language: {str(e)}")
