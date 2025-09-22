@@ -211,26 +211,39 @@ class GrievanceAnalyzer:
     def analyze_sentiment(self, text: str) -> Dict[str, Any]:
         """Analyze sentiment of the grievance"""
         try:
-            # Use transformer-based sentiment analysis
-            results = self.sentiment_analyzer(text)
-            
-            sentiment_scores = {}
-            primary_sentiment = None
-            max_score = 0
-            
-            for result in results:
-                label = result['label'].lower()
-                score = result['score']
-                sentiment_scores[label] = score
+            # Use transformer-based sentiment analysis if available
+            if self.sentiment_analyzer:
+                results = self.sentiment_analyzer(text)
                 
-                if score > max_score:
-                    max_score = score
-                    primary_sentiment = label
+                sentiment_scores = {}
+                primary_sentiment = None
+                max_score = 0
+                
+                for result in results:
+                    label = result['label'].lower()
+                    score = result['score']
+                    sentiment_scores[label] = score
+                    
+                    if score > max_score:
+                        max_score = score
+                        primary_sentiment = label
+            else:
+                # Fallback sentiment analysis
+                sentiment_data = self._fallback_sentiment_analysis(text)
+                primary_sentiment = sentiment_data['primary_sentiment'].lower()
+                max_score = sentiment_data['confidence']
+                sentiment_scores = {primary_sentiment: max_score}
             
-            # TextBlob analysis as secondary measure
-            blob = TextBlob(text)
-            textblob_polarity = blob.sentiment.polarity
-            textblob_subjectivity = blob.sentiment.subjectivity
+            # TextBlob analysis as secondary measure if available
+            textblob_polarity = 0
+            textblob_subjectivity = 0
+            if HAS_TEXTBLOB:
+                try:
+                    blob = TextBlob(text)
+                    textblob_polarity = blob.sentiment.polarity
+                    textblob_subjectivity = blob.sentiment.subjectivity
+                except Exception as e:
+                    logger.warning(f"TextBlob analysis failed: {e}")
             
             return {
                 'primary_sentiment': primary_sentiment,
