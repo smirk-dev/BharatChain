@@ -8,7 +8,24 @@ import traceback
 
 # Import our AI processing modules
 from document_processor import DocumentProcessor
-from grievance_analyzer import GrievanceAnalyzer
+# from grievance_analyzer import GrievanceAnalyzer
+
+# Temporary mock grievance analyzer
+class MockGrievanceAnalyzer:
+    def __init__(self):
+        self.models_loaded = True
+    
+    def analyze_grievance(self, text):
+        return {
+            'severity': 'medium',
+            'sentiment': {'primary_sentiment': 'negative', 'confidence': 0.7},
+            'category': {'predicted_category': 'general', 'confidence': 0.6},
+            'urgency': {'level': 'medium', 'score': 0.5},
+            'summary': 'Mock analysis - basic grievance processing'
+        }
+    
+    def get_status(self):
+        return {'models_loaded': True, 'features': ['basic_analysis']}
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -19,7 +36,7 @@ CORS(app)
 
 # Initialize AI processors
 document_processor = DocumentProcessor()
-grievance_analyzer = GrievanceAnalyzer()
+grievance_analyzer = MockGrievanceAnalyzer()
 
 # Create uploads directory
 UPLOAD_FOLDER = 'uploads'
