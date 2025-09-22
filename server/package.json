@@ -20,6 +20,7 @@
   "license": "MIT",
   "dependencies": {
     "axios": "^1.6.2",
+    "bcrypt": "^6.0.0",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
@@ -40,6 +41,7 @@
     "redis": "^4.6.11",
     "sequelize": "^6.37.7",
     "sharp": "^0.33.0",
+    "speakeasy": "^2.0.0",
     "sqlite3": "^5.1.7",
     "uuid": "^9.0.1"
   },
