@@ -1,14 +1,22 @@
 import logging
 from typing import Dict, List, Any
-import torch
-from transformers import pipeline, AutoTokenizer, AutoModelForSequenceClassification
-from textblob import TextBlob
-import spacy
 import re
 from datetime import datetime
 import numpy as np
-from sentence_transformers import SentenceTransformer
 import json
+
+# Safe imports with fallbacks - moved to lazy loading
+HAS_TRANSFORMERS = False
+HAS_SENTENCE_TRANSFORMERS = False
+HAS_SPACY = False
+HAS_TEXTBLOB = False
+
+try:
+    from textblob import TextBlob
+    HAS_TEXTBLOB = True
+except ImportError:
+    HAS_TEXTBLOB = False
+    logging.warning("TextBlob not available")
 
 logger = logging.getLogger(__name__)
 
