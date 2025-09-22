@@ -24,6 +24,7 @@ const broadcastRoutes = require('./routes/broadcasts');
 const healthRoutes = require('./routes/health');
 const aiAnalysisRoutes = require('./routes/ai-analysis');
 const qrCodeRoutes = require('./routes/qr-codes');
+const mobileAuthRoutes = require('./routes/mobile-auth');
 
 // Import database and models
 const { sequelize } = require('../config/database');
