@@ -292,33 +292,162 @@ router.put('/update', ensureBlockchain, [
 
 /**
  * @route GET /api/citizens/stats
- * @desc Get citizen statistics
+ * @desc Get citizen statistics from blockchain
  * @access Private
  */
-router.get('/stats', async (req, res) => {
+router.get('/stats', ensureBlockchain, async (req, res) => {
   try {
-    const mockStats = {
-      totalDocuments: 5,
-      verifiedDocuments: 3,
-      pendingDocuments: 2,
-      totalGrievances: 3,
-      resolvedGrievances: 2,
-      pendingGrievances: 1,
-      verificationStatus: 'verified',
-      memberSince: '2024-01-15T00:00:00.000Z'
+    const citizenAddress = extractAddressFromToken(req);
+
+    if (!isBlockchainInitialized) {
+      return res.status(503).json({
+        error: 'Service Unavailable',
+        message: 'Blockchain service not available'
+      });
+    }
+
+    // Check if citizen is registered
+    const isRegistered = await blockchainService.isCitizenRegistered(citizenAddress);
+    if (!isRegistered) {
+      return res.status(404).json({
+        error: 'Not Found',
+        message: 'Citizen not registered on blockchain'
+      });
+    }
+
+    // Get citizen profile
+    const citizen = await blockchainService.getCitizen(citizenAddress);
+
+    // Get user's documents
+    const documentIds = await blockchainService.getUserDocuments(citizenAddress);
+    let verifiedDocuments = 0;
+    let pendingDocuments = 0;
+
+    // Count document statuses
+    for (const docId of documentIds) {
+      try {
+        const doc = await blockchainService.getDocument(docId);
+        if (doc.status === 1) { // VERIFIED
+          verifiedDocuments++;
+        } else if (doc.status === 0) { // PENDING
+          pendingDocuments++;
+        }
+      } catch (error) {
+        console.warn(`Could not fetch document ${docId}:`, error.message);
+      }
+    }
+
+    // Get user's grievances
+    const grievanceIds = await blockchainService.getCitizenGrievances(citizenAddress);
+    let resolvedGrievances = 0;
+    let pendingGrievances = 0;
+
+    // Count grievance statuses
+    for (const grievanceId of grievanceIds) {
+      try {
+        const grievance = await blockchainService.getGrievance(grievanceId);
+        if (grievance.status === 2) { // RESOLVED
+          resolvedGrievances++;
+        } else if (grievance.status === 0 || grievance.status === 1) { // SUBMITTED or IN_PROGRESS
+          pendingGrievances++;
+        }
+      } catch (error) {
+        console.warn(`Could not fetch grievance ${grievanceId}:`, error.message);
+      }
+    }
+
+    const stats = {
+      totalDocuments: documentIds.length,
+      verifiedDocuments,
+      pendingDocuments,
+      rejectedDocuments: documentIds.length - verifiedDocuments - pendingDocuments,
+      totalGrievances: grievanceIds.length,
+      resolvedGrievances,
+      pendingGrievances,
+      escalatedGrievances: grievanceIds.length - resolvedGrievances - pendingGrievances,
+      verificationStatus: citizen.isVerified ? 'verified' : 'unverified',
+      memberSince: citizen.registrationDate.toISOString(),
+      walletAddress: citizenAddress
     };
 
     res.json({
       success: true,
-      message: 'Citizen statistics retrieved successfully',
-      data: mockStats
+      message: 'Citizen statistics retrieved successfully from blockchain',
+      data: stats
     });
 
   } catch (error) {
     console.error('Get stats error:', error);
+    
+    if (error.message.includes('Citizen not registered')) {
+      return res.status(404).json({
+        error: 'Not Found',
+        message: 'Citizen not registered'
+      });
+    }
+    
     res.status(500).json({
       error: 'Internal Server Error',
-      message: 'Failed to retrieve statistics'
+      message: 'Failed to retrieve statistics from blockchain',
+      details: error.message
+    });
+  }
+});
+
+/**
+ * @route POST /api/citizens/verify/:address
+ * @desc Verify a citizen (admin/verifier only)
+ * @access Private (Verifier)
+ */
+router.post('/verify/:address', ensureBlockchain, async (req, res) => {
+  try {
+    const { address } = req.params;
+    const verifierAddress = extractAddressFromToken(req);
+
+    if (!isBlockchainInitialized) {
+      return res.status(503).json({
+        error: 'Service Unavailable',
+        message: 'Blockchain service not available'
+      });
+    }
+
+    // Verify citizen on blockchain
+    const result = await blockchainService.verifyCitizen(address);
+
+    res.json({
+      success: true,
+      message: 'Citizen verified successfully on blockchain',
+      data: {
+        citizenAddress: address,
+        verifierAddress,
+        transactionHash: result.transactionHash,
+        blockNumber: result.blockNumber,
+        gasUsed: result.gasUsed,
+        timestamp: new Date().toISOString()
+      }
+    });
+
+  } catch (error) {
+    console.error('Verify citizen error:', error);
+    
+    if (error.message.includes('Not authorized verifier')) {
+      return res.status(403).json({
+        error: 'Forbidden',
+        message: 'Not authorized to verify citizens'
+      });
+    }
+    
+    if (error.message.includes('Citizen not registered')) {
+      return res.status(404).json({
+        error: 'Not Found',
+        message: 'Citizen not registered'
+      });
+    }
+    
+    res.status(500).json({
+      error: 'Internal Server Error',
+      message: 'Failed to verify citizen on blockchain',
+      details: error.message
     });
   }
 });
