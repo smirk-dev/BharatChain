@@ -27,6 +27,7 @@ const qrCodeRoutes = require('./routes/qr-codes');
 const mobileAuthRoutes = require('./routes/mobile-auth');
 const mobileConfigRoutes = require('./routes/mobile-config');
 const governmentAPIsRoutes = require('./routes/government-apis');
+const governmentServicesRoutes = require('./routes/government-services');
 
 // Import database and models
 const { sequelize } = require('../config/database');
