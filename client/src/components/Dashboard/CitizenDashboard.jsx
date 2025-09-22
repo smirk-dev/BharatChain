@@ -1764,7 +1764,7 @@ const CitizenDashboard = () => {
                         gradient: 'linear-gradient(135deg, #B22222 0%, #FF6347 100%)'
                       }
                     ].map((service, index) => (
-                      <Grid item xs={12} sm={6} md={3} key={index}>
+                      <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
                         <motion.div
                           initial={{ opacity: 0, x: -20 }}
                           animate={{ opacity: 1, x: 0 }}
