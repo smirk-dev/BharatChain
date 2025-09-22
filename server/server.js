@@ -19,6 +19,7 @@ const documentRoutes = require('./routes/documents');
 const grievanceRoutes = require('./routes/grievances');
 const notificationRoutes = require('./routes/notifications');
 const dashboardRoutes = require('./routes/dashboard');
+const chatRoutes = require('./routes/chat');
 const healthRoutes = require('./routes/health');
 const aiAnalysisRoutes = require('./routes/ai-analysis');
 
@@ -85,6 +86,7 @@ app.use('/api/documents', documentRoutes);
 app.use('/api/grievances', grievanceRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/chat', chatRoutes);
 app.use('/api/ai', aiAnalysisRoutes);
 
 // Blockchain status endpoint
