@@ -1528,6 +1528,46 @@ const CitizenDashboard = () => {
                 action: () => setCurrentTab(1),
                 gradient: 'linear-gradient(135deg, #E49B0F 0%, #FFA500 100%)',
                 bgPattern: '🎭'
+              },
+              {
+                title: 'सरकारी सेवाएं',
+                subtitle: 'Government Services',
+                description: 'आधार, पैन, पासपोर्ट सत्यापन',
+                englishDesc: 'Aadhaar, PAN, Passport verification',
+                icon: '🏛️',
+                action: () => setCurrentTab(5),
+                gradient: 'linear-gradient(135deg, #8B0000 0%, #DC143C 100%)',
+                bgPattern: '🇮🇳'
+              },
+              {
+                title: 'QR और मोबाइल',
+                subtitle: 'QR & Mobile',
+                description: 'QR कोड, OTP, ऑफलाइन सिंक',
+                englishDesc: 'QR codes, OTP, offline sync',
+                icon: '📱',
+                action: () => setCurrentTab(6),
+                gradient: 'linear-gradient(135deg, #4B0082 0%, #8A2BE2 100%)',
+                bgPattern: '📲'
+              },
+              {
+                title: 'भुगतान सेवाएं',
+                subtitle: 'Payment Services',
+                description: 'सरकारी शुल्क, UPI, बैंकिंग',
+                englishDesc: 'Government fees, UPI, banking',
+                icon: '💳',
+                action: () => setCurrentTab(7),
+                gradient: 'linear-gradient(135deg, #006400 0%, #32CD32 100%)',
+                bgPattern: '💰'
+              },
+              {
+                title: 'आपातकालीन सेवाएं',
+                subtitle: 'Emergency Services',
+                description: 'SOS अलर्ट, आपदा प्रबंधन',
+                englishDesc: 'SOS alerts, disaster management',
+                icon: '🚨',
+                action: () => setCurrentTab(8),
+                gradient: 'linear-gradient(135deg, #B22222 0%, #FF6347 100%)',
+                bgPattern: '🚑'
               }
             ].map((action, index) => (
               <Grid item xs={12} sm={6} md={3} key={index}>
