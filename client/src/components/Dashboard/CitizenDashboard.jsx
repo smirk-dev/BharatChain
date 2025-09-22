@@ -65,7 +65,6 @@ import {
   Work,
   School,
   Send,
-  CloudDownload,
   SettingsOutlined,
   AccountBalance,
   CloudUpload,
