@@ -84,6 +84,7 @@ app.use('/api/citizens', citizenRoutes);
 app.use('/api/documents', documentRoutes);
 app.use('/api/grievances', grievanceRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/ai', aiAnalysisRoutes);
 
 // Blockchain status endpoint
@@ -304,6 +305,8 @@ async function startServer() {
       console.log('   ├── POST /api/grievances           - Submit grievance');
       console.log('   ├── GET  /api/notifications        - Get notifications');
       console.log('   ├── PUT  /api/notifications/:id/read - Mark notification as read');
+      console.log('   ├── GET  /api/dashboard/status      - System status dashboard');
+      console.log('   ├── GET  /api/dashboard/health-check - Comprehensive health check');
       console.log('   ├── GET  /api/ai/health            - AI service health');
       console.log('   ├── POST /api/ai/analyze/document  - AI document analysis');
       console.log('   ├── POST /api/ai/analyze/grievance - AI grievance analysis');
