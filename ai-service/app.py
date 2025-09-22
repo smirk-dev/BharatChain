@@ -129,7 +129,7 @@ CORS(app)
 
 # Initialize AI processors
 document_processor = DocumentProcessor()
-grievance_analyzer = MockGrievanceAnalyzer()
+grievance_analyzer = LightweightGrievanceAnalyzer()
 
 # Create uploads directory
 UPLOAD_FOLDER = 'uploads'
