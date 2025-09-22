@@ -5,6 +5,12 @@ import json
 import logging
 from datetime import datetime
 import traceback
+import warnings
+
+# Suppress specific warnings
+warnings.filterwarnings('ignore', category=UserWarning)
+warnings.filterwarnings('ignore', message='.*CUDA.*')
+warnings.filterwarnings('ignore', message='.*MPS.*')
 
 # Import our AI processing modules
 from document_processor import DocumentProcessor
