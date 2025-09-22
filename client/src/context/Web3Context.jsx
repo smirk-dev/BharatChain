@@ -121,6 +121,29 @@ export const Web3Provider = ({ children }) => {
       setIsConnecting(true);
       setError(null);
 
+      // Check if MetaMask is unlocked
+      try {
+        const accounts = await window.ethereum.request({
+          method: 'eth_accounts',
+        });
+        
+        if (accounts.length === 0) {
+          // Request account access if no accounts are available
+          const requestedAccounts = await window.ethereum.request({
+            method: 'eth_requestAccounts',
+          });
+          
+          if (requestedAccounts.length === 0) {
+            throw new Error('No accounts found. Please connect to MetaMask.');
+          }
+        }
+      } catch (accountError) {
+        if (accountError.code === 4001) {
+          throw new Error('MetaMask connection was rejected by user.');
+        }
+        throw new Error('Failed to access MetaMask accounts. Please make sure MetaMask is unlocked.');
+      }
+
       // Request account access
       const accounts = await window.ethereum.request({
         method: 'eth_requestAccounts',
@@ -174,7 +197,18 @@ export const Web3Provider = ({ children }) => {
 
     } catch (error) {
       console.error('Wallet connection error:', error);
-      setError(error.message);
+      let errorMessage = error.message;
+      
+      // Provide user-friendly error messages
+      if (error.message.includes('user rejected') || error.code === 4001) {
+        errorMessage = 'Connection was cancelled by user.';
+      } else if (error.message.includes('Backend server is not running')) {
+        errorMessage = 'Backend server is not available. Please start the server and try again.';
+      } else if (error.message.includes('MetaMask is locked')) {
+        errorMessage = 'Please unlock your MetaMask wallet and try again.';
+      }
+      
+      setError(errorMessage);
       
       // Reset state on error
       setAccount(null);
