@@ -52,32 +52,39 @@ class DocumentProcessor:
                     self.easyocr_reader = None
             
             # Try to load AI models only if transformers is available
-            try:
-                with warnings.catch_warnings():
-                    warnings.simplefilter("ignore")
-                    import torch
-                    from transformers import pipeline, AutoTokenizer, AutoModelForSequenceClassification
-                global HAS_TRANSFORMERS
-                HAS_TRANSFORMERS = True
-                
-                # Load document classification model
-                self.doc_classifier = pipeline(
-                    "text-classification",
-                    model="microsoft/DialoGPT-medium",
-                    return_all_scores=True
-                )
-                
-                # Load sentiment analysis model
-                self.sentiment_analyzer = pipeline(
-                    "sentiment-analysis",
-                    model="cardiffnlp/twitter-roberta-base-sentiment-latest"
-                )
-                logger.info("Transformer models loaded successfully")
-            except Exception as e:
-                logger.info("Transformer models not available, using basic text analysis")
-                self.doc_classifier = None
-                self.sentiment_analyzer = None
-                HAS_TRANSFORMERS = False
+            # Temporarily disabled due to TensorFlow dependency issues
+            # try:
+            #     with warnings.catch_warnings():
+            #         warnings.simplefilter("ignore")
+            #         import torch
+            #         from transformers import pipeline, AutoTokenizer, AutoModelForSequenceClassification
+            #     global HAS_TRANSFORMERS
+            #     HAS_TRANSFORMERS = True
+            #     
+            #     # Load document classification model
+            #     self.doc_classifier = pipeline(
+            #         "text-classification",
+            #         model="microsoft/DialoGPT-medium",
+            #         return_all_scores=True
+            #     )
+            #     
+            #     # Load sentiment analysis model
+            #     self.sentiment_analyzer = pipeline(
+            #         "sentiment-analysis",
+            #         model="cardiffnlp/twitter-roberta-base-sentiment-latest"
+            #     )
+            #     logger.info("Transformer models loaded successfully")
+            # except Exception as e:
+            #     logger.info("Transformer models not available, using basic text analysis")
+            #     self.doc_classifier = None
+            #     self.sentiment_analyzer = None
+            #     HAS_TRANSFORMERS = False
+            
+            # For now, disable transformers completely to avoid TensorFlow conflicts
+            logger.info("Transformer models disabled to avoid TensorFlow conflicts")
+            self.doc_classifier = None
+            self.sentiment_analyzer = None
+            HAS_TRANSFORMERS = False
             
             # Try to load text similarity model if available
             # Temporarily disabled due to TensorFlow dependency issues
