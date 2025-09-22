@@ -127,7 +127,7 @@ const CitizenDashboard = () => {
 
   // Helper function for tab emojis
   const getTabEmoji = (index) => {
-    const emojis = ['🏠', '👤', '📄', '📋', '🤖'];
+    const emojis = ['🏠', '👤', '📄', '📋', '🤖', '🏛️', '📱', '💳', '🚨', '📊', '🔒'];
     return emojis[index] || '📊';
   };
 
@@ -203,6 +203,44 @@ const CitizenDashboard = () => {
   const [aiAnalysisHistory, setAiAnalysisHistory] = useState([]);
   const [selectedAnalysis, setSelectedAnalysis] = useState(null);
   const [analysisDetailOpen, setAnalysisDetailOpen] = useState(false);
+
+  // Government Services state
+  const [govServices, setGovServices] = useState([]);
+  const [govServicesLoading, setGovServicesLoading] = useState(false);
+  const [selectedGovService, setSelectedGovService] = useState(null);
+  const [govServiceApplications, setGovServiceApplications] = useState([]);
+  const [identityVerifications, setIdentityVerifications] = useState([]);
+
+  // QR & Mobile state
+  const [qrCodes, setQrCodes] = useState([]);
+  const [generatedQR, setGeneratedQR] = useState(null);
+  const [mobileConfig, setMobileConfig] = useState({});
+  const [offlineSync, setOfflineSync] = useState({ status: 'online', pendingOperations: 0 });
+  const [mobileAuth, setMobileAuth] = useState({ otpSent: false, verified: false });
+
+  // Payments state
+  const [paymentHistory, setPaymentHistory] = useState([]);
+  const [pendingPayments, setPendingPayments] = useState([]);
+  const [paymentMethods, setPaymentMethods] = useState([]);
+  const [serviceFees, setServiceFees] = useState({});
+
+  // Emergency state
+  const [emergencyContacts, setEmergencyContacts] = useState([]);
+  const [sosAlerts, setSosAlerts] = useState([]);
+  const [disasterAlerts, setDisasterAlerts] = useState([]);
+  const [emergencyServices, setEmergencyServices] = useState([]);
+
+  // Open Data state
+  const [rtiApplications, setRtiApplications] = useState([]);
+  const [governmentDatasets, setGovernmentDatasets] = useState([]);
+  const [budgetData, setBudgetData] = useState([]);
+  const [tenderData, setTenderData] = useState([]);
+
+  // Compliance state
+  const [complianceStatus, setComplianceStatus] = useState({});
+  const [auditLogs, setAuditLogs] = useState([]);
+  const [riskAssessments, setRiskAssessments] = useState([]);
+  const [incidents, setIncidents] = useState([]);
 
   // Handle tab change
   const handleTabChange = (event, newValue) => {
@@ -1144,7 +1182,13 @@ const CitizenDashboard = () => {
     { label: 'Profile', icon: <PersonIcon /> },
     { label: 'Documents', icon: <DocumentIcon /> },
     { label: 'Grievances', icon: <GrievanceIcon /> },
-    { label: 'AI Analysis', icon: <SmartToyIcon /> }
+    { label: 'AI Analysis', icon: <SmartToyIcon /> },
+    { label: 'Government Services', icon: <AccountBalance /> },
+    { label: 'QR & Mobile', icon: <PhotoCamera /> },
+    { label: 'Payments', icon: <AccountBalance /> },
+    { label: 'Emergency', icon: <ErrorIcon /> },
+    { label: 'Open Data', icon: <AnalyticsIcon /> },
+    { label: 'Compliance', icon: <Security /> }
   ];
 
   const quickActions = [
@@ -1330,6 +1374,42 @@ const CitizenDashboard = () => {
                 gradient: 'linear-gradient(135deg, #005A5B 0%, #4169E1 100%)',
                 trend: '+25%',
                 description: 'सफलतापूर्वक हल किया गया'
+              },
+              {
+                title: 'सरकारी सेवाएं',
+                subtitle: 'Government Services',
+                value: stats.governmentServices || 12,
+                icon: '🏛️',
+                gradient: 'linear-gradient(135deg, #8B0000 0%, #DC143C 100%)',
+                trend: 'NEW',
+                description: 'उपलब्ध सरकारी सुविधाएं'
+              },
+              {
+                title: 'मोबाइल सुविधाएं',
+                subtitle: 'Mobile Features',
+                value: stats.mobileFeatures || 4,
+                icon: '📱',
+                gradient: 'linear-gradient(135deg, #4B0082 0%, #8A2BE2 100%)',
+                trend: 'NEW',
+                description: 'QR कोड और ऑफलाइन सिंक'
+              },
+              {
+                title: 'भुगतान इतिहास',
+                subtitle: 'Payment History',
+                value: stats.completedPayments || 0,
+                icon: '💳',
+                gradient: 'linear-gradient(135deg, #006400 0%, #32CD32 100%)',
+                trend: '+0%',
+                description: 'सफल भुगतान लेनदेन'
+              },
+              {
+                title: 'आपातकालीन सेवाएं',
+                subtitle: 'Emergency Services',
+                value: stats.emergencyContacts || 3,
+                icon: '🚨',
+                gradient: 'linear-gradient(135deg, #B22222 0%, #FF6347 100%)',
+                trend: 'ACTIVE',
+                description: 'आपातकालीन संपर्क तैयार'
               }
             ].map((stat, index) => (
               <Grid item xs={12} sm={6} md={3} key={index}>
