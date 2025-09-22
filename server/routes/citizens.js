@@ -204,13 +204,13 @@ router.post('/register', ensureBlockchain, [
 
 /**
  * @route PUT /api/citizens/update
- * @desc Update citizen profile
+ * @desc Update citizen profile on blockchain
  * @access Private
  */
-router.put('/update', [
-  body('name').optional().isLength({ min: 2 }).withMessage('Name must be at least 2 characters'),
+router.put('/update', ensureBlockchain, [
+  body('name').optional().isLength({ min: 2, max: 100 }).withMessage('Name must be 2-100 characters'),
   body('email').optional().isEmail().withMessage('Valid email is required'),
-  body('phone').optional().isMobilePhone().withMessage('Valid phone number is required')
+  body('phone').optional().isMobilePhone('en-IN').withMessage('Valid Indian phone number is required')
 ], async (req, res) => {
   try {
     // Check for validation errors
@@ -224,27 +224,68 @@ router.put('/update', [
     }
 
     const { name, email, phone } = req.body;
+    const citizenAddress = extractAddressFromToken(req);
 
-    // TODO: Implement actual update logic
-    const mockUpdatedProfile = {
-      address: '0x1234567890123456789012345678901234567890',
-      name: name || 'John Doe',
-      email: email || 'john.doe@example.com',
-      phone: phone || '+91-9876543210',
-      lastUpdated: new Date().toISOString()
+    if (!isBlockchainInitialized) {
+      return res.status(503).json({
+        error: 'Service Unavailable',
+        message: 'Blockchain service not available'
+      });
+    }
+
+    // Check if citizen is registered
+    const isRegistered = await blockchainService.isCitizenRegistered(citizenAddress);
+    if (!isRegistered) {
+      return res.status(404).json({
+        error: 'Not Found',
+        message: 'Citizen not registered on blockchain'
+      });
+    }
+
+    // Get current profile
+    const currentProfile = await blockchainService.getCitizen(citizenAddress);
+
+    // Update profile on blockchain (using the updateProfile function from smart contract)
+    const contract = blockchainService.getContract('CitizenRegistry');
+    const tx = await contract.updateProfile(
+      name || currentProfile.name,
+      email || currentProfile.email,
+      phone || currentProfile.phone
+    );
+
+    const receipt = await tx.wait();
+
+    const updatedProfile = {
+      address: citizenAddress,
+      name: name || currentProfile.name,
+      email: email || currentProfile.email,
+      phone: phone || currentProfile.phone,
+      lastUpdated: new Date().toISOString(),
+      transactionHash: tx.hash,
+      blockNumber: receipt.blockNumber,
+      gasUsed: receipt.gasUsed.toString()
     };
 
     res.json({
       success: true,
-      message: 'Profile updated successfully',
-      data: mockUpdatedProfile
+      message: 'Profile updated successfully on blockchain',
+      data: updatedProfile
     });
 
   } catch (error) {
     console.error('Update profile error:', error);
+    
+    if (error.message.includes('Citizen not registered')) {
+      return res.status(404).json({
+        error: 'Not Found',
+        message: 'Citizen not registered'
+      });
+    }
+    
     res.status(500).json({
       error: 'Internal Server Error',
-      message: 'Failed to update profile'
+      message: 'Failed to update profile on blockchain',
+      details: error.message
     });
   }
 });
