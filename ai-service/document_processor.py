@@ -14,10 +14,28 @@ try:
 except ImportError:
     HAS_PYMUPDF = False
     logging.warning("PyMuPDF not available, PDF processing will be limited")
-import torch
-from transformers import pipeline, AutoTokenizer, AutoModelForSequenceClassification
-from sentence_transformers import SentenceTransformer
-import magic
+# Safe imports with fallbacks
+try:
+    import torch
+    from transformers import pipeline, AutoTokenizer, AutoModelForSequenceClassification
+    HAS_TRANSFORMERS = True
+except ImportError:
+    HAS_TRANSFORMERS = False
+    logging.warning("Transformers not available, using basic text analysis")
+
+try:
+    from sentence_transformers import SentenceTransformer
+    HAS_SENTENCE_TRANSFORMERS = True
+except ImportError:
+    HAS_SENTENCE_TRANSFORMERS = False
+    logging.warning("Sentence transformers not available")
+
+try:
+    import magic
+    HAS_MAGIC = True
+except ImportError:
+    HAS_MAGIC = False
+    logging.warning("python-magic not available, using basic file type detection")
 import json
 import re
 from datetime import datetime
