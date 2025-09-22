@@ -105,6 +105,7 @@ app.use('/api/government', governmentAPIsRoutes);
 app.use('/api/gov-services', governmentServicesRoutes);
 app.use('/api/payments', governmentPaymentsRoutes);
 app.use('/api/open-data', openDataRoutes);
+app.use('/api/secure-exchange', secureExchangeRoutes);
 
 // Blockchain status endpoint
 app.get('/api/blockchain/status', (req, res) => {
