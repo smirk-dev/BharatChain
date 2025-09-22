@@ -27,33 +27,59 @@ class GrievanceAnalyzer:
         self.load_models()
     
     def load_models(self):
-        """Load all required AI models for grievance analysis"""
+        """Load all required AI models for grievance analysis with fallbacks"""
         try:
             logger.info("Loading AI models for grievance analysis...")
             
-            # Load sentiment analysis model
-            self.sentiment_analyzer = pipeline(
-                "sentiment-analysis",
-                model="cardiffnlp/twitter-roberta-base-sentiment-latest",
-                return_all_scores=True
-            )
-            
-            # Load emotion detection model
-            self.emotion_analyzer = pipeline(
-                "text-classification",
-                model="j-hartmann/emotion-english-distilroberta-base",
-                return_all_scores=True
-            )
-            
-            # Load text similarity model for category classification
-            self.similarity_model = SentenceTransformer('all-MiniLM-L6-v2')
-            
-            # Load SpaCy model for NER and linguistic analysis
+            # Try to load sentiment analysis model
             try:
+                import torch
+                from transformers import pipeline, AutoTokenizer, AutoModelForSequenceClassification
+                global HAS_TRANSFORMERS
+                HAS_TRANSFORMERS = True
+                
+                self.sentiment_analyzer = pipeline(
+                    "sentiment-analysis",
+                    model="cardiffnlp/twitter-roberta-base-sentiment-latest",
+                    return_all_scores=True
+                )
+                
+                # Load emotion detection model
+                self.emotion_analyzer = pipeline(
+                    "text-classification",
+                    model="j-hartmann/emotion-english-distilroberta-base",
+                    return_all_scores=True
+                )
+                logger.info("Transformer models loaded successfully")
+            except Exception as e:
+                logger.warning(f"Could not load transformer models: {e}")
+                self.sentiment_analyzer = None
+                self.emotion_analyzer = None
+                HAS_TRANSFORMERS = False
+            
+            # Try to load text similarity model
+            try:
+                from sentence_transformers import SentenceTransformer
+                global HAS_SENTENCE_TRANSFORMERS
+                HAS_SENTENCE_TRANSFORMERS = True
+                self.similarity_model = SentenceTransformer('all-MiniLM-L6-v2')
+                logger.info("Sentence transformer loaded successfully")
+            except Exception as e:
+                logger.warning(f"Could not load sentence transformer: {e}")
+                self.similarity_model = None
+                HAS_SENTENCE_TRANSFORMERS = False
+            
+            # Try to load SpaCy model for NER and linguistic analysis
+            try:
+                import spacy
+                global HAS_SPACY
+                HAS_SPACY = True
                 self.nlp = spacy.load("en_core_web_sm")
-            except OSError:
-                logger.warning("SpaCy model not found. Install with: python -m spacy download en_core_web_sm")
+                logger.info("SpaCy model loaded successfully")
+            except Exception as e:
+                logger.warning(f"SpaCy model not available: {e}")
                 self.nlp = None
+                HAS_SPACY = False
             
             # Predefined categories with example embeddings
             self.grievance_categories = {
