@@ -1,6 +1,45 @@
 const express = require('express');
 const router = express.Router();
 const { body, validationResult } = require('express-validator');
+const crypto = require('crypto');
+const blockchainService = require('../services/blockchain');
+
+// Initialize blockchain service on first load
+let isBlockchainInitialized = false;
+
+async function initializeBlockchain() {
+  if (!isBlockchainInitialized) {
+    try {
+      const network = process.env.BLOCKCHAIN_NETWORK || 'localhost';
+      const privateKey = process.env.PRIVATE_KEY;
+      
+      await blockchainService.initialize(network, privateKey);
+      isBlockchainInitialized = true;
+      console.log('✅ Blockchain service initialized for citizens module');
+    } catch (error) {
+      console.error('❌ Failed to initialize blockchain service:', error);
+      // Continue without blockchain integration for development
+    }
+  }
+}
+
+// Middleware to ensure blockchain is initialized
+const ensureBlockchain = async (req, res, next) => {
+  await initializeBlockchain();
+  next();
+};
+
+// Hash Aadhar number for privacy
+function hashAadhar(aadharNumber) {
+  return crypto.createHash('sha256').update(aadharNumber).digest('hex');
+}
+
+// Extract address from JWT token
+function extractAddressFromToken(req) {
+  // TODO: Implement JWT extraction
+  // For now, use mock address or from request
+  return req.body.address || req.headers['x-wallet-address'] || '0x742d35Cc6635C0532925a3b8D07376F0c9fF4c52';
+}
 
 /**
  * @route GET /api/citizens/profile
