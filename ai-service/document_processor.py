@@ -6,6 +6,9 @@ import easyocr
 from PIL import Image
 import logging
 from typing import Dict, List, Any
+import json
+import re
+from datetime import datetime
 
 # Safe PyMuPDF import with fallback
 try:
@@ -13,7 +16,7 @@ try:
     HAS_PYMUPDF = True
 except ImportError:
     HAS_PYMUPDF = False
-    logging.warning("PyMuPDF not available, PDF processing will be limited")
+
 # Safe imports with fallbacks - moved to lazy loading
 HAS_TRANSFORMERS = False
 HAS_SENTENCE_TRANSFORMERS = False
@@ -23,10 +26,6 @@ try:
     HAS_MAGIC = True
 except ImportError:
     HAS_MAGIC = False
-    logging.warning("python-magic not available, using basic file type detection")
-import json
-import re
-from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
