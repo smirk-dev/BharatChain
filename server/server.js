@@ -29,6 +29,7 @@ const mobileConfigRoutes = require('./routes/mobile-config');
 const governmentAPIsRoutes = require('./routes/government-apis');
 const governmentServicesRoutes = require('./routes/government-services');
 const governmentPaymentsRoutes = require('./routes/government-payments');
+const openDataRoutes = require('./routes/open-data');
 
 // Import database and models
 const { sequelize } = require('../config/database');
@@ -102,6 +103,7 @@ app.use('/api/mobile-config', mobileConfigRoutes);
 app.use('/api/government', governmentAPIsRoutes);
 app.use('/api/gov-services', governmentServicesRoutes);
 app.use('/api/payments', governmentPaymentsRoutes);
+app.use('/api/open-data', openDataRoutes);
 
 // Blockchain status endpoint
 app.get('/api/blockchain/status', (req, res) => {
