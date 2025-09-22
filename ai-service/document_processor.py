@@ -245,11 +245,12 @@ class DocumentProcessor:
         try:
             # Method 1: EasyOCR
             easyocr_text = ""
-            try:
-                results = self.easyocr_reader.readtext(filepath)
-                easyocr_text = " ".join([result[1] for result in results])
-            except Exception as e:
-                logger.warning(f"EasyOCR failed: {str(e)}")
+            if self.easyocr_reader:
+                try:
+                    results = self.easyocr_reader.readtext(filepath)
+                    easyocr_text = " ".join([result[1] for result in results])
+                except Exception as e:
+                    logger.warning(f"EasyOCR failed: {str(e)}")
             
             # Method 2: Tesseract OCR
             tesseract_text = ""
