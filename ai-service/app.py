@@ -8,24 +8,117 @@ import traceback
 
 # Import our AI processing modules
 from document_processor import DocumentProcessor
-# from grievance_analyzer import GrievanceAnalyzer
 
-# Temporary mock grievance analyzer
-class MockGrievanceAnalyzer:
+# Create a proper lightweight grievance analyzer
+class LightweightGrievanceAnalyzer:
     def __init__(self):
         self.models_loaded = True
-    
-    def analyze_grievance(self, text):
-        return {
-            'severity': 'medium',
-            'sentiment': {'primary_sentiment': 'negative', 'confidence': 0.7},
-            'category': {'predicted_category': 'general', 'confidence': 0.6},
-            'urgency': {'level': 'medium', 'score': 0.5},
-            'summary': 'Mock analysis - basic grievance processing'
+        self.sentiment_keywords = {
+            'positive': ['good', 'great', 'excellent', 'satisfied', 'happy', 'pleased', 'thank', 'wonderful', 'amazing'],
+            'negative': ['bad', 'terrible', 'awful', 'angry', 'frustrated', 'disappointed', 'complaint', 'horrible', 'disgusted', 'furious'],
+            'urgent': ['urgent', 'emergency', 'immediately', 'asap', 'critical', 'serious', 'quick']
+        }
+        self.category_keywords = {
+            'corruption': ['bribe', 'corruption', 'illegal', 'fraud', 'dishonest'],
+            'service_quality': ['service', 'quality', 'staff', 'behavior', 'treatment'],
+            'infrastructure': ['road', 'water', 'electricity', 'sanitation', 'infrastructure'],
+            'healthcare': ['hospital', 'doctor', 'medical', 'health', 'treatment'],
+            'education': ['school', 'teacher', 'education', 'student', 'learning'],
+            'administration': ['office', 'documentation', 'paperwork', 'process', 'delay']
         }
     
+    def analyze_grievance(self, text):
+        """Lightweight grievance analysis using keyword-based approach"""
+        text_lower = text.lower()
+        
+        # Sentiment analysis
+        sentiment = self._analyze_sentiment(text_lower)
+        
+        # Category detection
+        category = self._detect_category(text_lower)
+        
+        # Urgency detection
+        urgency = self._detect_urgency(text_lower)
+        
+        # Severity calculation
+        severity = self._calculate_severity(sentiment, urgency, len(text))
+        
+        return {
+            'sentiment': sentiment,
+            'category': category,
+            'urgency': urgency,
+            'severity': severity,
+            'summary': f"Lightweight analysis: {category['predicted_category']} grievance with {sentiment['primary_sentiment']} sentiment",
+            'confidence': 0.7,
+            'processing_method': 'keyword_based'
+        }
+    
+    def _analyze_sentiment(self, text):
+        positive_score = sum(1 for word in self.sentiment_keywords['positive'] if word in text)
+        negative_score = sum(1 for word in self.sentiment_keywords['negative'] if word in text)
+        
+        if positive_score > negative_score:
+            return {'primary_sentiment': 'positive', 'confidence': min(0.8, 0.5 + positive_score * 0.1)}
+        elif negative_score > positive_score:
+            return {'primary_sentiment': 'negative', 'confidence': min(0.8, 0.5 + negative_score * 0.1)}
+        else:
+            return {'primary_sentiment': 'neutral', 'confidence': 0.5}
+    
+    def _detect_category(self, text):
+        scores = {}
+        for category, keywords in self.category_keywords.items():
+            score = sum(1 for keyword in keywords if keyword in text)
+            if score > 0:
+                scores[category] = score
+        
+        if scores:
+            best_category = max(scores.keys(), key=lambda x: scores[x])
+            confidence = min(scores[best_category] * 0.2, 1.0)
+        else:
+            best_category = 'general'
+            confidence = 0.3
+        
+        return {'predicted_category': best_category, 'confidence': confidence, 'all_scores': scores}
+    
+    def _detect_urgency(self, text):
+        urgency_score = sum(1 for word in self.sentiment_keywords['urgent'] if word in text)
+        
+        if urgency_score >= 2:
+            return {'level': 'high', 'score': 0.8}
+        elif urgency_score == 1:
+            return {'level': 'medium', 'score': 0.6}
+        else:
+            return {'level': 'low', 'score': 0.3}
+    
+    def _calculate_severity(self, sentiment, urgency, text_length):
+        base_score = 0.5
+        
+        if sentiment['primary_sentiment'] == 'negative':
+            base_score += 0.3
+        if urgency['level'] == 'high':
+            base_score += 0.2
+        elif urgency['level'] == 'medium':
+            base_score += 0.1
+        
+        # Longer text might indicate more detailed complaint
+        if text_length > 500:
+            base_score += 0.1
+        
+        severity_score = min(base_score, 1.0)
+        
+        if severity_score >= 0.7:
+            return {'level': 'high', 'score': severity_score}
+        elif severity_score >= 0.5:
+            return {'level': 'medium', 'score': severity_score}
+        else:
+            return {'level': 'low', 'score': severity_score}
+    
     def get_status(self):
-        return {'models_loaded': True, 'features': ['basic_analysis']}
+        return {
+            'models_loaded': True, 
+            'features': ['sentiment_analysis', 'category_detection', 'urgency_assessment', 'severity_calculation'],
+            'method': 'keyword_based_lightweight'
+        }
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
