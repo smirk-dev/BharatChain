@@ -25,6 +25,7 @@ const healthRoutes = require('./routes/health');
 const aiAnalysisRoutes = require('./routes/ai-analysis');
 const qrCodeRoutes = require('./routes/qr-codes');
 const mobileAuthRoutes = require('./routes/mobile-auth');
+const mobileConfigRoutes = require('./routes/mobile-config');
 
 // Import database and models
 const { sequelize } = require('../config/database');
@@ -94,6 +95,7 @@ app.use('/api/broadcasts', broadcastRoutes);
 app.use('/api/ai', aiAnalysisRoutes);
 app.use('/api/qr', qrCodeRoutes);
 app.use('/api/mobile-auth', mobileAuthRoutes);
+app.use('/api/mobile-config', mobileConfigRoutes);
 
 // Blockchain status endpoint
 app.get('/api/blockchain/status', (req, res) => {
