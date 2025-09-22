@@ -88,6 +88,7 @@ app.use('/api/grievances', grievanceRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/broadcasts', broadcastRoutes);
 app.use('/api/ai', aiAnalysisRoutes);
 
 // Blockchain status endpoint
