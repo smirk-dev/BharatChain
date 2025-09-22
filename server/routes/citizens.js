@@ -43,35 +43,72 @@ function extractAddressFromToken(req) {
 
 /**
  * @route GET /api/citizens/profile
- * @desc Get citizen profile information
+ * @desc Get citizen profile information from blockchain
  * @access Private
  */
-router.get('/profile', async (req, res) => {
+router.get('/profile', ensureBlockchain, async (req, res) => {
   try {
-    // TODO: Add JWT middleware to verify authentication
-    const mockProfile = {
-      address: '0x1234567890123456789012345678901234567890',
-      name: 'John Doe',
-      email: 'john.doe@example.com',
-      phone: '+91-9876543210',
-      aadharHash: 'hash123456789',
-      isVerified: true,
-      registrationDate: new Date().toISOString(),
-      documentsCount: 3,
-      grievancesCount: 1
+    const citizenAddress = extractAddressFromToken(req);
+    
+    if (!isBlockchainInitialized) {
+      return res.status(503).json({
+        error: 'Service Unavailable',
+        message: 'Blockchain service not available'
+      });
+    }
+
+    // Check if citizen is registered on blockchain
+    const isRegistered = await blockchainService.isCitizenRegistered(citizenAddress);
+    
+    if (!isRegistered) {
+      return res.status(404).json({
+        error: 'Not Found',
+        message: 'Citizen not registered on blockchain'
+      });
+    }
+
+    // Get citizen data from blockchain
+    const citizen = await blockchainService.getCitizen(citizenAddress);
+    
+    // Get user's documents count
+    const documentIds = await blockchainService.getUserDocuments(citizenAddress);
+    
+    // Get user's grievances count
+    const grievanceIds = await blockchainService.getCitizenGrievances(citizenAddress);
+
+    const profile = {
+      address: citizenAddress,
+      name: citizen.name,
+      email: citizen.email,
+      phone: citizen.phone,
+      aadharHash: citizen.aadharHash,
+      isVerified: citizen.isVerified,
+      registrationDate: citizen.registrationDate.toISOString(),
+      documentsCount: documentIds.length,
+      grievancesCount: grievanceIds.length,
+      walletAddress: citizen.walletAddress
     };
 
     res.json({
       success: true,
-      message: 'Citizen profile retrieved successfully',
-      data: mockProfile
+      message: 'Citizen profile retrieved successfully from blockchain',
+      data: profile
     });
 
   } catch (error) {
     console.error('Get profile error:', error);
+    
+    if (error.message.includes('Citizen not registered')) {
+      return res.status(404).json({
+        error: 'Not Found',
+        message: 'Citizen not registered'
+      });
+    }
+    
     res.status(500).json({
       error: 'Internal Server Error',
-      message: 'Failed to retrieve citizen profile'
+      message: 'Failed to retrieve citizen profile',
+      details: error.message
     });
   }
 });
