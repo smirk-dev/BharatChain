@@ -3631,6 +3631,863 @@ const CitizenDashboard = () => {
             </DialogActions>
           </Dialog>
         </TabPanel>
+
+        {/* Government Services Tab */}
+        <TabPanel key="government-services" value={currentTab} index={5}>
+          <Grid container spacing={4}>
+            {/* Header */}
+            <Grid item xs={12}>
+              <Card className="bharat-card">
+                <CardContent sx={{ p: 4 }}>
+                  <Typography variant="h4" sx={{ 
+                    fontWeight: 700,
+                    color: '#000080',
+                    fontFamily: '"Playfair Display", serif',
+                    mb: 2
+                  }}>
+                    🏛️ सरकारी सेवाएं • Government Services
+                  </Typography>
+                  <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+                    आधार, पैन, पासपोर्ट सत्यापन और अन्य सरकारी सेवाओं तक पहुंच
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic' }}>
+                    Access Aadhaar, PAN, Passport verification and other government services
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+
+            {/* Identity Verification Services */}
+            <Grid item xs={12}>
+              <Typography variant="h5" sx={{ fontWeight: 700, mb: 3, color: '#000080' }}>
+                🆔 पहचान सत्यापन सेवाएं • Identity Verification Services
+              </Typography>
+            </Grid>
+
+            {[
+              {
+                title: 'आधार सत्यापन',
+                subtitle: 'Aadhaar Verification',
+                description: 'OTP के साथ आधार संख्या सत्यापित करें',
+                englishDesc: 'Verify Aadhaar number with OTP',
+                icon: '🆔',
+                gradient: 'linear-gradient(135deg, #FF6B35 0%, #F7931E 100%)',
+                action: () => alert('Aadhaar verification coming soon!'),
+                status: 'Available'
+              },
+              {
+                title: 'पैन सत्यापन',
+                subtitle: 'PAN Verification',
+                description: 'पैन कार्ड नाम मिलान के साथ सत्यापित करें',
+                englishDesc: 'Verify PAN card with name matching',
+                icon: '💳',
+                gradient: 'linear-gradient(135deg, #138808 0%, #50C878 100%)',
+                action: () => alert('PAN verification coming soon!'),
+                status: 'Available'
+              },
+              {
+                title: 'पासपोर्ट सत्यापन',
+                subtitle: 'Passport Verification',
+                description: 'पासपोर्ट संख्या और DOB सत्यापन',
+                englishDesc: 'Passport number and DOB verification',
+                icon: '📘',
+                gradient: 'linear-gradient(135deg, #005A5B 0%, #4169E1 100%)',
+                action: () => alert('Passport verification coming soon!'),
+                status: 'Available'
+              },
+              {
+                title: 'वोटर ID सत्यापन',
+                subtitle: 'Voter ID Verification',
+                description: 'मतदाता पहचान पत्र सत्यापन',
+                englishDesc: 'Voter identity card verification',
+                icon: '🗳️',
+                gradient: 'linear-gradient(135deg, #E49B0F 0%, #FFA500 100%)',
+                action: () => alert('Voter ID verification coming soon!'),
+                status: 'Available'
+              }
+            ].map((service, index) => (
+              <Grid item xs={12} sm={6} md={3} key={index}>
+                <Card className="bharat-card bharat-glow" sx={{ 
+                  height: '100%',
+                  cursor: 'pointer',
+                  background: service.gradient,
+                  color: 'white',
+                  '&:hover': {
+                    transform: 'translateY(-4px)',
+                    boxShadow: '0 12px 40px rgba(0,0,0,0.2)'
+                  }
+                }} onClick={service.action}>
+                  <CardContent sx={{ p: 3, textAlign: 'center' }}>
+                    <Typography sx={{ fontSize: '3rem', mb: 2 }}>
+                      {service.icon}
+                    </Typography>
+                    <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
+                      {service.title}
+                    </Typography>
+                    <Typography variant="body2" sx={{ mb: 2, opacity: 0.9 }}>
+                      {service.subtitle}
+                    </Typography>
+                    <Typography variant="body2" sx={{ mb: 2, fontSize: '0.9rem' }}>
+                      {service.description}
+                    </Typography>
+                    <Typography variant="caption" sx={{ opacity: 0.8, fontStyle: 'italic' }}>
+                      {service.englishDesc}
+                    </Typography>
+                    <Box sx={{ mt: 2 }}>
+                      <Chip 
+                        label={`✅ ${service.status}`}
+                        size="small"
+                        sx={{
+                          backgroundColor: 'rgba(255,255,255,0.2)',
+                          color: 'white',
+                          fontWeight: 600
+                        }}
+                      />
+                    </Box>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+
+            {/* Service Applications */}
+            <Grid item xs={12}>
+              <Typography variant="h5" sx={{ fontWeight: 700, mb: 3, mt: 4, color: '#000080' }}>
+                📋 सेवा आवेदन • Service Applications
+              </Typography>
+            </Grid>
+
+            {[
+              {
+                title: 'पासपोर्ट आवेदन',
+                subtitle: 'Passport Application',
+                description: 'नया पासपोर्ट आवेदन या नवीनीकरण',
+                englishDesc: 'New passport application or renewal',
+                icon: '📋',
+                gradient: 'linear-gradient(135deg, #8B0000 0%, #DC143C 100%)',
+                action: () => alert('Passport application coming soon!'),
+                status: 'Coming Soon'
+              },
+              {
+                title: 'ड्राइविंग लाइसेंस',
+                subtitle: 'Driving License',
+                description: 'ड्राइविंग लाइसेंस आवेदन और नवीनीकरण',
+                englishDesc: 'Driving license application and renewal',
+                icon: '🚗',
+                gradient: 'linear-gradient(135deg, #4B0082 0%, #8A2BE2 100%)',
+                action: () => alert('Driving license application coming soon!'),
+                status: 'Coming Soon'
+              },
+              {
+                title: 'जन्म प्रमाण पत्र',
+                subtitle: 'Birth Certificate',
+                description: 'जन्म प्रमाण पत्र आवेदन',
+                englishDesc: 'Birth certificate application',
+                icon: '👶',
+                gradient: 'linear-gradient(135deg, #006400 0%, #32CD32 100%)',
+                action: () => alert('Birth certificate application coming soon!'),
+                status: 'Coming Soon'
+              },
+              {
+                title: 'आय प्रमाण पत्र',
+                subtitle: 'Income Certificate',
+                description: 'आय प्रमाण पत्र आवेदन',
+                englishDesc: 'Income certificate application',
+                icon: '💰',
+                gradient: 'linear-gradient(135deg, #B22222 0%, #FF6347 100%)',
+                action: () => alert('Income certificate application coming soon!'),
+                status: 'Coming Soon'
+              }
+            ].map((service, index) => (
+              <Grid item xs={12} sm={6} md={3} key={index}>
+                <Card className="bharat-card bharat-glow" sx={{ 
+                  height: '100%',
+                  cursor: 'pointer',
+                  background: service.gradient,
+                  color: 'white',
+                  '&:hover': {
+                    transform: 'translateY(-4px)',
+                    boxShadow: '0 12px 40px rgba(0,0,0,0.2)'
+                  }
+                }} onClick={service.action}>
+                  <CardContent sx={{ p: 3, textAlign: 'center' }}>
+                    <Typography sx={{ fontSize: '3rem', mb: 2 }}>
+                      {service.icon}
+                    </Typography>
+                    <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
+                      {service.title}
+                    </Typography>
+                    <Typography variant="body2" sx={{ mb: 2, opacity: 0.9 }}>
+                      {service.subtitle}
+                    </Typography>
+                    <Typography variant="body2" sx={{ mb: 2, fontSize: '0.9rem' }}>
+                      {service.description}
+                    </Typography>
+                    <Typography variant="caption" sx={{ opacity: 0.8, fontStyle: 'italic' }}>
+                      {service.englishDesc}
+                    </Typography>
+                    <Box sx={{ mt: 2 }}>
+                      <Chip 
+                        label={service.status === 'Available' ? `✅ ${service.status}` : `🔄 ${service.status}`}
+                        size="small"
+                        sx={{
+                          backgroundColor: 'rgba(255,255,255,0.2)',
+                          color: 'white',
+                          fontWeight: 600
+                        }}
+                      />
+                    </Box>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+
+            {/* Integration Status */}
+            <Grid item xs={12}>
+              <Card className="bharat-card" sx={{ mt: 4 }}>
+                <CardContent sx={{ p: 4 }}>
+                  <Typography variant="h5" sx={{ fontWeight: 700, mb: 3, color: '#000080' }}>
+                    🔗 एकीकरण स्थिति • Integration Status
+                  </Typography>
+                  <Grid container spacing={3}>
+                    {[
+                      { name: 'UIDAI (आधार)', status: 'Connected', icon: '🆔', color: 'success' },
+                      { name: 'Income Tax Dept', status: 'Connected', icon: '💳', color: 'success' },
+                      { name: 'MEA (Passport)', status: 'Connected', icon: '📘', color: 'success' },
+                      { name: 'Election Commission', status: 'Connected', icon: '🗳️', color: 'success' },
+                      { name: 'DigiLocker', status: 'Connected', icon: '📱', color: 'success' },
+                      { name: 'State Governments', status: 'Partial', icon: '🏛️', color: 'warning' }
+                    ].map((integration, index) => (
+                      <Grid item xs={12} sm={6} md={4} key={index}>
+                        <Box sx={{ 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          p: 2,
+                          border: '1px solid',
+                          borderColor: integration.color === 'success' ? 'success.main' : 'warning.main',
+                          borderRadius: 2,
+                          backgroundColor: integration.color === 'success' ? 'success.50' : 'warning.50'
+                        }}>
+                          <Typography sx={{ fontSize: '2rem', mr: 2 }}>
+                            {integration.icon}
+                          </Typography>
+                          <Box sx={{ flexGrow: 1 }}>
+                            <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                              {integration.name}
+                            </Typography>
+                            <Chip 
+                              label={integration.status}
+                              size="small"
+                              color={integration.color}
+                              sx={{ mt: 0.5 }}
+                            />
+                          </Box>
+                        </Box>
+                      </Grid>
+                    ))}
+                  </Grid>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
+        </TabPanel>
+
+        {/* QR & Mobile Tab */}
+        <TabPanel key="qr-mobile" value={currentTab} index={6}>
+          <Grid container spacing={4}>
+            {/* Header */}
+            <Grid item xs={12}>
+              <Card className="bharat-card">
+                <CardContent sx={{ p: 4 }}>
+                  <Typography variant="h4" sx={{ 
+                    fontWeight: 700,
+                    color: '#000080',
+                    fontFamily: '"Playfair Display", serif',
+                    mb: 2
+                  }}>
+                    📱 QR कोड और मोबाइल सुविधाएं • QR Code & Mobile Features
+                  </Typography>
+                  <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+                    QR कोड जेनरेशन, मोबाइल OTP, और ऑफलाइन सिंक सुविधाएं
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic' }}>
+                    QR code generation, mobile OTP, and offline sync features
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+
+            {/* QR Code Generation */}
+            <Grid item xs={12} md={6}>
+              <Card className="bharat-card" sx={{ height: '100%' }}>
+                <CardContent sx={{ p: 4 }}>
+                  <Typography variant="h5" sx={{ fontWeight: 700, mb: 3, color: '#000080' }}>
+                    📱 QR कोड जेनरेशन • QR Code Generation
+                  </Typography>
+                  <Grid container spacing={2}>
+                    {[
+                      { type: 'Citizen ID', icon: '👤', desc: 'नागरिक पहचान QR' },
+                      { type: 'Document', icon: '📄', desc: 'दस्तावेज़ QR कोड' },
+                      { type: 'Service', icon: '🏛️', desc: 'सेवा पहुंच QR' },
+                      { type: 'Payment', icon: '💳', desc: 'भुगतान QR कोड' }
+                    ].map((qrType, index) => (
+                      <Grid item xs={6} key={index}>
+                        <Button
+                          fullWidth
+                          variant="outlined"
+                          sx={{
+                            p: 2,
+                            borderColor: '#FF9933',
+                            color: '#7B3F00',
+                            '&:hover': {
+                              borderColor: '#FF6B35',
+                              backgroundColor: 'rgba(255, 153, 51, 0.1)'
+                            }
+                          }}
+                          onClick={() => alert(`Generate ${qrType.type} QR coming soon!`)}
+                        >
+                          <Box sx={{ textAlign: 'center' }}>
+                            <Typography sx={{ fontSize: '2rem', mb: 1 }}>
+                              {qrType.icon}
+                            </Typography>
+                            <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                              {qrType.type}
+                            </Typography>
+                            <Typography variant="caption" sx={{ opacity: 0.8 }}>
+                              {qrType.desc}
+                            </Typography>
+                          </Box>
+                        </Button>
+                      </Grid>
+                    ))}
+                  </Grid>
+                  <Button
+                    fullWidth
+                    variant="contained"
+                    startIcon={<PhotoCamera />}
+                    sx={{
+                      mt: 3,
+                      background: 'linear-gradient(135deg, #4B0082 0%, #8A2BE2 100%)',
+                      py: 1.5
+                    }}
+                    onClick={() => alert('QR Scanner coming soon!')}
+                  >
+                    QR स्कैनर खोलें • Open QR Scanner
+                  </Button>
+                </CardContent>
+              </Card>
+            </Grid>
+
+            {/* Mobile Features */}
+            <Grid item xs={12} md={6}>
+              <Card className="bharat-card" sx={{ height: '100%' }}>
+                <CardContent sx={{ p: 4 }}>
+                  <Typography variant="h5" sx={{ fontWeight: 700, mb: 3, color: '#000080' }}>
+                    📲 मोबाइल सुविधाएं • Mobile Features
+                  </Typography>
+                  
+                  {/* OTP Authentication */}
+                  <Box sx={{ mb: 3 }}>
+                    <Typography variant="h6" sx={{ mb: 2, display: 'flex', alignItems: 'center' }}>
+                      <Phone sx={{ mr: 1, color: '#FF9933' }} />
+                      OTP प्रमाणीकरण • OTP Authentication
+                    </Typography>
+                    <TextField
+                      fullWidth
+                      label="मोबाइल नंबर • Mobile Number"
+                      placeholder="+91 XXXXX XXXXX"
+                      sx={{ mb: 2 }}
+                    />
+                    <Button
+                      variant="contained"
+                      startIcon={<Send />}
+                      sx={{
+                        background: 'linear-gradient(135deg, #138808 0%, #50C878 100%)',
+                        mr: 2
+                      }}
+                      onClick={() => alert('Send OTP coming soon!')}
+                    >
+                      OTP भेजें • Send OTP
+                    </Button>
+                  </Box>
+
+                  {/* Offline Sync Status */}
+                  <Box sx={{ mb: 3 }}>
+                    <Typography variant="h6" sx={{ mb: 2, display: 'flex', alignItems: 'center' }}>
+                      <CloudDownload sx={{ mr: 1, color: '#FF9933' }} />
+                      ऑफलाइन सिंक • Offline Sync
+                    </Typography>
+                    <Box sx={{ 
+                      p: 2, 
+                      border: '1px solid', 
+                      borderColor: 'success.main',
+                      borderRadius: 2,
+                      backgroundColor: 'success.50'
+                    }}>
+                      <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                        Status: ✅ Online & Synced
+                      </Typography>
+                      <Typography variant="caption" sx={{ opacity: 0.8 }}>
+                        स्थिति: ऑनलाइन और सिंक • Last sync: Just now
+                      </Typography>
+                    </Box>
+                  </Box>
+
+                  {/* App Configuration */}
+                  <Box>
+                    <Typography variant="h6" sx={{ mb: 2, display: 'flex', alignItems: 'center' }}>
+                      <SettingsOutlined sx={{ mr: 1, color: '#FF9933' }} />
+                      ऐप कॉन्फ़िगरेशन • App Configuration
+                    </Typography>
+                    <FormControlLabel
+                      control={<Switch defaultChecked />}
+                      label="हिंदी भाषा सक्षम • Enable Hindi Language"
+                      sx={{ mb: 1 }}
+                    />
+                    <FormControlLabel
+                      control={<Switch defaultChecked />}
+                      label="ऑफलाइन मोड • Offline Mode"
+                      sx={{ mb: 1 }}
+                    />
+                    <FormControlLabel
+                      control={<Switch />}
+                      label="अंधेरे विषय • Dark Theme"
+                    />
+                  </Box>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
+        </TabPanel>
+
+        {/* Payments Tab */}
+        <TabPanel key="payments" value={currentTab} index={7}>
+          <Grid container spacing={4}>
+            {/* Header */}
+            <Grid item xs={12}>
+              <Card className="bharat-card">
+                <CardContent sx={{ p: 4 }}>
+                  <Typography variant="h4" sx={{ 
+                    fontWeight: 700,
+                    color: '#000080',
+                    fontFamily: '"Playfair Display", serif',
+                    mb: 2
+                  }}>
+                    💳 भुगतान सेवाएं • Payment Services
+                  </Typography>
+                  <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+                    सरकारी शुल्क भुगतान, UPI, बैंकिंग और रसीद प्रबंधन
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic' }}>
+                    Government fee payments, UPI, banking and receipt management
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+
+            {/* Quick Payment Options */}
+            <Grid item xs={12}>
+              <Typography variant="h5" sx={{ fontWeight: 700, mb: 3, color: '#000080' }}>
+                💰 त्वरित भुगतान • Quick Payments
+              </Typography>
+            </Grid>
+
+            {[
+              {
+                service: 'पासपोर्ट शुल्क',
+                englishService: 'Passport Fees',
+                amount: '₹1,500',
+                icon: '📘',
+                gradient: 'linear-gradient(135deg, #FF6B35 0%, #F7931E 100%)',
+                description: 'नया पासपोर्ट आवेदन शुल्क'
+              },
+              {
+                service: 'PAN कार्ड',
+                englishService: 'PAN Card',
+                amount: '₹110',
+                icon: '💳',
+                gradient: 'linear-gradient(135deg, #138808 0%, #50C878 100%)',
+                description: 'नया PAN कार्ड शुल्क'
+              },
+              {
+                service: 'ड्राइविंग लाइसेंस',
+                englishService: 'Driving License',
+                amount: '₹200',
+                icon: '🚗',
+                gradient: 'linear-gradient(135deg, #005A5B 0%, #4169E1 100%)',
+                description: 'ड्राइविंग लाइसेंस शुल्क'
+              },
+              {
+                service: 'प्रमाण पत्र',
+                englishService: 'Certificates',
+                amount: '₹50',
+                icon: '📋',
+                gradient: 'linear-gradient(135deg, #E49B0F 0%, #FFA500 100%)',
+                description: 'विभिन्न प्रमाण पत्र शुल्क'
+              }
+            ].map((payment, index) => (
+              <Grid item xs={12} sm={6} md={3} key={index}>
+                <Card className="bharat-card bharat-glow" sx={{ 
+                  height: '100%',
+                  cursor: 'pointer',
+                  background: payment.gradient,
+                  color: 'white',
+                  '&:hover': {
+                    transform: 'translateY(-4px)',
+                    boxShadow: '0 12px 40px rgba(0,0,0,0.2)'
+                  }
+                }} onClick={() => alert(`Pay ${payment.service} coming soon!`)}>
+                  <CardContent sx={{ p: 3, textAlign: 'center' }}>
+                    <Typography sx={{ fontSize: '3rem', mb: 2 }}>
+                      {payment.icon}
+                    </Typography>
+                    <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
+                      {payment.service}
+                    </Typography>
+                    <Typography variant="body2" sx={{ mb: 1, opacity: 0.9 }}>
+                      {payment.englishService}
+                    </Typography>
+                    <Typography variant="h5" sx={{ fontWeight: 700, mb: 2 }}>
+                      {payment.amount}
+                    </Typography>
+                    <Typography variant="caption" sx={{ opacity: 0.8 }}>
+                      {payment.description}
+                    </Typography>
+                    <Button
+                      fullWidth
+                      variant="contained"
+                      sx={{
+                        mt: 2,
+                        backgroundColor: 'rgba(255,255,255,0.2)',
+                        color: 'white',
+                        '&:hover': {
+                          backgroundColor: 'rgba(255,255,255,0.3)'
+                        }
+                      }}
+                    >
+                      भुगतान करें • Pay Now
+                    </Button>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+
+            {/* Payment Methods */}
+            <Grid item xs={12} md={6}>
+              <Card className="bharat-card">
+                <CardContent sx={{ p: 4 }}>
+                  <Typography variant="h5" sx={{ fontWeight: 700, mb: 3, color: '#000080' }}>
+                    💎 भुगतान विधियां • Payment Methods
+                  </Typography>
+                  <Grid container spacing={2}>
+                    {[
+                      { name: 'UPI', icon: '📱', status: 'Available' },
+                      { name: 'Net Banking', icon: '🏦', status: 'Available' },
+                      { name: 'Debit Card', icon: '💳', status: 'Available' },
+                      { name: 'Credit Card', icon: '💎', status: 'Available' },
+                      { name: 'Digital Wallet', icon: '📲', status: 'Available' },
+                      { name: 'Bank Transfer', icon: '🔄', status: 'Available' }
+                    ].map((method, index) => (
+                      <Grid item xs={6} key={index}>
+                        <Box sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          p: 2,
+                          border: '1px solid #FF9933',
+                          borderRadius: 2,
+                          backgroundColor: 'rgba(255, 153, 51, 0.1)'
+                        }}>
+                          <Typography sx={{ fontSize: '1.5rem', mr: 2 }}>
+                            {method.icon}
+                          </Typography>
+                          <Box>
+                            <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                              {method.name}
+                            </Typography>
+                            <Chip 
+                              label={method.status}
+                              size="small"
+                              color="success"
+                            />
+                          </Box>
+                        </Box>
+                      </Grid>
+                    ))}
+                  </Grid>
+                </CardContent>
+              </Card>
+            </Grid>
+
+            {/* Payment History */}
+            <Grid item xs={12} md={6}>
+              <Card className="bharat-card">
+                <CardContent sx={{ p: 4 }}>
+                  <Typography variant="h5" sx={{ fontWeight: 700, mb: 3, color: '#000080' }}>
+                    📊 भुगतान इतिहास • Payment History
+                  </Typography>
+                  <Box sx={{ textAlign: 'center', py: 4 }}>
+                    <Typography sx={{ fontSize: '4rem', mb: 2, opacity: 0.5 }}>
+                      📋
+                    </Typography>
+                    <Typography variant="h6" color="text.secondary" gutterBottom>
+                      कोई भुगतान इतिहास नहीं
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      No payment history found
+                    </Typography>
+                    <Button
+                      variant="outlined"
+                      sx={{
+                        mt: 2,
+                        borderColor: '#FF9933',
+                        color: '#7B3F00'
+                      }}
+                      onClick={() => alert('View all payments coming soon!')}
+                    >
+                      सभी भुगतान देखें • View All Payments
+                    </Button>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
+        </TabPanel>
+
+        {/* Emergency & Safety Tab */}
+        <TabPanel key="emergency" value={currentTab} index={8}>
+          <Grid container spacing={4}>
+            {/* Header */}
+            <Grid item xs={12}>
+              <Card className="bharat-card">
+                <CardContent sx={{ p: 4 }}>
+                  <Typography variant="h4" sx={{ 
+                    fontWeight: 700,
+                    color: '#000080',
+                    fontFamily: '"Playfair Display", serif',
+                    mb: 2
+                  }}>
+                    🚨 आपातकालीन और सुरक्षा सेवाएं • Emergency & Safety Services
+                  </Typography>
+                  <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+                    SOS अलर्ट, आपातकालीन संपर्क, और आपदा प्रबंधन सुविधाएं
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic' }}>
+                    SOS alerts, emergency contacts, and disaster management features
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+
+            {/* Emergency Alert Button */}
+            <Grid item xs={12}>
+              <Card sx={{ 
+                background: 'linear-gradient(135deg, #B22222 0%, #FF6347 100%)',
+                color: 'white' 
+              }}>
+                <CardContent sx={{ p: 4, textAlign: 'center' }}>
+                  <Typography variant="h4" sx={{ fontWeight: 700, mb: 3 }}>
+                    🆘 आपातकालीन अलर्ट • Emergency Alert
+                  </Typography>
+                  <Button
+                    variant="contained"
+                    size="large"
+                    sx={{
+                      backgroundColor: 'rgba(255,255,255,0.2)',
+                      color: 'white',
+                      fontSize: '1.5rem',
+                      py: 3,
+                      px: 6,
+                      borderRadius: '50px',
+                      '&:hover': {
+                        backgroundColor: 'rgba(255,255,255,0.3)',
+                        transform: 'scale(1.05)'
+                      }
+                    }}
+                    onClick={() => alert('Emergency SOS alert will be sent!')}
+                  >
+                    🚨 SOS अलर्ट भेजें • Send SOS Alert
+                  </Button>
+                  <Typography variant="body1" sx={{ mt: 2, opacity: 0.9 }}>
+                    आपातकाल में तुरंत सहायता के लिए दबाएं • Press for immediate emergency assistance
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+
+            {/* Emergency Services */}
+            <Grid item xs={12}>
+              <Typography variant="h5" sx={{ fontWeight: 700, mb: 3, color: '#000080' }}>
+                📞 आपातकालीन सेवाएं • Emergency Services
+              </Typography>
+            </Grid>
+
+            {[
+              {
+                service: 'पुलिस',
+                englishService: 'Police',
+                number: '100',
+                icon: '👮',
+                gradient: 'linear-gradient(135deg, #000080 0%, #4169E1 100%)',
+                description: 'तत्काल पुलिस सहायता'
+              },
+              {
+                service: 'अग्निशमन',
+                englishService: 'Fire Department',
+                number: '101',
+                icon: '🚒',
+                gradient: 'linear-gradient(135deg, #B22222 0%, #FF6347 100%)',
+                description: 'अग्निशमन सेवा'
+              },
+              {
+                service: 'एम्बुलेंस',
+                englishService: 'Ambulance',
+                number: '108',
+                icon: '🚑',
+                gradient: 'linear-gradient(135deg, #DC143C 0%, #FF1493 100%)',
+                description: 'चिकित्सा आपातकाल'
+              },
+              {
+                service: 'आपदा प्रबंधन',
+                englishService: 'Disaster Management',
+                number: '108',
+                icon: '🌪️',
+                gradient: 'linear-gradient(135deg, #8B4513 0%, #D2691E 100%)',
+                description: 'प्राकृतिक आपदा सहायता'
+              }
+            ].map((emergency, index) => (
+              <Grid item xs={12} sm={6} md={3} key={index}>
+                <Card className="bharat-card bharat-glow" sx={{ 
+                  height: '100%',
+                  cursor: 'pointer',
+                  background: emergency.gradient,
+                  color: 'white',
+                  '&:hover': {
+                    transform: 'translateY(-4px)',
+                    boxShadow: '0 12px 40px rgba(0,0,0,0.2)'
+                  }
+                }} onClick={() => alert(`Calling ${emergency.service} - ${emergency.number}`)}>
+                  <CardContent sx={{ p: 3, textAlign: 'center' }}>
+                    <Typography sx={{ fontSize: '3rem', mb: 2 }}>
+                      {emergency.icon}
+                    </Typography>
+                    <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
+                      {emergency.service}
+                    </Typography>
+                    <Typography variant="body2" sx={{ mb: 1, opacity: 0.9 }}>
+                      {emergency.englishService}
+                    </Typography>
+                    <Typography variant="h4" sx={{ fontWeight: 700, mb: 2 }}>
+                      {emergency.number}
+                    </Typography>
+                    <Typography variant="caption" sx={{ opacity: 0.8 }}>
+                      {emergency.description}
+                    </Typography>
+                    <Button
+                      fullWidth
+                      variant="contained"
+                      startIcon={<Phone />}
+                      sx={{
+                        mt: 2,
+                        backgroundColor: 'rgba(255,255,255,0.2)',
+                        color: 'white',
+                        '&:hover': {
+                          backgroundColor: 'rgba(255,255,255,0.3)'
+                        }
+                      }}
+                    >
+                      कॉल करें • Call Now
+                    </Button>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+
+            {/* Emergency Contacts */}
+            <Grid item xs={12} md={6}>
+              <Card className="bharat-card">
+                <CardContent sx={{ p: 4 }}>
+                  <Typography variant="h5" sx={{ fontWeight: 700, mb: 3, color: '#000080' }}>
+                    📱 आपातकालीन संपर्क • Emergency Contacts
+                  </Typography>
+                  <List>
+                    {[
+                      { name: 'परिवार संपर्क • Family Contact', number: '+91 XXXXX XXXXX', type: 'family' },
+                      { name: 'कार्यालय संपर्क • Office Contact', number: '+91 XXXXX XXXXX', type: 'work' },
+                      { name: 'मित्र संपर्क • Friend Contact', number: '+91 XXXXX XXXXX', type: 'friend' }
+                    ].map((contact, index) => (
+                      <ListItem key={index} sx={{ border: '1px solid #FF9933', borderRadius: 2, mb: 1 }}>
+                        <ListItemAvatar>
+                          <Avatar sx={{ backgroundColor: '#FF9933' }}>
+                            {contact.type === 'family' ? '👨‍👩‍👧‍👦' : contact.type === 'work' ? '💼' : '👥'}
+                          </Avatar>
+                        </ListItemAvatar>
+                        <ListItemText
+                          primary={contact.name}
+                          secondary={contact.number}
+                        />
+                        <ListItemSecondaryAction>
+                          <IconButton 
+                            edge="end"
+                            sx={{ color: '#138808' }}
+                            onClick={() => alert(`Calling ${contact.name}`)}
+                          >
+                            <Phone />
+                          </IconButton>
+                        </ListItemSecondaryAction>
+                      </ListItem>
+                    ))}
+                  </List>
+                  <Button
+                    fullWidth
+                    variant="outlined"
+                    startIcon={<AddIcon />}
+                    sx={{
+                      mt: 2,
+                      borderColor: '#FF9933',
+                      color: '#7B3F00'
+                    }}
+                    onClick={() => alert('Add emergency contact coming soon!')}
+                  >
+                    संपर्क जोड़ें • Add Contact
+                  </Button>
+                </CardContent>
+              </Card>
+            </Grid>
+
+            {/* Safety Tips */}
+            <Grid item xs={12} md={6}>
+              <Card className="bharat-card">
+                <CardContent sx={{ p: 4 }}>
+                  <Typography variant="h5" sx={{ fontWeight: 700, mb: 3, color: '#000080' }}>
+                    🛡️ सुरक्षा सुझाव • Safety Tips
+                  </Typography>
+                  <List>
+                    {[
+                      'आपातकाल में शांत रहें • Stay calm during emergencies',
+                      'हमेशा फोन चार्ज रखें • Keep phone charged always',
+                      'स्थान साझा करें • Share your location',
+                      'आपातकालीन किट तैयार रखें • Keep emergency kit ready'
+                    ].map((tip, index) => (
+                      <ListItem key={index}>
+                        <ListItemText
+                          primary={
+                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                              <Typography sx={{ mr: 2 }}>
+                                {index === 0 ? '🧘' : index === 1 ? '🔋' : index === 2 ? '📍' : '🎒'}
+                              </Typography>
+                              <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                                {tip}
+                              </Typography>
+                            </Box>
+                          }
+                        />
+                      </ListItem>
+                    ))}
+                  </List>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
+        </TabPanel>
       </AnimatePresence>
     </div>
   );
