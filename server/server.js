@@ -26,6 +26,7 @@ const aiAnalysisRoutes = require('./routes/ai-analysis');
 const qrCodeRoutes = require('./routes/qr-codes');
 const mobileAuthRoutes = require('./routes/mobile-auth');
 const mobileConfigRoutes = require('./routes/mobile-config');
+const governmentAPIsRoutes = require('./routes/government-apis');
 
 // Import database and models
 const { sequelize } = require('../config/database');
@@ -96,6 +97,7 @@ app.use('/api/ai', aiAnalysisRoutes);
 app.use('/api/qr', qrCodeRoutes);
 app.use('/api/mobile-auth', mobileAuthRoutes);
 app.use('/api/mobile-config', mobileConfigRoutes);
+app.use('/api/government', governmentAPIsRoutes);
 
 // Blockchain status endpoint
 app.get('/api/blockchain/status', (req, res) => {
