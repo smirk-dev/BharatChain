@@ -20,6 +20,7 @@ const grievanceRoutes = require('./routes/grievances');
 const notificationRoutes = require('./routes/notifications');
 const dashboardRoutes = require('./routes/dashboard');
 const chatRoutes = require('./routes/chat');
+const broadcastRoutes = require('./routes/broadcasts');
 const healthRoutes = require('./routes/health');
 const aiAnalysisRoutes = require('./routes/ai-analysis');
 
