@@ -93,6 +93,7 @@ app.use('/api/chat', chatRoutes);
 app.use('/api/broadcasts', broadcastRoutes);
 app.use('/api/ai', aiAnalysisRoutes);
 app.use('/api/qr', qrCodeRoutes);
+app.use('/api/mobile-auth', mobileAuthRoutes);
 
 // Blockchain status endpoint
 app.get('/api/blockchain/status', (req, res) => {
