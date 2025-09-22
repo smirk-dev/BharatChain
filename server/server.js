@@ -263,6 +263,21 @@ async function startServer() {
       console.log('⚠️ Server will continue without real-time events.');
     }
 
+    // Initialize notification service
+    try {
+      await notificationService.initialize();
+      console.log('✅ Notification service initialized successfully.');
+      
+      // Setup blockchain event notifications if both services are available
+      if (blockchainService.isInitialized && realtimeEventService.isInitialized) {
+        notificationService.setupBlockchainEventNotifications();
+        console.log('✅ Blockchain event notifications setup complete.');
+      }
+    } catch (notificationError) {
+      console.error('❌ Notification service initialization failed:', notificationError.message);
+      console.log('⚠️ Server will continue without notifications.');
+    }
+
     // Start server
     server.listen(PORT, () => {
       console.log('');
@@ -273,6 +288,7 @@ async function startServer() {
       console.log(`   ├── CORS Origin: ${process.env.CORS_ORIGIN || 'http://localhost:3000'}`);
       console.log(`   ├── Blockchain: ${blockchainService.isInitialized ? '✅ Connected' : '❌ Offline'}`);
       console.log(`   ├── Real-time Events: ${realtimeEventService.isInitialized ? '✅ Active' : '❌ Offline'}`);
+      console.log(`   ├── Notifications: ${notificationService.initialized ? '✅ Active' : '❌ Offline'}`);
       console.log(`   └── API Base URL: http://localhost:${PORT}/api`);
       console.log('');
       console.log('📋 Available Endpoints:');
