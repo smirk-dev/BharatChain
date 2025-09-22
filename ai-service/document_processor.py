@@ -44,38 +44,43 @@ class DocumentProcessor:
             # Initialize OCR readers
             self.easyocr_reader = easyocr.Reader(['en', 'hi'])  # English and Hindi
             
-            # Load AI models only if transformers is available
-            if HAS_TRANSFORMERS:
-                try:
-                    # Load document classification model
-                    self.doc_classifier = pipeline(
-                        "text-classification",
-                        model="microsoft/DialoGPT-medium",
-                        return_all_scores=True
-                    )
-                    
-                    # Load sentiment analysis model
-                    self.sentiment_analyzer = pipeline(
-                        "sentiment-analysis",
-                        model="cardiffnlp/twitter-roberta-base-sentiment-latest"
-                    )
-                except Exception as e:
-                    logger.warning(f"Could not load transformer models: {e}")
-                    self.doc_classifier = None
-                    self.sentiment_analyzer = None
-            else:
+            # Try to load AI models only if transformers is available
+            try:
+                import torch
+                from transformers import pipeline, AutoTokenizer, AutoModelForSequenceClassification
+                global HAS_TRANSFORMERS
+                HAS_TRANSFORMERS = True
+                
+                # Load document classification model
+                self.doc_classifier = pipeline(
+                    "text-classification",
+                    model="microsoft/DialoGPT-medium",
+                    return_all_scores=True
+                )
+                
+                # Load sentiment analysis model
+                self.sentiment_analyzer = pipeline(
+                    "sentiment-analysis",
+                    model="cardiffnlp/twitter-roberta-base-sentiment-latest"
+                )
+                logger.info("Transformer models loaded successfully")
+            except Exception as e:
+                logger.warning(f"Could not load transformer models: {e}")
                 self.doc_classifier = None
                 self.sentiment_analyzer = None
+                HAS_TRANSFORMERS = False
             
-            # Load text similarity model if available
-            if HAS_SENTENCE_TRANSFORMERS:
-                try:
-                    self.similarity_model = SentenceTransformer('all-MiniLM-L6-v2')
-                except Exception as e:
-                    logger.warning(f"Could not load sentence transformer: {e}")
-                    self.similarity_model = None
-            else:
+            # Try to load text similarity model if available
+            try:
+                from sentence_transformers import SentenceTransformer
+                global HAS_SENTENCE_TRANSFORMERS
+                HAS_SENTENCE_TRANSFORMERS = True
+                self.similarity_model = SentenceTransformer('all-MiniLM-L6-v2')
+                logger.info("Sentence transformer loaded successfully")
+            except Exception as e:
+                logger.warning(f"Could not load sentence transformer: {e}")
                 self.similarity_model = None
+                HAS_SENTENCE_TRANSFORMERS = False
             
             # Document type patterns
             self.document_patterns = {
