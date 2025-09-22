@@ -47,7 +47,13 @@ export const Web3Provider = ({ children }) => {
   const getAuthMessage = async (address) => {
     try {
       const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3001';
-      const response = await fetch(`${apiUrl}/api/auth/message`, {
+      
+      // Add timeout and retry logic
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Request timeout')), 10000)
+      );
+      
+      const fetchPromise = fetch(`${apiUrl}/api/auth/message`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -55,14 +61,22 @@ export const Web3Provider = ({ children }) => {
         body: JSON.stringify({ address }),
       });
 
+      const response = await Promise.race([fetchPromise, timeoutPromise]);
+
       if (!response.ok) {
-        const errorData = await response.json();
+        const errorData = await response.json().catch(() => ({ message: 'Server error' }));
         throw new Error(errorData.message || 'Failed to get authentication message');
       }
 
       return await response.json();
     } catch (error) {
       console.error('Error getting auth message:', error);
+      
+      // Check if it's a network error
+      if (error.message.includes('fetch') || error.message.includes('Failed to fetch')) {
+        throw new Error('Backend server is not running. Please start the server on port 3001.');
+      }
+      
       throw error;
     }
   };
