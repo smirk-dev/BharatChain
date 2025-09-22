@@ -40,13 +40,23 @@ class DocumentProcessor:
         try:
             logger.info("Loading AI models for document processing...")
             
-            # Initialize OCR readers
-            self.easyocr_reader = easyocr.Reader(['en', 'hi'])  # English and Hindi
+            # Initialize OCR readers with warning suppression
+            import warnings
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                try:
+                    self.easyocr_reader = easyocr.Reader(['en', 'hi'])  # English and Hindi
+                    logger.info("EasyOCR loaded successfully")
+                except Exception as e:
+                    logger.warning(f"EasyOCR failed to load: {e}")
+                    self.easyocr_reader = None
             
             # Try to load AI models only if transformers is available
             try:
-                import torch
-                from transformers import pipeline, AutoTokenizer, AutoModelForSequenceClassification
+                with warnings.catch_warnings():
+                    warnings.simplefilter("ignore")
+                    import torch
+                    from transformers import pipeline, AutoTokenizer, AutoModelForSequenceClassification
                 global HAS_TRANSFORMERS
                 HAS_TRANSFORMERS = True
                 
@@ -64,20 +74,22 @@ class DocumentProcessor:
                 )
                 logger.info("Transformer models loaded successfully")
             except Exception as e:
-                logger.warning(f"Could not load transformer models: {e}")
+                logger.info("Transformer models not available, using basic text analysis")
                 self.doc_classifier = None
                 self.sentiment_analyzer = None
                 HAS_TRANSFORMERS = False
             
             # Try to load text similarity model if available
             try:
-                from sentence_transformers import SentenceTransformer
+                with warnings.catch_warnings():
+                    warnings.simplefilter("ignore")
+                    from sentence_transformers import SentenceTransformer
                 global HAS_SENTENCE_TRANSFORMERS
                 HAS_SENTENCE_TRANSFORMERS = True
                 self.similarity_model = SentenceTransformer('all-MiniLM-L6-v2')
                 logger.info("Sentence transformer loaded successfully")
             except Exception as e:
-                logger.warning(f"Could not load sentence transformer: {e}")
+                logger.info("Sentence transformer not available, using basic similarity")
                 self.similarity_model = None
                 HAS_SENTENCE_TRANSFORMERS = False
             
@@ -95,7 +107,7 @@ class DocumentProcessor:
             }
             
             self.models_loaded = True
-            logger.info("AI models loaded successfully (with available dependencies)")
+            logger.info("Document processor initialized with available dependencies")
             
         except Exception as e:
             logger.error(f"Error loading models: {str(e)}")
