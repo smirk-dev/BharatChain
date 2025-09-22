@@ -18,6 +18,7 @@ const citizenRoutes = require('./routes/citizens');
 const documentRoutes = require('./routes/documents');
 const grievanceRoutes = require('./routes/grievances');
 const notificationRoutes = require('./routes/notifications');
+const dashboardRoutes = require('./routes/dashboard');
 const healthRoutes = require('./routes/health');
 const aiAnalysisRoutes = require('./routes/ai-analysis');
 
