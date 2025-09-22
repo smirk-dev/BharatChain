@@ -301,6 +301,8 @@ async function startServer() {
       console.log('   ├── POST /api/documents/upload     - Upload document');
       console.log('   ├── GET  /api/grievances           - List grievances');
       console.log('   ├── POST /api/grievances           - Submit grievance');
+      console.log('   ├── GET  /api/notifications        - Get notifications');
+      console.log('   ├── PUT  /api/notifications/:id/read - Mark notification as read');
       console.log('   ├── GET  /api/ai/health            - AI service health');
       console.log('   ├── POST /api/ai/analyze/document  - AI document analysis');
       console.log('   ├── POST /api/ai/analyze/grievance - AI grievance analysis');
