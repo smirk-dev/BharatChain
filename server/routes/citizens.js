@@ -115,14 +115,14 @@ router.get('/profile', ensureBlockchain, async (req, res) => {
 
 /**
  * @route POST /api/citizens/register
- * @desc Register a new citizen
+ * @desc Register a new citizen on blockchain
  * @access Private
  */
-router.post('/register', [
-  body('name').isLength({ min: 2 }).withMessage('Name must be at least 2 characters'),
+router.post('/register', ensureBlockchain, [
+  body('name').isLength({ min: 2, max: 100 }).withMessage('Name must be 2-100 characters'),
   body('email').isEmail().withMessage('Valid email is required'),
-  body('phone').isMobilePhone().withMessage('Valid phone number is required'),
-  body('aadharHash').isLength({ min: 10 }).withMessage('Aadhar hash is required')
+  body('phone').isMobilePhone('en-IN').withMessage('Valid Indian phone number is required'),
+  body('aadharNumber').isLength({ min: 12, max: 12 }).isNumeric().withMessage('Valid 12-digit Aadhar number is required')
 ], async (req, res) => {
   try {
     // Check for validation errors
@@ -135,35 +135,69 @@ router.post('/register', [
       });
     }
 
-    const { name, email, phone, aadharHash } = req.body;
+    const { name, email, phone, aadharNumber } = req.body;
+    const citizenAddress = extractAddressFromToken(req);
 
-    // TODO: Implement actual registration logic
-    // 1. Save to database
-    // 2. Call smart contract
-    // 3. Send verification email
+    if (!isBlockchainInitialized) {
+      return res.status(503).json({
+        error: 'Service Unavailable',
+        message: 'Blockchain service not available'
+      });
+    }
 
-    const mockRegistration = {
-      id: Date.now(),
-      address: req.body.address || '0x1234567890123456789012345678901234567890',
+    // Check if citizen is already registered
+    const isAlreadyRegistered = await blockchainService.isCitizenRegistered(citizenAddress);
+    if (isAlreadyRegistered) {
+      return res.status(409).json({
+        error: 'Already Registered',
+        message: 'Citizen is already registered on blockchain'
+      });
+    }
+
+    // Hash Aadhar number for privacy
+    const aadharHash = hashAadhar(aadharNumber);
+
+    // Register citizen on blockchain
+    const result = await blockchainService.registerCitizen(
+      aadharHash,
+      name,
+      email,
+      phone
+    );
+
+    const registration = {
+      address: citizenAddress,
       name,
       email,
       phone,
       aadharHash,
       isVerified: false,
-      registrationDate: new Date().toISOString()
+      registrationDate: new Date().toISOString(),
+      transactionHash: result.transactionHash,
+      blockNumber: result.blockNumber,
+      gasUsed: result.gasUsed
     };
 
     res.status(201).json({
       success: true,
-      message: 'Citizen registered successfully',
-      data: mockRegistration
+      message: 'Citizen registered successfully on blockchain',
+      data: registration
     });
 
   } catch (error) {
     console.error('Registration error:', error);
+    
+    if (error.message.includes('Already registered')) {
+      return res.status(409).json({
+        error: 'Already Registered',
+        message: 'Citizen or Aadhar already registered'
+      });
+    }
+    
     res.status(500).json({
       error: 'Internal Server Error',
-      message: 'Failed to register citizen'
+      message: 'Failed to register citizen on blockchain',
+      details: error.message
     });
   }
 });
