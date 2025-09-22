@@ -1730,6 +1730,38 @@ const CitizenDashboard = () => {
                         statusHindi: 'सक्रिय',
                         icon: '✅',
                         gradient: 'linear-gradient(135deg, #FF6B35 0%, #F7931E 100%)'
+                      },
+                      { 
+                        name: 'सरकारी APIs', 
+                        englishName: 'Government APIs', 
+                        status: 'Connected',
+                        statusHindi: 'जुड़ा हुआ',
+                        icon: '🏛️',
+                        gradient: 'linear-gradient(135deg, #8B0000 0%, #DC143C 100%)'
+                      },
+                      { 
+                        name: 'मोबाइल सेवाएं', 
+                        englishName: 'Mobile Services', 
+                        status: 'Active',
+                        statusHindi: 'सक्रिय',
+                        icon: '📱',
+                        gradient: 'linear-gradient(135deg, #4B0082 0%, #8A2BE2 100%)'
+                      },
+                      { 
+                        name: 'भुगतान गेटवे', 
+                        englishName: 'Payment Gateway', 
+                        status: 'Secure',
+                        statusHindi: 'सुरक्षित',
+                        icon: '💳',
+                        gradient: 'linear-gradient(135deg, #006400 0%, #32CD32 100%)'
+                      },
+                      { 
+                        name: 'आपातकालीन सिस्टम', 
+                        englishName: 'Emergency System', 
+                        status: 'Ready',
+                        statusHindi: 'तैयार',
+                        icon: '🚨',
+                        gradient: 'linear-gradient(135deg, #B22222 0%, #FF6347 100%)'
                       }
                     ].map((service, index) => (
                       <Grid item xs={12} sm={6} md={3} key={index}>
