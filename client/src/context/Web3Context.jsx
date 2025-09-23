@@ -20,6 +20,22 @@ export const Web3Provider = ({ children }) => {
   const [chainId, setChainId] = useState(null);
   const [error, setError] = useState(null);
   const [authToken, setAuthToken] = useState(null);
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  // Add timeout for connecting state
+  useEffect(() => {
+    let timeoutId;
+    if (isConnecting) {
+      timeoutId = setTimeout(() => {
+        console.log('Connection timeout, resetting state');
+        setIsConnecting(false);
+        setError('Connection timeout. Please try again.');
+      }, 30000); // 30 second timeout
+    }
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, [isConnecting]);
 
   // Check if MetaMask is installed
   const isMetaMaskInstalled = () => {
@@ -29,6 +45,25 @@ export const Web3Provider = ({ children }) => {
   // Clear error
   const clearError = useCallback(() => {
     setError(null);
+  }, []);
+
+  // Reset all states (emergency function)
+  const resetConnection = useCallback(() => {
+    console.log('Resetting connection state...');
+    setAccount(null);
+    setProvider(null);
+    setSigner(null);
+    setAuthToken(null);
+    setIsConnected(false);
+    setIsConnecting(false);
+    setChainId(null);
+    setError(null);
+    setIsInitialized(true);
+    
+    // Clear localStorage
+    localStorage.removeItem('bharatchain_address');
+    localStorage.removeItem('bharatchain_token');
+    localStorage.removeItem('bharatchain_connected');
   }, []);
 
   // Sanitize address to prevent ENS resolution issues
@@ -117,9 +152,16 @@ export const Web3Provider = ({ children }) => {
       return;
     }
 
+    // Prevent multiple simultaneous connection attempts
+    if (isConnecting) {
+      console.log('Connection already in progress');
+      return;
+    }
+
     try {
       setIsConnecting(true);
       setError(null);
+      console.log('Starting wallet connection...');
 
       // Check if MetaMask is unlocked
       try {
@@ -128,6 +170,7 @@ export const Web3Provider = ({ children }) => {
         });
         
         if (accounts.length === 0) {
+          console.log('No accounts found, requesting access...');
           // Request account access if no accounts are available
           const requestedAccounts = await window.ethereum.request({
             method: 'eth_requestAccounts',
@@ -138,6 +181,7 @@ export const Web3Provider = ({ children }) => {
           }
         }
       } catch (accountError) {
+        console.error('Account access error:', accountError);
         if (accountError.code === 4001) {
           throw new Error('MetaMask connection was rejected by user.');
         }
@@ -160,6 +204,8 @@ export const Web3Provider = ({ children }) => {
         throw new Error('Invalid account address received from MetaMask.');
       }
 
+      console.log('MetaMask connected, creating provider...');
+      
       // Create provider without specifying network (let it auto-detect)
       const web3Provider = new ethers.BrowserProvider(window.ethereum);
 
@@ -169,18 +215,26 @@ export const Web3Provider = ({ children }) => {
       // Get network info
       const network = await web3Provider.getNetwork();
 
+      console.log('Getting authentication message from backend...');
+      
       // Get authentication message from backend
       const authData = await getAuthMessage(sanitizedAddress);
 
+      console.log('Signing authentication message...');
+      
       // Sign the authentication message
       const signature = await web3Signer.signMessage(authData.data.message);
 
+      console.log('Authenticating with backend...');
+      
       // Authenticate with backend
       const token = await authenticateWithBackend(
         sanitizedAddress,
         signature,
         authData.data.nonce
       );
+
+      console.log('Authentication successful, updating state...');
 
       // Update state
       setAccount(sanitizedAddress);
@@ -194,6 +248,8 @@ export const Web3Provider = ({ children }) => {
       localStorage.setItem('bharatchain_address', sanitizedAddress);
       localStorage.setItem('bharatchain_token', token);
       localStorage.setItem('bharatchain_connected', 'true');
+      
+      console.log('Wallet connection completed successfully');
 
     } catch (error) {
       console.error('Wallet connection error:', error);
@@ -206,6 +262,8 @@ export const Web3Provider = ({ children }) => {
         errorMessage = 'Backend server is not available. Please start the server and try again.';
       } else if (error.message.includes('MetaMask is locked')) {
         errorMessage = 'Please unlock your MetaMask wallet and try again.';
+      } else if (error.message.includes('timeout') || error.message.includes('Request timeout')) {
+        errorMessage = 'Connection timed out. Please check your internet connection and try again.';
       }
       
       setError(errorMessage);
@@ -224,7 +282,7 @@ export const Web3Provider = ({ children }) => {
     } finally {
       setIsConnecting(false);
     }
-  }, []);
+  }, [isConnecting]);
 
   // Disconnect wallet
   const disconnectWallet = useCallback(async () => {
@@ -275,7 +333,11 @@ export const Web3Provider = ({ children }) => {
   // Auto-connect on page load
   useEffect(() => {
     const autoConnect = async () => {
-      if (!isMetaMaskInstalled()) return;
+      if (!isMetaMaskInstalled()) {
+        console.log('MetaMask not installed');
+        setIsInitialized(true);
+        return;
+      }
 
       const wasConnected = localStorage.getItem('bharatchain_connected');
       const storedAddress = localStorage.getItem('bharatchain_address');
@@ -283,12 +345,17 @@ export const Web3Provider = ({ children }) => {
 
       if (wasConnected && storedAddress && storedToken) {
         try {
+          setIsConnecting(true);
+          console.log('Attempting auto-connect...');
+          
           // Check if accounts are still accessible
           const accounts = await window.ethereum.request({
             method: 'eth_accounts',
           });
 
           if (accounts.length > 0 && sanitizeAddress(accounts[0]) === storedAddress) {
+            console.log('Valid stored session found, restoring connection...');
+            
             // Verify token is still valid (optional)
             // For now, just restore the connection
             const web3Provider = new ethers.BrowserProvider(window.ethereum);
@@ -301,7 +368,9 @@ export const Web3Provider = ({ children }) => {
             setAuthToken(storedToken);
             setChainId(network.chainId.toString());
             setIsConnected(true);
+            console.log('Auto-connect successful');
           } else {
+            console.log('Stored session invalid, clearing data');
             // Clear invalid stored data
             localStorage.removeItem('bharatchain_address');
             localStorage.removeItem('bharatchain_token');
@@ -313,11 +382,23 @@ export const Web3Provider = ({ children }) => {
           localStorage.removeItem('bharatchain_address');
           localStorage.removeItem('bharatchain_token');
           localStorage.removeItem('bharatchain_connected');
+          
+          // Set error state
+          setError('Failed to restore previous session. Please connect again.');
+        } finally {
+          setIsConnecting(false);
+          setIsInitialized(true);
         }
+      } else {
+        console.log('No previous session found');
+        setIsConnecting(false);
+        setIsInitialized(true);
       }
     };
 
-    autoConnect();
+    // Add a small delay to ensure DOM is ready
+    const timer = setTimeout(autoConnect, 100);
+    return () => clearTimeout(timer);
   }, []);
 
   // Set up event listeners
@@ -355,6 +436,7 @@ export const Web3Provider = ({ children }) => {
     signer,
     isConnected,
     isConnecting,
+    isInitialized,
     chainId,
     error,
     authToken,
@@ -363,6 +445,7 @@ export const Web3Provider = ({ children }) => {
     connectWallet,
     disconnectWallet,
     clearError,
+    resetConnection,
     
     // Utilities
     isMetaMaskInstalled,

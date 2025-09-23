@@ -40,7 +40,9 @@ function App() {
     account, 
     isConnected, 
     isConnecting, 
+    isInitialized,
     disconnectWallet,
+    resetConnection,
     error: web3Error,
     clearError
   } = useWeb3();
@@ -92,8 +94,12 @@ function App() {
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
   };
 
-  // Loading state with Indian theme
-  if (isConnecting) {
+  // Loading state with Indian theme - Show during connection or initialization
+  if (isConnecting || !isInitialized) {
+    const loadingMessage = isConnecting 
+      ? 'MetaMask से जुड़ रहा है... • Connecting to MetaMask...'
+      : 'BharatChain शुरू हो रहा है... • Initializing BharatChain...';
+      
     return (
       <Box
         sx={{
@@ -131,9 +137,20 @@ function App() {
             fontWeight: 600,
             mb: 4
           }}>
-            MetaMask से जुड़ रहा है... • Connecting to MetaMask...
+            {loadingMessage}
           </Typography>
           <div className="bharat-loading" style={{ margin: '0 auto' }}></div>
+          <LinearProgress 
+            sx={{ 
+              mt: 3, 
+              width: '300px',
+              mx: 'auto',
+              backgroundColor: 'rgba(255,255,255,0.3)',
+              '& .MuiLinearProgress-bar': {
+                background: 'linear-gradient(90deg, #FF9933 0%, #FFFFFF 50%, #138808 100%)'
+              }
+            }} 
+          />
           <Typography variant="body1" sx={{ 
             mt: 3, 
             fontStyle: 'italic',
@@ -142,6 +159,52 @@ function App() {
           }}>
             कृपया प्रतीक्षा करें... • Please wait...
           </Typography>
+          
+          {(isConnecting && !web3Error) && (
+            <Button
+              variant="outlined"
+              onClick={resetConnection}
+              sx={{
+                mt: 3,
+                color: '#7B3F00',
+                borderColor: '#7B3F00',
+                '&:hover': { 
+                  backgroundColor: 'rgba(123, 63, 0, 0.1)',
+                  borderColor: '#7B3F00'
+                },
+                fontWeight: 600
+              }}
+            >
+              कनेक्शन रीसेट करें • Reset if stuck
+            </Button>
+          )}
+          {web3Error && (
+            <Box sx={{ mt: 2 }}>
+              <Typography variant="body2" sx={{ 
+                color: '#E34234',
+                backgroundColor: 'rgba(255,255,255,0.9)',
+                padding: '12px 20px',
+                borderRadius: '8px',
+                maxWidth: '400px',
+                mx: 'auto',
+                mb: 2
+              }}>
+                Error: {web3Error}
+              </Typography>
+              <Button
+                variant="contained"
+                onClick={resetConnection}
+                sx={{
+                  backgroundColor: '#FF9933',
+                  color: 'white',
+                  '&:hover': { backgroundColor: '#E68929' },
+                  fontWeight: 600
+                }}
+              >
+                रीसेट करें • Reset Connection
+              </Button>
+            </Box>
+          )}
         </motion.div>
       </Box>
     );
