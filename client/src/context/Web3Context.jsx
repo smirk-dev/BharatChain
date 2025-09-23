@@ -120,7 +120,13 @@ export const Web3Provider = ({ children }) => {
   const authenticateWithBackend = async (address, signature, nonce) => {
     try {
       const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3001';
-      const response = await fetch(`${apiUrl}/api/auth/connect`, {
+      
+      // Add timeout logic
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Authentication timeout')), 15000)
+      );
+      
+      const fetchPromise = fetch(`${apiUrl}/api/auth/connect`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -131,6 +137,8 @@ export const Web3Provider = ({ children }) => {
           nonce,
         }),
       });
+
+      const response = await Promise.race([fetchPromise, timeoutPromise]);
 
       if (!response.ok) {
         const errorData = await response.json();
