@@ -184,11 +184,22 @@ class BlockchainService {
   }
 
   /**
-   * Get contract instance
+   * Check if blockchain is available
+   */
+  isBlockchainAvailable() {
+    return this.isInitialized && this.provider !== null;
+  }
+
+  /**
+   * Get contract instance with availability check
    * @param {string} contractName - Name of the contract
    * @returns {ethers.Contract} Contract instance
    */
   getContract(contractName) {
+    if (!this.isBlockchainAvailable()) {
+      throw new Error('Blockchain service not available. Running in offline mode.');
+    }
+    
     const contract = this.contracts[contractName];
     if (!contract || typeof contract.interface === 'undefined') {
       throw new Error(`Contract ${contractName} not initialized or not deployed`);
