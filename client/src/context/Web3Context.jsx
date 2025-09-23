@@ -81,7 +81,10 @@ export const Web3Provider = ({ children }) => {
   // Get authentication message from backend
   const getAuthMessage = async (address) => {
     try {
-      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+      // Use relative URL to work with proxy in development
+      const apiUrl = process.env.NODE_ENV === 'production' 
+        ? (process.env.REACT_APP_API_URL || 'http://localhost:3001')
+        : '';
       
       // Add timeout and retry logic
       const timeoutPromise = new Promise((_, reject) =>
@@ -119,7 +122,10 @@ export const Web3Provider = ({ children }) => {
   // Authenticate with backend using signature
   const authenticateWithBackend = async (address, signature, nonce) => {
     try {
-      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+      // Use relative URL to work with proxy in development
+      const apiUrl = process.env.NODE_ENV === 'production' 
+        ? (process.env.REACT_APP_API_URL || 'http://localhost:3001')
+        : '';
       
       // Add timeout logic
       const timeoutPromise = new Promise((_, reject) =>
