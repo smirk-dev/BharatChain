@@ -213,6 +213,16 @@ class BlockchainService {
   
   async registerCitizen(aadharHash, name, email, phone) {
     try {
+      if (!this.isBlockchainAvailable()) {
+        console.log(`🔄 Blockchain offline - Mock registering citizen: ${name}`);
+        return {
+          transactionHash: '0x' + Math.random().toString(16).substr(2, 64),
+          blockNumber: Math.floor(Math.random() * 1000000),
+          gasUsed: '21000',
+          mock: true
+        };
+      }
+
       const contract = this.getContract('CitizenRegistry');
       
       console.log(`📝 Registering citizen: ${name}`);
