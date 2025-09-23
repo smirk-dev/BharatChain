@@ -260,7 +260,7 @@ async function startServer() {
 
     // Initialize blockchain service
     try {
-      const network = process.env.BLOCKCHAIN_NETWORK || 'localhost';
+      const network = process.env.NETWORK || 'hardhat';
       const privateKey = process.env.PRIVATE_KEY;
       
       if (privateKey) {
