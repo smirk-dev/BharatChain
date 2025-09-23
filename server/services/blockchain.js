@@ -290,6 +290,16 @@ class BlockchainService {
 
   async isCitizenRegistered(address) {
     try {
+      if (!this.isBlockchainAvailable()) {
+        console.log(`🔄 Blockchain offline - Mock checking citizen registration for: ${address}`);
+        // Mock response - assume some addresses are registered
+        const mockRegisteredAddresses = [
+          '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
+          '0x70997970C51812dc3A010C7d01b50e0d17dc79C8'
+        ];
+        return mockRegisteredAddresses.includes(address);
+      }
+
       const contract = this.getContract('CitizenRegistry');
       return await contract.isCitizenRegistered(address);
     } catch (error) {
@@ -304,6 +314,18 @@ class BlockchainService {
   
   async uploadDocument(documentHash, docType, metadata, expiryDate = 0) {
     try {
+      if (!this.isBlockchainAvailable()) {
+        console.log(`🔄 Blockchain offline - Mock uploading document: ${documentHash}`);
+        const mockDocumentId = Math.floor(Math.random() * 1000000);
+        return {
+          documentId: mockDocumentId.toString(),
+          transactionHash: '0x' + Math.random().toString(16).substr(2, 64),
+          blockNumber: Math.floor(Math.random() * 1000000),
+          gasUsed: '75000',
+          mock: true
+        };
+      }
+
       const contract = this.getContract('DocumentRegistry');
       
       console.log(`📄 Uploading document: ${documentHash}`);
@@ -400,6 +422,18 @@ class BlockchainService {
   
   async submitGrievance(title, description, category, priority, location, attachments = []) {
     try {
+      if (!this.isBlockchainAvailable()) {
+        console.log(`🔄 Blockchain offline - Mock submitting grievance: ${title}`);
+        const mockGrievanceId = Math.floor(Math.random() * 1000000);
+        return {
+          grievanceId: mockGrievanceId.toString(),
+          transactionHash: '0x' + Math.random().toString(16).substr(2, 64),
+          blockNumber: Math.floor(Math.random() * 1000000),
+          gasUsed: '120000',
+          mock: true
+        };
+      }
+
       const contract = this.getContract('GrievanceSystem');
       
       console.log(`📢 Submitting grievance: ${title}`);
