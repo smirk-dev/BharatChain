@@ -16,7 +16,7 @@ REM Start AI Service
 echo Starting AI Service...
 cd /d "%~dp0\ai-service"
 if exist "enhanced_app.py" (
-    start "AI Service" cmd /k "echo AI Service Starting... && python enhanced_app.py"
+    start "AI Service" cmd /k "echo AI Service Starting... && C:/Users/surya/OneDrive/Desktop/suryansh/coding_projects/BharatChain/.venv/Scripts/python.exe enhanced_app.py"
 ) else (
     echo Warning: AI service file not found
 )
