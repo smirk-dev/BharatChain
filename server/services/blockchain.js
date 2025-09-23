@@ -13,6 +13,10 @@ class BlockchainService {
         rpcUrl: 'http://127.0.0.1:8545',
         chainId: 1337
       },
+      hardhat: {
+        rpcUrl: 'http://127.0.0.1:8545',
+        chainId: 31337
+      },
       mumbai: {
         rpcUrl: process.env.MUMBAI_RPC_URL || 'https://rpc-mumbai.maticvigil.com',
         chainId: 80001
