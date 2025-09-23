@@ -36,17 +36,26 @@ class BlockchainService {
         throw new Error(`Unknown network: ${network}`);
       }
 
+      console.log(`🔗 Attempting to connect to ${network} blockchain...`);
+
       // Setup provider
       this.provider = new ethers.JsonRpcProvider(config.rpcUrl);
       
-      // Test connection
-      const networkInfo = await this.provider.getNetwork();
+      // Test connection with timeout
+      const connectionPromise = this.provider.getNetwork();
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Connection timeout')), 5000)
+      );
+      
+      const networkInfo = await Promise.race([connectionPromise, timeoutPromise]);
       console.log(`✅ Connected to ${network} (Chain ID: ${networkInfo.chainId})`);
 
       // Setup signer if private key provided
       if (privateKey) {
         this.signer = new ethers.Wallet(privateKey, this.provider);
         console.log(`✅ Signer initialized: ${this.signer.address}`);
+      } else {
+        console.log(`⚠️ Private key not provided, blockchain will run in read-only mode.`);
       }
 
       // Load contract ABIs and initialize contracts
@@ -57,7 +66,16 @@ class BlockchainService {
 
     } catch (error) {
       console.error('❌ Failed to initialize blockchain service:', error);
-      throw error;
+      console.log('🔄 Blockchain will run in offline mode. Some features may be limited.');
+      
+      // Set offline mode
+      this.isInitialized = false;
+      this.provider = null;
+      this.signer = null;
+      this.contracts = {};
+      
+      // Don't throw error, allow backend to continue without blockchain
+      console.log('❌ Blockchain initialization failed:', error.message);
     }
   }
 
