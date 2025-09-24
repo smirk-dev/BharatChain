@@ -8,7 +8,7 @@ const http = require('http');
 require('dotenv').config();
 
 // Import blockchain and real-time services
-const blockchainService = require('./services/blockchain');
+const blockchainService = require('./services/enhanced-blockchain');
 const realtimeEventService = require('./services/realtime-events');
 const notificationService = require('./services/notification');
 
@@ -32,6 +32,7 @@ const governmentPaymentsRoutes = require('./routes/government-payments');
 const openDataRoutes = require('./routes/open-data');
 const secureExchangeRoutes = require('./routes/secure-data-exchange');
 const complianceAuditRoutes = require('./routes/compliance-audit');
+const blockchainRoutes = require('./routes/blockchain');
 
 // Import database and models
 const { sequelize } = require('../config/database');
@@ -108,29 +109,7 @@ app.use('/api/payments', governmentPaymentsRoutes);
 app.use('/api/open-data', openDataRoutes);
 app.use('/api/secure-exchange', secureExchangeRoutes);
 app.use('/api/compliance', complianceAuditRoutes);
-
-// Blockchain status endpoint
-app.get('/api/blockchain/status', (req, res) => {
-  try {
-    const stats = {
-      isInitialized: blockchainService.isInitialized,
-      network: process.env.BLOCKCHAIN_NETWORK || 'localhost',
-      contractsLoaded: Object.keys(blockchainService.contracts).length,
-      realtimeConnections: realtimeEventService.getStatistics().totalClients
-    };
-    
-    res.json({
-      success: true,
-      message: 'Blockchain service status',
-      data: stats
-    });
-  } catch (error) {
-    res.status(500).json({
-      error: 'Internal Server Error',
-      message: 'Failed to get blockchain status'
-    });
-  }
-});
+app.use('/api/blockchain', blockchainRoutes);
 
 // WebSocket status endpoint
 app.get('/api/websocket/status', (req, res) => {
@@ -258,21 +237,39 @@ async function startServer() {
     });
     console.log('✅ Database models synchronized.');
 
-    // Initialize blockchain service
+    // Initialize enhanced blockchain service
     try {
       const network = process.env.NETWORK || 'hardhat';
       const privateKey = process.env.PRIVATE_KEY;
+      const forceOffline = process.env.FORCE_OFFLINE === 'true';
       
-      if (privateKey) {
+      if (forceOffline) {
+        console.log('🔄 Force offline mode enabled via environment variable');
+        await blockchainService.initialize(network, privateKey, true);
+      } else if (privateKey) {
         await blockchainService.initialize(network, privateKey);
-        console.log('✅ Blockchain service initialized successfully.');
       } else {
         console.log('⚠️ Private key not provided, blockchain will run in read-only mode.');
         await blockchainService.initialize(network);
       }
+      
+      // Setup blockchain event listeners
+      blockchainService.on('connected', (info) => {
+        console.log(`🎉 Blockchain connected to ${info.network} (Chain ID: ${info.chainId})`);
+      });
+      
+      blockchainService.on('offline', (info) => {
+        console.log(`🔄 Blockchain switched to offline mode: ${info.reason}`);
+      });
+      
+      blockchainService.on('transaction', (tx) => {
+        console.log(`📝 Transaction processed: ${tx.transactionHash} (${tx.type})`);
+      });
+
+      console.log('✅ Enhanced blockchain service initialized successfully.');
     } catch (blockchainError) {
       console.error('❌ Blockchain initialization failed:', blockchainError.message);
-      console.log('⚠️ Server will continue without blockchain integration.');
+      console.log('⚠️ Server will continue in enhanced offline mode.');
     }
 
     // Create HTTP server
