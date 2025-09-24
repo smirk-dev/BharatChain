@@ -8,7 +8,7 @@ const http = require('http');
 require('dotenv').config();
 
 // Import blockchain and real-time services
-// const blockchainService = require('./services/enhanced-blockchain');
+const blockchainService = require('./services/blockchain-simple');
 const realtimeEventService = require('./services/realtime-events');
 const notificationService = require('./services/notification');
 
