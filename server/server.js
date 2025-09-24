@@ -379,6 +379,18 @@ async function startServer() {
     process.on('SIGTERM', gracefulShutdown);
     process.on('SIGINT', gracefulShutdown);
 
+    // Handle unhandled promise rejections
+    process.on('unhandledRejection', (reason, promise) => {
+      console.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
+      // Don't exit on unhandled rejection, just log it
+    });
+
+    // Handle uncaught exceptions
+    process.on('uncaughtException', (error) => {
+      console.error('❌ Uncaught Exception:', error);
+      // Don't exit on uncaught exception, just log it
+    });
+
   } catch (error) {
     console.error('❌ Unable to start server:', error);
     process.exit(1);
