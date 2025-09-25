@@ -1,0 +1,27 @@
+{
+  "network": {
+    "name": "localhost",
+    "chainId": "31337"
+  },
+  "deployer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  "timestamp": "2025-09-25T10:29:57.406Z",
+  "contracts": {
+    "CitizenRegistry": {
+      "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+      "transactionHash": "0x54ffb12682db3744eb7a1e6d75d4393ae64b20cd7c1898d04e49e0a459ceb862"
+    },
+    "DocumentRegistry": {
+      "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+      "transactionHash": "0x6689b46e8189ec3bd456a8c1d27f5c4bf9048ef9cdf11ad5bc13d97412c83c6d"
+    },
+    "GrievanceSystem": {
+      "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+      "transactionHash": "0x95a2e5bdd4f711baa2c57a7b0b8defc9755a55a39ea0e500b077c9e63d0ab1a3"
+    }
+  },
+  "gasUsed": {
+    "CitizenRegistry": "30000000",
+    "DocumentRegistry": "30000000",
+    "GrievanceSystem": "30000000"
+  }
+}
