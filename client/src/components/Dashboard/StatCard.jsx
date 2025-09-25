@@ -121,7 +121,6 @@ const StatCard = ({
               </Tooltip>
             )}
           </Box>
-          )}
           
           {/* Value */}
           <Typography 
