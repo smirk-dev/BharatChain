@@ -204,7 +204,7 @@ router.post('/store-document', verifyToken, async (req, res) => {
  * POST /api/web3/submit-grievance
  * Submit grievance on blockchain
  */
-router.post('/submit-grievance', auth, async (req, res) => {
+router.post('/submit-grievance', verifyToken, async (req, res) => {
     try {
         const { title, description, category, signerAddress } = req.body;
         
@@ -292,7 +292,7 @@ router.get('/verify-document/:hash', async (req, res) => {
  * POST /api/web3/generate-transaction
  * Generate transaction data for MetaMask signing
  */
-router.post('/generate-transaction', auth, async (req, res) => {
+router.post('/generate-transaction', verifyToken, async (req, res) => {
     try {
         const { method, params } = req.body;
         
