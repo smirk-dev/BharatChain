@@ -190,7 +190,7 @@ def extract_text():
             }), 400
         
         file = request.files['file']
-        if file.filename == '':
+        if file.filename == '' or file.filename is None:
             return jsonify({
                 "success": False,
                 "error": "No file selected"
