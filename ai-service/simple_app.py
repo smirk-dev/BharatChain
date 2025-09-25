@@ -10,6 +10,19 @@ import logging
 from datetime import datetime
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+import base64
+from PIL import Image
+import io
+
+# OCR imports - with fallback if not available
+try:
+    import pytesseract
+    import cv2
+    import numpy as np
+    OCR_AVAILABLE = True
+except ImportError:
+    OCR_AVAILABLE = False
+    print("Warning: pytesseract not installed. Using mock OCR. Install with: pip install pytesseract opencv-python")
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -58,8 +71,8 @@ class SimpleDocumentProcessor:
             # Enhanced document type detection
             document_analysis = self._analyze_document_type(filename, file_extension)
             
-            # Simulate OCR and text extraction
-            extracted_content = self._simulate_text_extraction(file_extension, document_analysis['type'])
+            # Perform OCR or simulate text extraction
+            extracted_content = self._simulate_text_extraction(file_path, file_extension, document_analysis['type'])
             
             # Quality assessment
             quality_analysis = self._assess_document_quality(file_extension, file_size)
@@ -127,9 +140,18 @@ class SimpleDocumentProcessor:
             'confidence': round(confidence, 3)
         }
     
-    def _simulate_text_extraction(self, file_extension, document_type):
-        """Simulate realistic OCR text extraction"""
+    def _simulate_text_extraction(self, file_path, file_extension, document_type):
+        """Perform real OCR text extraction or fallback to simulation"""
         extracted_fields = {}
+        
+        # Try real OCR if available
+        if OCR_AVAILABLE and os.path.exists(file_path):
+            try:
+                return self._perform_real_ocr(file_path, file_extension, document_type)
+            except Exception as e:
+                self.logger.warning(f"OCR failed, falling back to simulation: {str(e)}")
+        
+        # Fallback to simulation
         
         # Generate realistic extracted text based on document type
         if document_type == 'identity_document':

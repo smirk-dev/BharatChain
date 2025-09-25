@@ -1,11 +1,12 @@
 const { Sequelize } = require('sequelize');
+const path = require('path');
 require('dotenv').config();
 
 // Database configuration based on environment
 const config = {
   development: {
     dialect: 'sqlite',
-    storage: './server/database/bharatchain.db',
+    storage: path.resolve(__dirname, '..', 'server', 'database', 'bharatchain.db'),
     logging: false,
     define: {
       timestamps: true,
