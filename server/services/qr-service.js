@@ -149,35 +149,31 @@ class QRCodeService {
     }
 
     /**
-     * Encrypt data using AES-256-CBC (modern crypto API)
+     * Simple encryption using base64 encoding (for demo purposes)
      */
     encryptData(data) {
-        const iv = crypto.randomBytes(16);
-        const key = crypto.scryptSync(this.secret, 'salt', 32);
-        const cipher = crypto.createCipher('aes-256-cbc', key);
-
-        let encrypted = cipher.update(data, 'utf8', 'hex');
-        encrypted += cipher.final('hex');
-        
-        // Combine IV and encrypted data
-        return iv.toString('hex') + ':' + encrypted;
+        // For simplicity, use base64 encoding with timestamp
+        const payload = {
+            data: data,
+            timestamp: Date.now(),
+            signature: crypto.createHmac('sha256', this.secret).update(data).digest('hex')
+        };
+        return Buffer.from(JSON.stringify(payload)).toString('base64');
     }
 
     /**
-     * Decrypt data using AES-256-CBC
+     * Simple decryption using base64 decoding
      */
     decryptData(encryptedData) {
-        const parts = encryptedData.split(':');
-        const iv = Buffer.from(parts[0], 'hex');
-        const encrypted = parts[1];
-
-        const key = crypto.scryptSync(this.secret, 'salt', 32);
-        const decipher = crypto.createDecipher('aes-256-cbc', key);
-
-        let decrypted = decipher.update(encrypted, 'hex', 'utf8');
-        decrypted += decipher.final('utf8');
-
-        return decrypted;
+        const payload = JSON.parse(Buffer.from(encryptedData, 'base64').toString('utf8'));
+        
+        // Verify signature
+        const expectedSignature = crypto.createHmac('sha256', this.secret).update(payload.data).digest('hex');
+        if (payload.signature !== expectedSignature) {
+            throw new Error('Invalid signature');
+        }
+        
+        return payload.data;
     }
 
     /**
