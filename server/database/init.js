@@ -92,6 +92,9 @@ async function initDatabase() {
     await sequelize.authenticate();
     console.log('✅ Database connection successful');
     
+    // Create necessary directories first
+    await createDirectories();
+    
     // Sync database (force: true will drop existing tables)
     const forceSync = process.env.NODE_ENV === 'development' && process.argv.includes('--force');
     
@@ -101,6 +104,9 @@ async function initDatabase() {
     
     await syncDatabase({ force: forceSync, alter: !forceSync });
     console.log('✅ Database schema synchronized');
+    
+    // Create additional models
+    await createAdditionalModels();
     
     // Check if we should seed data
     if (process.argv.includes('--seed') || forceSync) {
@@ -124,18 +130,43 @@ async function initDatabase() {
       }
     }
     
-    // Create additional models if needed
-    await createAdditionalModels();
-    
     console.log('🎉 Database initialization complete!');
     console.log('📊 Database Statistics:');
     console.log(`   - Users: ${await User.count()}`);
     console.log(`   - Documents: ${await Document.count()}`);
     console.log(`   - Grievances: ${await Grievance.count()}`);
     
+    return true;
+    
   } catch (error) {
     console.error('❌ Database initialization failed:', error);
-    process.exit(1);
+    throw error;
+  }
+}
+
+/**
+ * Create necessary directories for file uploads
+ */
+async function createDirectories() {
+  const directories = [
+    path.join(__dirname, '..', 'uploads'),
+    path.join(__dirname, '..', 'uploads', 'documents'),
+    path.join(__dirname, '..', 'uploads', 'profiles'),
+    path.join(__dirname, '..', 'uploads', 'temp'),
+    path.join(__dirname, '..', 'uploads', 'qr-codes')
+  ];
+
+  console.log('📁 Creating upload directories...');
+  
+  for (const dir of directories) {
+    try {
+      await fs.mkdir(dir, { recursive: true });
+      console.log(`   ✅ Created: ${path.relative(process.cwd(), dir)}`);
+    } catch (error) {
+      if (error.code !== 'EEXIST') {
+        console.error(`   ❌ Failed to create directory ${dir}:`, error);
+      }
+    }
   }
 }
 
