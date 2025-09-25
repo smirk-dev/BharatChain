@@ -46,7 +46,7 @@ async function testWeb3System() {
             console.log(`   📋 Transaction Hash: ${registerResult.data.transactionHash}`);
             console.log(`   📦 Block Number: ${registerResult.data.blockNumber}`);
             console.log(`   ⛽ Gas Used: ${registerResult.data.gasUsed}`);
-            console.log(`   👤 Citizen: ${registerResult.data.citizen.name}`);
+            console.log(`   👤 Citizen: ${registerResult.data.citizen?.name || citizenData.name}`);
         }
         console.log();
 
