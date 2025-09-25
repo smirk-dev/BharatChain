@@ -185,7 +185,8 @@ echo.
 echo    ⛓️  Initializing local Hardhat blockchain network...
 echo    🚀 Starting development blockchain on port 8545...
 start "🔗 BharatChain Blockchain Network" /MIN cmd /c "echo ╔══════════════════════════════════════════════════════════╗ && echo ║                  BHARATCHAIN BLOCKCHAIN                  ║ && echo ║                    Hardhat Network                       ║ && echo ║                   Port: 8545                            ║ && echo ╚══════════════════════════════════════════════════════════╝ && echo. && echo Starting Hardhat Network... && npx hardhat --config blockchain\hardhat.config.js node"
-timeout /t 5 >nul
+echo    ⏳ Waiting for blockchain to initialize... (10 seconds)
+timeout /t 10 >nul
 
 echo    📋 Deploying smart contracts to blockchain...
 npx hardhat run scripts/deploy.js --network localhost --config blockchain\hardhat.config.js >nul 2>&1
