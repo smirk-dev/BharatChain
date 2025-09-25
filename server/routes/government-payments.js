@@ -389,8 +389,6 @@ router.get('/stats', verifyToken, async (req, res) => {
         requestTimes.push(now);
         requests.set(key, requestTimes);
         next();
-    };
-};
 
 // Initiate payment
 router.post('/initiate', validateCitizenId, rateLimit(5, 300000), async (req, res) => {
