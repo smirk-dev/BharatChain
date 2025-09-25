@@ -149,33 +149,29 @@ class QRCodeService {
     }
 
     /**
-     * Encrypt data using AES-256-GCM
+     * Encrypt data using AES-256-CBC (simpler approach)
      */
     encryptData(data) {
         const iv = crypto.randomBytes(16);
-        const cipher = crypto.createCipherGCM(this.algorithm, this.secret, iv);
+        const cipher = crypto.createCipher('aes-256-cbc', this.secret);
 
         let encrypted = cipher.update(data, 'utf8', 'hex');
         encrypted += cipher.final('hex');
-
-        const authTag = cipher.getAuthTag();
         
-        // Combine IV, auth tag, and encrypted data
-        return Buffer.concat([iv, authTag, Buffer.from(encrypted, 'hex')]).toString('base64');
+        // Combine IV and encrypted data
+        return Buffer.concat([iv, Buffer.from(encrypted, 'hex')]).toString('base64');
     }
 
     /**
-     * Decrypt data using AES-256-GCM
+     * Decrypt data using AES-256-CBC
      */
     decryptData(encryptedData) {
         const buffer = Buffer.from(encryptedData, 'base64');
         
         const iv = buffer.slice(0, 16);
-        const authTag = buffer.slice(16, 32);
-        const encrypted = buffer.slice(32);
+        const encrypted = buffer.slice(16);
 
-        const decipher = crypto.createDecipherGCM(this.algorithm, this.secret, iv);
-        decipher.setAuthTag(authTag);
+        const decipher = crypto.createDecipher('aes-256-cbc', this.secret);
 
         let decrypted = decipher.update(encrypted, null, 'utf8');
         decrypted += decipher.final('utf8');
