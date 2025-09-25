@@ -1,6 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const qrCodeService = require('../services/qr-code');
+const QRCodeService = require('../services/qr-service');
+const { verifyToken } = require('../middleware/auth');
+const db = require('../../database/bharatchain.db');
+
+// Get QR service secret from config
+const config = require('../../config/env-config');
+const qrService = new QRCodeService(config.QR_CODE_SECRET);
 
 /**
  * @route POST /api/qr/generate
