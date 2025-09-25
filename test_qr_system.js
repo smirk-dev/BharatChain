@@ -3,10 +3,10 @@ const QRCodeService = require('./server/services/qr-service');
 const config = require('./config/env-config');
 
 console.log('🧪 Testing QR Code System for BharatChain');
-console.log('=' * 50);
+console.log('='.repeat(50));
 
-// Initialize QR service
-const qrService = new QRCodeService(config.QR_CODE_SECRET);
+// Initialize QR service with a test secret
+const testSecret = config.QR_CODE_SECRET || 'test-secret-key-for-qr-codes-12345';
 
 async function testQRSystem() {
     try {
