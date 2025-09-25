@@ -309,6 +309,9 @@ timeout /t 10 >nul
 echo    🚀 Launching BharatChain Platform in your default browser...
 echo    📱 URL: http://localhost:3000
 start "BharatChain Platform - Digital India" http://localhost:3000
+timeout /t 2 >nul
+REM Backup browser opening method
+powershell -command "try { Start-Process 'http://localhost:3000' -ErrorAction SilentlyContinue } catch { Write-Host 'Browser already opened or unavailable' }"
 echo    ✅ Browser opened successfully!
 echo.
 
