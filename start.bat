@@ -184,11 +184,11 @@ cd /d "%PROJECT_ROOT%"
 echo.
 echo    ⛓️  Initializing local Hardhat blockchain network...
 echo    🚀 Starting development blockchain on port 8545...
-start "🔗 BharatChain Blockchain Network" /MIN cmd /c "echo ╔══════════════════════════════════════════════════════════╗ && echo ║                  BHARATCHAIN BLOCKCHAIN                  ║ && echo ║                    Hardhat Network                       ║ && echo ║                   Port: 8545                            ║ && echo ╚══════════════════════════════════════════════════════════╝ && echo. && echo Starting Hardhat Network... && npx hardhat node"
+start "🔗 BharatChain Blockchain Network" /MIN cmd /c "echo ╔══════════════════════════════════════════════════════════╗ && echo ║                  BHARATCHAIN BLOCKCHAIN                  ║ && echo ║                    Hardhat Network                       ║ && echo ║                   Port: 8545                            ║ && echo ╚══════════════════════════════════════════════════════════╝ && echo. && echo Starting Hardhat Network... && npx hardhat --config blockchain\hardhat.config.js node"
 timeout /t 5 >nul
 
 echo    📋 Deploying smart contracts to blockchain...
-npx hardhat run scripts/deploy.js --network localhost >nul 2>&1
+npx hardhat run scripts/deploy.js --network localhost --config blockchain\hardhat.config.js >nul 2>&1
 if %errorlevel% neq 0 (
     color 0E
     echo    ⚠️  Contract deployment had warnings (blockchain will continue)
