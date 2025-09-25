@@ -149,31 +149,32 @@ class QRCodeService {
     }
 
     /**
-     * Encrypt data using AES-256-CBC (simpler approach)
+     * Encrypt data using AES-256-CBC (modern crypto API)
      */
     encryptData(data) {
         const iv = crypto.randomBytes(16);
-        const cipher = crypto.createCipher('aes-256-cbc', this.secret);
+        const key = crypto.scryptSync(this.secret, 'salt', 32);
+        const cipher = crypto.createCipher('aes-256-cbc', key);
 
         let encrypted = cipher.update(data, 'utf8', 'hex');
         encrypted += cipher.final('hex');
         
         // Combine IV and encrypted data
-        return Buffer.concat([iv, Buffer.from(encrypted, 'hex')]).toString('base64');
+        return iv.toString('hex') + ':' + encrypted;
     }
 
     /**
      * Decrypt data using AES-256-CBC
      */
     decryptData(encryptedData) {
-        const buffer = Buffer.from(encryptedData, 'base64');
-        
-        const iv = buffer.slice(0, 16);
-        const encrypted = buffer.slice(16);
+        const parts = encryptedData.split(':');
+        const iv = Buffer.from(parts[0], 'hex');
+        const encrypted = parts[1];
 
-        const decipher = crypto.createDecipher('aes-256-cbc', this.secret);
+        const key = crypto.scryptSync(this.secret, 'salt', 32);
+        const decipher = crypto.createDecipher('aes-256-cbc', key);
 
-        let decrypted = decipher.update(encrypted, null, 'utf8');
+        let decrypted = decipher.update(encrypted, 'hex', 'utf8');
         decrypted += decipher.final('utf8');
 
         return decrypted;
