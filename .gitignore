@@ -34,7 +34,7 @@ wheels/
 server/database/*.db
 server/database/*.sqlite
 server/database/*.sqlite3
-
+bharatchain.db
 # Environment Variables
 .env
 .env.local
