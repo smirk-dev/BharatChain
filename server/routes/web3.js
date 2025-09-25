@@ -6,7 +6,7 @@
 const express = require('express');
 const router = express.Router();
 const Web3Service = require('../services/web3-service');
-const auth = require('../middleware/auth');
+const { verifyToken } = require('../middleware/auth');
 const crypto = require('crypto');
 
 // Initialize Web3 service
@@ -62,7 +62,7 @@ router.get('/network-status', async (req, res) => {
  * GET /api/web3/citizen/:address
  * Get citizen data from blockchain
  */
-router.get('/citizen/:address', auth, async (req, res) => {
+router.get('/citizen/:address', verifyToken, async (req, res) => {
     try {
         const { address } = req.params;
         
