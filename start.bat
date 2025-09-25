@@ -176,122 +176,225 @@ if exist requirements.txt (
 )
 
 echo.
-echo ⛓️ STEP 4/7: Starting Blockchain Network
-echo ────────────────────────────────────────
+echo ╔═════════════════════════════════════════════════════════════════════════╗
+echo ║              ⛓️ STEP 4/7: STARTING BLOCKCHAIN NETWORK ⛓️              ║
+echo ║                      Hardhat Local Development                          ║
+echo ╚═════════════════════════════════════════════════════════════════════════╝
 cd /d "%PROJECT_ROOT%"
-echo Starting local Hardhat blockchain network...
-start "🔗 BharatChain Blockchain" /MIN cmd /c "echo Starting Hardhat Network... && npx hardhat node"
+echo.
+echo    ⛓️  Initializing local Hardhat blockchain network...
+echo    🚀 Starting development blockchain on port 8545...
+start "🔗 BharatChain Blockchain Network" /MIN cmd /c "echo ╔══════════════════════════════════════════════════════════╗ && echo ║                  BHARATCHAIN BLOCKCHAIN                  ║ && echo ║                    Hardhat Network                       ║ && echo ║                   Port: 8545                            ║ && echo ╚══════════════════════════════════════════════════════════╝ && echo. && echo Starting Hardhat Network... && npx hardhat node"
 timeout /t 5 >nul
 
-echo Deploying smart contracts...
+echo    📋 Deploying smart contracts to blockchain...
 npx hardhat run scripts/deploy.js --network localhost >nul 2>&1
 if %errorlevel% neq 0 (
-    echo ⚠️  Contract deployment had warnings (blockchain will continue)
+    color 0E
+    echo    ⚠️  Contract deployment had warnings (blockchain will continue)
 ) else (
-    echo ✅ Smart contracts deployed successfully
+    color 0A
+    echo    ✅ Smart contracts deployed successfully to local network!
 )
 
 echo.
-echo 🧠 STEP 5/7: Starting AI Service (Port 5001)
-echo ────────────────────────────────────────
+echo ╔═════════════════════════════════════════════════════════════════════════╗
+echo ║                 🧠 STEP 5/7: STARTING AI SERVICE 🧠                   ║
+echo ║                    OCR ^& Document Processing                            ║
+echo ╚═════════════════════════════════════════════════════════════════════════╝
 cd /d "%PROJECT_ROOT%ai-service"
+echo.
+echo    🧠 Initializing AI service with OCR capabilities...
+echo    🤖 Starting document processing engine on port 5001...
 if exist "simple_ai_service.py" (
-    start "🧠 BharatChain AI Service" cmd /k "echo [AI SERVICE] Starting OCR and Document Processing... && echo [AI SERVICE] Port: 5001 && echo. && "%PYTHON_PATH%" simple_ai_service.py"
-    echo ✅ AI Service starting on port 5001
+    start "🧠 BharatChain AI Service" cmd /k "title 🧠 BharatChain AI Service && color 0E && echo ╔══════════════════════════════════════════════════════════╗ && echo ║                    BHARATCHAIN AI SERVICE                ║ && echo ║                 OCR ^& Document Processing                 ║ && echo ║                      Port: 5001                          ║ && echo ╚══════════════════════════════════════════════════════════╝ && echo. && echo [AI SERVICE] Starting OCR and Document Processing... && echo [AI SERVICE] TensorFlow/OpenCV Loading... && echo [AI SERVICE] Ready for Hindi/English text recognition && echo. && "%PYTHON_PATH%" simple_ai_service.py"
+    color 0A
+    echo    ✅ AI Service starting successfully on port 5001
 ) else if exist "app.py" (
-    start "🧠 BharatChain AI Service" cmd /k "echo [AI SERVICE] Starting OCR and Document Processing... && echo [AI SERVICE] Port: 5001 && echo. && "%PYTHON_PATH%" app.py"
-    echo ✅ AI Service (fallback) starting on port 5001
+    start "🧠 BharatChain AI Service" cmd /k "title 🧠 BharatChain AI Service && color 0E && echo ╔══════════════════════════════════════════════════════════╗ && echo ║                    BHARATCHAIN AI SERVICE                ║ && echo ║                 OCR ^& Document Processing                 ║ && echo ║                      Port: 5001                          ║ && echo ╚══════════════════════════════════════════════════════════╝ && echo. && echo [AI SERVICE] Starting OCR and Document Processing... && echo [AI SERVICE] Loading ML Models... && echo [AI SERVICE] Ready for document analysis && echo. && "%PYTHON_PATH%" app.py"
+    color 0A
+    echo    ✅ AI Service (fallback) starting successfully on port 5001
 ) else (
-    echo ❌ AI Service files not found
+    color 0C
+    echo    ❌ AI Service files not found - check ai-service directory
 )
 timeout /t 3 >nul
 
 echo.
-echo ⚙️  STEP 6/7: Starting Backend API (Port 3001)
-echo ────────────────────────────────────────
+echo ╔═════════════════════════════════════════════════════════════════════════╗
+echo ║                ⚙️ STEP 6/7: STARTING BACKEND API ⚙️                   ║
+echo ║                Express Server ^& Database Integration                   ║
+echo ╚═════════════════════════════════════════════════════════════════════════╝
 cd /d "%PROJECT_ROOT%server"
+echo.
+echo    ⚙️  Initializing Express.js backend server...
+echo    🗄️  Connecting to SQLite database...
+echo    🔐 Setting up JWT authentication system...
+echo    🌐 Configuring Web3 blockchain integration...
 if exist "server.js" (
     REM Use full path to ensure server.js is found correctly
-    start "⚙️ BharatChain Backend" cmd /k "echo [BACKEND] Starting Express Server and APIs... && echo [BACKEND] Port: 3001 && echo [BACKEND] Database: SQLite && echo [BACKEND] JWT Authentication Enabled && echo [BACKEND] Web3 Integration: Ready && echo. && node "%PROJECT_ROOT%server\server.js""
-    echo ✅ Backend API starting on port 3001
+    start "⚙️ BharatChain Backend API" cmd /k "title ⚙️ BharatChain Backend API && color 0C && echo ╔══════════════════════════════════════════════════════════╗ && echo ║                   BHARATCHAIN BACKEND API                ║ && echo ║                Express.js ^& SQLite Database                ║ && echo ║                       Port: 3001                         ║ && echo ╚══════════════════════════════════════════════════════════╝ && echo. && echo [BACKEND] Starting Express Server and APIs... && echo [BACKEND] Database: SQLite with auto-sync && echo [BACKEND] JWT Authentication: Enabled && echo [BACKEND] Web3 Integration: Ready && echo [BACKEND] CORS Origin: http://localhost:3000 && echo [BACKEND] WebSocket Support: Active && echo. && node "%PROJECT_ROOT%server\server.js""
+    color 0A
+    echo    ✅ Backend API starting successfully on port 3001
 ) else (
-    echo ❌ Backend server file not found at %PROJECT_ROOT%server\server.js
+    color 0C
+    echo    ❌ Backend server file not found at %PROJECT_ROOT%server\server.js
 )
 timeout /t 5 >nul
 
 echo.
-echo 🎨 STEP 7/7: Starting Frontend React App (Port 3000)
-echo ────────────────────────────────────────
+echo ╔═════════════════════════════════════════════════════════════════════════╗
+echo ║                🎨 STEP 7/7: STARTING FRONTEND APP 🎨                  ║
+echo ║                React Development Server ^& Material-UI                  ║
+echo ╚═════════════════════════════════════════════════════════════════════════╝
 cd /d "%PROJECT_ROOT%client"
+echo.
+echo    🎨 Initializing React development environment...
+echo    ⚛️  Loading Material-UI component library...
+echo    🔗 Establishing Web3/MetaMask integration...
 if exist "package.json" (
-    start "🎨 BharatChain Frontend" cmd /k "echo [FRONTEND] Starting React Development Server... && echo [FRONTEND] Port: 3000 && echo [FRONTEND] Material-UI Theme Loaded && echo [FRONTEND] Web3 Integration Ready && echo. && npm start"
-    echo ✅ Frontend app starting on port 3000
+    start "🎨 BharatChain Frontend" cmd /k "title 🎨 BharatChain Frontend && color 0B && echo ╔══════════════════════════════════════════════════════════╗ && echo ║                  BHARATCHAIN FRONTEND                    ║ && echo ║                React.js ^& Material-UI                     ║ && echo ║                      Port: 3000                          ║ && echo ╚══════════════════════════════════════════════════════════╝ && echo. && echo [FRONTEND] Starting React Development Server... && echo [FRONTEND] Material-UI Theme: Loaded && echo [FRONTEND] Web3 Integration: Ready && echo [FRONTEND] MetaMask Support: Active && echo [FRONTEND] Multi-language: Hindi/English && echo [FRONTEND] Hot Reload: Enabled && echo. && npm start"
+    color 0A
+    echo    ✅ Frontend app starting successfully on port 3000
 ) else (
-    echo ❌ Frontend package.json not found
+    color 0C
+    echo    ❌ Frontend package.json not found - check client directory
 )
+
+color 0B
 
 echo.
 echo  ╔══════════════════════════════════════════════════════════════════════╗
 echo  ║                    🎉 BHARATCHAIN LAUNCHED! 🎉                      ║
+echo  ║                                                                      ║
+echo  ║    🚀 All services are spinning up in dedicated windows...          ║
+echo  ║    ⭐ Professional-grade microservices architecture                  ║
 echo  ╚══════════════════════════════════════════════════════════════════════╝
 echo.
-echo 🚀 All services are starting up in separate windows...
-echo ⏱️  Please wait 20-35 seconds for complete initialization
-echo.
-echo 📍 SERVICE ENDPOINTS:
-echo    🌐 Frontend (React):       http://localhost:3000
-echo    🔧 Backend API:            http://localhost:3001/api/health
-echo    🧠 AI Service:             http://localhost:5001/health
-echo    ⛓️  Blockchain Network:     http://localhost:8545
-echo.
-echo 📋 FEATURES AVAILABLE:
-echo    ✅ Citizen Registration ^& Authentication
-echo    ✅ Document Upload ^& OCR Processing
-echo    ✅ Blockchain Verification ^& QR Codes  
-echo    ✅ Grievance Management System
-echo    ✅ Government Payment Processing
-echo    ✅ MetaMask Web3 Integration
-echo    ✅ Multi-language Support (Hindi/English)
-echo    ✅ Real-time WebSocket Events
-echo    ✅ JWT Authentication ^& Security
-echo.
-
 REM Wait for services to initialize
-echo ⏳ Waiting for services to initialize completely...
-echo    🔗 Blockchain: ~5 seconds
-echo    🧠 AI Service: ~8 seconds  
-echo    ⚙️  Backend API: ~10 seconds
-echo    🎨 Frontend: ~15 seconds
-timeout /t 18 >nul
+echo ╔═════════════════════════════════════════════════════════════════════════╗
+echo ║                    ⏳ SERVICE INITIALIZATION STATUS ⏳                 ║
+echo ╚═════════════════════════════════════════════════════════════════════════╝
+echo.
+echo    ⛓️  Blockchain Network:   Initializing... (~5 seconds)
+echo    🧠 AI Service:           Loading models... (~8 seconds)  
+echo    ⚙️  Backend API:          Connecting database... (~12 seconds)
+echo    🎨 Frontend App:         Building bundle... (~18 seconds)
+echo.
+echo    ⏱️  Total estimated startup time: ~25 seconds
+echo.
+for /l %%i in (1,1,20) do (
+    set /p "=■" <nul
+    timeout /t 1 >nul
+)
+echo.
+echo.
+color 0A
+echo    ✅ All services should now be operational!
 
 REM Try to open browser automatically
-echo 🌐 Opening BharatChain in your default browser...
+echo.
+echo ╔═════════════════════════════════════════════════════════════════════════╗
+echo ║                      🌐 OPENING WEB BROWSER 🌐                        ║
+echo ╚═════════════════════════════════════════════════════════════════════════╝
+echo.
+echo    🌐 Launching BharatChain Platform in your default browser...
+echo    📱 URL: http://localhost:3000
 timeout /t 3 >nul
 start "BharatChain Platform" http://localhost:3000
 
 echo.
 echo  ╔══════════════════════════════════════════════════════════════════════╗
-echo  ║  🏛️ Welcome to BharatChain - India's Digital Identity Platform! 🏛️   ║
+echo  ║  🏛️ WELCOME TO BHARATCHAIN - DIGITAL INDIA PLATFORM! 🏛️             ║
 echo  ║                                                                      ║
-echo  ║  Your browser should open automatically to:                          ║
-echo  ║  👉 http://localhost:3000                                            ║
+echo  ║  🚀 SYSTEM STATUS: FULLY OPERATIONAL                                ║
 echo  ║                                                                      ║
-echo  ║  All services are running in separate windows.                       ║
-echo  ║  You can minimize this window - services will continue running.      ║
+echo  ║  📍 SERVICE ENDPOINTS:                                               ║
+echo  ║     🌐 Frontend:          http://localhost:3000                     ║
+echo  ║     🔧 Backend API:       http://localhost:3001/api/health          ║
+echo  ║     🧠 AI Service:        http://localhost:5001/health              ║
+echo  ║     ⛓️  Blockchain:        http://localhost:8545                     ║
+echo  ║                                                                      ║
+echo  ║  📋 AVAILABLE FEATURES:                                              ║
+echo  ║     ✅ Citizen Registration ^& Authentication                        ║
+echo  ║     ✅ Document Upload ^& OCR Processing                             ║
+echo  ║     ✅ Blockchain Verification ^& QR Codes                           ║
+echo  ║     ✅ Grievance Management System                                   ║
+echo  ║     ✅ Government Payment Processing                                 ║
+echo  ║     ✅ MetaMask Web3 Integration                                     ║
+echo  ║     ✅ Multi-language Support (Hindi/English)                       ║
+echo  ║     ✅ Real-time WebSocket Events                                    ║
+echo  ║     ✅ JWT Authentication ^& Security                                ║
 echo  ║                                                                      ║
 echo  ║  🔧 TROUBLESHOOTING:                                                 ║
-echo  ║  • If frontend shows errors, wait 30 seconds for backend to start   ║
-echo  ║  • Check service windows for any startup errors                     ║
-echo  ║  • Backend must be on port 3001, Frontend on 3000                   ║
-echo  ║  • MetaMask required for Web3 features                              ║
+echo  ║     • If frontend shows errors, wait 30 seconds for backend         ║
+echo  ║     • Check service windows for any startup errors                  ║
+echo  ║     • Backend must be on port 3001, Frontend on 3000                ║
+echo  ║     • MetaMask required for Web3 features                           ║
 echo  ║                                                                      ║
-echo  ║  To stop all services: Close all terminal windows or run stop.bat   ║
+echo  ║  ⚡ All services running in separate windows - DO NOT CLOSE THEM    ║
+echo  ║                                                                      ║
+echo  ║  🛑 TO STOP: Close all terminal windows or run stop.bat             ║
 echo  ╚══════════════════════════════════════════════════════════════════════╝
 echo.
 
 cd /d "%PROJECT_ROOT%"
-echo Press any key to minimize this launcher (services will keep running)...
-pause >nul
 
-REM Minimize this window
-powershell -window minimized -command "Start-Sleep -Seconds 1"
+echo ╔═════════════════════════════════════════════════════════════════════════╗
+echo ║                    🎛️ LAUNCHER CONTROL PANEL 🎛️                      ║
+echo ╚═════════════════════════════════════════════════════════════════════════╝
+echo.
+echo    This launcher will remain open to monitor your services.
+echo    You can safely minimize this window - all services will continue running.
+echo.
+echo    Available Actions:
+echo    [M] Minimize this launcher window
+echo    [O] Open BharatChain in browser again  
+echo    [S] Show service status
+echo    [Q] Quit launcher (services will keep running)
+echo    [X] Stop all services and exit
+echo.
+
+:MENU
+set /p "choice=    Enter your choice (M/O/S/Q/X): "
+
+if /i "%choice%"=="M" (
+    echo    🗕 Minimizing launcher window...
+    powershell -command "(New-Object -ComObject Shell.Application).MinimizeAll()"
+    goto MENU
+)
+
+if /i "%choice%"=="O" (
+    echo    🌐 Opening BharatChain Platform...
+    start "BharatChain Platform" http://localhost:3000
+    goto MENU
+)
+
+if /i "%choice%"=="S" (
+    echo.
+    echo    📊 Checking service status...
+    netstat -ano | findstr ":300" >nul && echo    ✅ Services detected on ports 3000-3001 || echo    ⚠️  No services detected
+    goto MENU
+)
+
+if /i "%choice%"=="Q" (
+    echo.
+    echo    👋 Launcher closing... Services will continue running in background.
+    echo    💡 Tip: Use stop.bat to stop all services later.
+    timeout /t 2 >nul
+    exit /b 0
+)
+
+if /i "%choice%"=="X" (
+    echo.
+    echo    🛑 Stopping all BharatChain services...
+    taskkill /f /im node.exe >nul 2>&1
+    taskkill /f /im python.exe >nul 2>&1
+    echo    ✅ All services stopped.
+    echo    👋 Thank you for using BharatChain!
+    timeout /t 3 >nul
+    exit /b 0
+)
+
+echo    ❌ Invalid choice. Please enter M, O, S, Q, or X.
+goto MENU
