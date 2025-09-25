@@ -324,17 +324,26 @@ async function startServer() {
     // Handle unhandled promise rejections
     process.on('unhandledRejection', (reason, promise) => {
       console.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
-      // Don't exit on unhandled rejection, just log it
+      // Log but don't exit - let application continue running
     });
 
     // Handle uncaught exceptions
     process.on('uncaughtException', (error) => {
       console.error('❌ Uncaught Exception:', error);
-      // Don't exit on uncaught exception, just log it
+      // Log but don't exit - let application continue running
+      // In production, you might want to exit gracefully
     });
+
+    console.log('✅ Server started successfully with enhanced error handling!');
 
   } catch (error) {
     console.error('❌ Unable to start server:', error);
+    // Log the full error for debugging
+    console.error('Error details:', {
+      name: error.name,
+      message: error.message,
+      stack: error.stack
+    });
     process.exit(1);
   }
 }
