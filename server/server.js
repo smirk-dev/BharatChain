@@ -297,9 +297,9 @@ async function startServer() {
       console.log('');
     });
 
-    // Graceful shutdown
-    const gracefulShutdown = () => {
-      console.log('🛑 Shutting down gracefully...');
+    // Graceful shutdown function (only call when truly shutting down)
+    const gracefulShutdown = (signal) => {
+      console.log(`🛑 Received ${signal}. Shutting down gracefully...`);
       
       // Close real-time service
       if (realtimeEventService.isInitialized) {
@@ -314,12 +314,29 @@ async function startServer() {
         sequelize.close().then(() => {
           console.log('✅ Database connection closed.');
           process.exit(0);
+        }).catch(() => {
+          process.exit(1);
         });
       });
     };
 
-    process.on('SIGTERM', gracefulShutdown);
-    process.on('SIGINT', gracefulShutdown);
+    // Only handle explicit shutdown signals - not development interrupts
+    process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+    
+    // Handle SIGINT more carefully - allow multiple for force quit
+    let sigintCount = 0;
+    process.on('SIGINT', () => {
+      sigintCount++;
+      if (sigintCount === 1) {
+        console.log('\n🛑 Received SIGINT (Ctrl+C). Press Ctrl+C again within 2 seconds to force quit.');
+        setTimeout(() => {
+          sigintCount = 0;
+          console.log('✅ Shutdown cancelled. Server continues running.');
+        }, 2000);
+      } else {
+        gracefulShutdown('SIGINT');
+      }
+    });
 
     // Handle unhandled promise rejections
     process.on('unhandledRejection', (reason, promise) => {
