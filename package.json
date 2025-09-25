@@ -9,11 +9,11 @@
     "client": "cd client && npm start",
     "build": "cd client && npm run build",
     "test": "cd server && npm test && cd ../client && npm test",
-    "compile": "npx hardhat compile",
-    "deploy": "npx hardhat run scripts/deploy.js --network localhost",
-    "deploy:mumbai": "npx hardhat run scripts/deploy.js --network mumbai",
-    "test:contracts": "npx hardhat test",
-    "node": "npx hardhat node",
+    "compile": "npx hardhat --config blockchain/hardhat.config.js compile",
+    "deploy": "npx hardhat run scripts/deploy.js --network localhost --config blockchain/hardhat.config.js",
+    "deploy:mumbai": "npx hardhat run scripts/deploy.js --network mumbai --config blockchain/hardhat.config.js",
+    "test:contracts": "npx hardhat --config blockchain/hardhat.config.js test",
+    "node": "npx hardhat --config blockchain/hardhat.config.js node",
     "setup": "npm install && cd client && npm install && cd ../server && npm install"
   },
   "keywords": [
