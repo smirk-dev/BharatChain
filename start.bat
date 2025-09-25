@@ -234,16 +234,18 @@ echo    ⚙️  Initializing Express.js backend server...
 echo    🗄️  Connecting to SQLite database...
 echo    🔐 Setting up JWT authentication system...
 echo    🌐 Configuring Web3 blockchain integration...
+echo    ⏳ Waiting for blockchain to be ready... (5 seconds)
+timeout /t 5 >nul
 if exist "server.js" (
     REM Use full path to ensure server.js is found correctly
-    start "⚙️ BharatChain Backend API" cmd /k "title ⚙️ BharatChain Backend API && color 0C && echo ╔══════════════════════════════════════════════════════════╗ && echo ║                   BHARATCHAIN BACKEND API                ║ && echo ║                Express.js ^& SQLite Database                ║ && echo ║                       Port: 3001                         ║ && echo ╚══════════════════════════════════════════════════════════╝ && echo. && echo [BACKEND] Starting Express Server and APIs... && echo [BACKEND] Database: SQLite with auto-sync && echo [BACKEND] JWT Authentication: Enabled && echo [BACKEND] Web3 Integration: Ready && echo [BACKEND] CORS Origin: http://localhost:3000 && echo [BACKEND] WebSocket Support: Active && echo. && node "%PROJECT_ROOT%server\server.js""
+    start "⚙️ BharatChain Backend API" cmd /k "title ⚙️ BharatChain Backend API && color 0C && echo ╔══════════════════════════════════════════════════════════╗ && echo ║                   BHARATCHAIN BACKEND API                ║ && echo ║                Express.js ^& SQLite Database                ║ && echo ║                       Port: 3001                         ║ && echo ╚══════════════════════════════════════════════════════════╝ && echo. && echo [BACKEND] Starting Express Server and APIs... && echo [BACKEND] Database: SQLite with auto-sync && echo [BACKEND] JWT Authentication: Enabled && echo [BACKEND] Web3 Integration: Ready && echo [BACKEND] CORS Origin: http://localhost:3000 && echo [BACKEND] WebSocket Support: Active && echo. && pushd \"%PROJECT_ROOT%server\" && node server.js"
     color 0A
     echo    ✅ Backend API starting successfully on port 3001
 ) else (
     color 0C
     echo    ❌ Backend server file not found at %PROJECT_ROOT%server\server.js
 )
-timeout /t 5 >nul
+timeout /t 8 >nul
 
 echo.
 echo ╔═════════════════════════════════════════════════════════════════════════╗
