@@ -40,6 +40,7 @@ const governmentPaymentsRoutes = require('./routes/government-payments');
 const openDataRoutes = require('./routes/open-data');
 const secureExchangeRoutes = require('./routes/secure-data-exchange');
 const complianceAuditRoutes = require('./routes/compliance-audit');
+const web3Routes = require('./routes/web3');
 // const blockchainRoutes = require('./routes/blockchain');
 
 // Import database and models
@@ -111,6 +112,7 @@ app.use('/api/payments', governmentPaymentsRoutes);
 app.use('/api/open-data', openDataRoutes);
 app.use('/api/secure-exchange', secureExchangeRoutes);
 app.use('/api/compliance', complianceAuditRoutes);
+app.use('/api/web3', web3Routes);
 // app.use('/api/blockchain', blockchainRoutes);
 
 // Root endpoint - wrapped with asyncHandler to prevent crashes
