@@ -6,6 +6,9 @@ import logging
 from datetime import datetime
 import traceback
 import warnings
+from functools import wraps
+import time
+from werkzeug.utils import secure_filename
 
 # Suppress specific warnings
 warnings.filterwarnings('ignore', category=UserWarning)
@@ -14,6 +17,7 @@ warnings.filterwarnings('ignore', message='.*MPS.*')
 
 # Import our AI processing modules
 from document_processor import DocumentProcessor
+from enhanced_ocr import get_ocr_service
 
 # Create a proper lightweight grievance analyzer
 class LightweightGrievanceAnalyzer:
