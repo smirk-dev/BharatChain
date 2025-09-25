@@ -1,21 +1,23 @@
 flask==2.3.3
 flask-cors==4.0.0
 Pillow==10.0.0
-opencv-python==4.8.0.76
+opencv-python-headless==4.8.0.76
 pytesseract==0.3.10
 requests==2.31.0
 numpy==1.24.3
 pandas==2.0.3
 langdetect==1.0.9
-easyocr==1.7.0
 PyMuPDF==1.23.3
-python-magic==0.4.27
+
+# Simpler OCR dependencies that work better on Windows
+# easyocr==1.7.0  # Commented out due to dependency conflicts
+# python-magic==0.4.27  # Commented out - Windows compatibility issues
 
 # Additional OCR and document processing
-pdf2image==1.16.3
-pyenchant==3.2.2
+# pdf2image==1.16.3  # Optional - may require poppler installation
+# pyenchant==3.2.2   # Optional - may require system libraries
 
-# Optional ML dependencies (comment out if causing issues)
+# Optional ML dependencies (commented out to avoid conflicts)
 # torch==2.0.1
 # torchvision==0.15.2
 # transformers==4.33.2
