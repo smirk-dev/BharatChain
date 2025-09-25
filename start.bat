@@ -412,5 +412,5 @@ if /i "%choice%"=="X" (
     exit /b 0
 )
 
-echo    ❌ Invalid choice. Please enter M, O, S, Q, or X.
+echo    ❌ Invalid choice. Please enter B, M, O, S, Q, or X.
 goto MENU
