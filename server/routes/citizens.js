@@ -46,11 +46,13 @@ function extractAddressFromToken(req) {
 /**
  * @route GET /api/citizens/profile
  * @desc Get citizen profile information from blockchain
- * @access Private
+ * @access Private - requires authentication
  */
-router.get('/profile', ensureBlockchain, async (req, res) => {
-  try {
-    const citizenAddress = extractAddressFromToken(req);
+router.get('/profile', 
+  verifyToken, 
+  attachUserContext, 
+  asyncHandler(async (req, res) => {
+    const citizenAddress = req.user.address;
     
     if (!isBlockchainInitialized) {
       return res.status(503).json({
