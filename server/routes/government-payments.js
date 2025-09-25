@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const PaymentGatewayService = require('../services/payment-gateway');
 const { verifyToken } = require('../middleware/auth');
-const db = require('../../database/bharatchain.db');
+const db = require('../database/init');
 
 const paymentGateway = new PaymentGatewayService();
 
