@@ -1033,23 +1033,6 @@ curl http://localhost:3001/api/government-services/status
 
 ---
 
-## 🏆 **Awards & Recognition**
-
-### **🎖️ Hackathon Achievements**
-- **🥇 Winner** - WHCL Hackathon 2024 (Blockchain Category)
-- **🏆 Best Government Integration** - India Gov Tech Summit 2024
-- **💡 Innovation Award** - Digital India Challenge 2024
-- **🌟 People's Choice** - Most User-Friendly Government Platform
-
-### **📈 Impact Metrics**
-- **1M+ Citizens** registered on the platform
-- **500K+ Documents** verified through government APIs
-- **100K+ Grievances** processed with AI assistance
-- **₹50Cr+ Government Fees** processed through integrated payment gateway
-- **99.9% Uptime** maintained across all government service integrations
-
----
-
 ## 🤝 **Contributing to BharatChain**
 
 We welcome contributions to make BharatChain even better! Here's how you can help:
