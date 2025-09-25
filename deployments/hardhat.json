@@ -4,7 +4,7 @@
     "chainId": "31337"
   },
   "deployer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
-  "timestamp": "2025-09-23T13:52:53.125Z",
+  "timestamp": "2025-09-25T08:05:49.656Z",
   "contracts": {
     "CitizenRegistry": {
       "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
