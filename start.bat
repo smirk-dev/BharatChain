@@ -1,5 +1,6 @@
 @echo off
 setlocal enabledelayedexpansion
+title 🇮🇳 BharatChain Platform Launcher 🇮🇳
 
 REM ============================================================================
 REM 🇮🇳 BharatChain Digital Identity Platform - One-Click Startup 🇮🇳
@@ -9,14 +10,23 @@ REM All services will be automatically configured and launched
 REM ============================================================================
 
 cls
-color 0A
+color 0B
 echo.
 echo  ╔══════════════════════════════════════════════════════════════════════╗
-echo  ║                    🇮🇳 BharatChain Platform 🇮🇳                     ║
-echo  ║                  Digital Identity ^& Governance                      ║
+echo  ║  ████████╗██████╗  ██╗  ██╗ █████╗ ██████╗  █████╗ ████████╗███████╗ ║
+echo  ║  ██╔══██║██╔══██╗ ██║  ██║██╔══██╗██╔══██╗██╔══██╗╚══██╔══╝██╔════╝ ║
+echo  ║  ██████╔╝██████╔╝ ███████║███████║██████╔╝███████║   ██║   ███████╗ ║
+echo  ║  ██╔══██╗██╔══██╗ ██╔══██║██╔══██║██╔══██╗██╔══██║   ██║   ╚════██║ ║
+echo  ║  ██████╔╝██║  ██║ ██║  ██║██║  ██║██║  ██║██║  ██║   ██║   ███████║ ║
+echo  ║  ╚═════╝ ╚═╝  ╚═╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝   ╚══════╝ ║
 echo  ║                                                                      ║
-echo  ║              🚀 ONE-CLICK STARTUP - EVERYTHING AUTOMATED 🚀         ║
+echo  ║             🇮🇳 DIGITAL IDENTITY ^& GOVERNANCE PLATFORM 🇮🇳           ║
+echo  ║                                                                      ║
+echo  ║          🚀 INTELLIGENT ONE-CLICK STARTUP SYSTEM 🚀                  ║
+echo  ║                    ⚡ Everything Automated ⚡                       ║
 echo  ╚══════════════════════════════════════════════════════════════════════╝
+echo.
+echo                     🌟 Empowering Digital India 🌟
 echo.
 
 REM Set project root
@@ -24,104 +34,145 @@ set "PROJECT_ROOT=%~dp0"
 set "PYTHON_PATH=%PROJECT_ROOT%.venv\Scripts\python.exe"
 set "ERROR_COUNT=0"
 
-echo 🔍 STEP 1/7: Pre-flight System Check
-echo ────────────────────────────────────────
+echo.
+echo ╔═════════════════════════════════════════════════════════════════════════╗
+echo ║                      🔍 STEP 1/7: PRE-FLIGHT SYSTEM CHECK 🔍          ║
+echo ║                        Validating System Requirements                   ║
+echo ╚═════════════════════════════════════════════════════════════════════════╝
+echo.
 
 REM Check Node.js
+echo    🔍 Checking Node.js installation...
 node --version >nul 2>&1
 if %errorlevel% neq 0 (
-    echo ❌ Node.js not found - please install Node.js from nodejs.org
+    color 0C
+    echo    ❌ Node.js not found - please install Node.js from nodejs.org
     set /a ERROR_COUNT+=1
 ) else (
-    echo ✅ Node.js detected
+    for /f "tokens=*" %%i in ('node --version') do set NODE_VERSION=%%i
+    echo    ✅ Node.js detected - Version: !NODE_VERSION!
 )
 
 REM Check Python (project virtual environment)
+echo    🔍 Checking Python environment...
 if exist "%PYTHON_PATH%" (
-    echo ✅ Python virtual environment found
+    echo    ✅ Python virtual environment found
 ) else (
     REM Try system Python
     python --version >nul 2>&1
     if %errorlevel% neq 0 (
-        echo ❌ Python not found - please install Python 3.8+ from python.org
+        color 0C
+        echo    ❌ Python not found - please install Python 3.8+ from python.org
         set /a ERROR_COUNT+=1
     ) else (
-        echo ⚠️  System Python detected (virtual environment preferred)
+        for /f "tokens=2" %%i in ('python --version') do set PYTHON_VERSION=%%i
+        echo    ⚠️  System Python detected - Version: !PYTHON_VERSION! (virtual environment preferred)
         set "PYTHON_PATH=python"
     )
 )
 
 REM Check npm dependencies
+echo    🔍 Checking project dependencies...
 if not exist "%PROJECT_ROOT%server\node_modules" (
-    echo ⚠️  Server dependencies missing - will install automatically
+    echo    ⚠️  Server dependencies missing - will install automatically
 )
 if not exist "%PROJECT_ROOT%client\node_modules" (
-    echo ⚠️  Client dependencies missing - will install automatically
+    echo    ⚠️  Client dependencies missing - will install automatically
 )
 
 if %ERROR_COUNT% gtr 0 (
     echo.
-    echo ❌ %ERROR_COUNT% critical dependencies missing. Please install them first.
-    pause
+    color 0C
+    echo    ╔═══════════════════════════════════════════════════════════════╗
+    echo    ║  ❌ CRITICAL ERROR: %ERROR_COUNT% dependencies missing              ║
+    echo    ║  Please install missing dependencies first                   ║
+    echo    ╚═══════════════════════════════════════════════════════════════╝
+    echo.
+    echo Press any key to exit...
+    pause >nul
     exit /b 1
+) else (
+    color 0A
+    echo    ✅ All system requirements satisfied!
 )
 
 echo.
-echo 🧹 STEP 2/7: Cleanup Existing Services
-echo ────────────────────────────────────────
-echo Stopping any existing BharatChain services...
+echo ╔═════════════════════════════════════════════════════════════════════════╗
+echo ║                   🧹 STEP 2/7: CLEANUP EXISTING SERVICES 🧹           ║
+echo ║                      Preparing Clean Environment                        ║
+echo ╚═════════════════════════════════════════════════════════════════════════╝
+echo.
+echo    🧹 Stopping any existing BharatChain services...
+echo    ⏹️  Terminating Node.js processes...
 taskkill /f /im node.exe >nul 2>&1
+echo    ⏹️  Terminating Python processes...
 taskkill /f /im python.exe >nul 2>&1
+echo    ⏹️  Terminating Hardhat processes...
 taskkill /f /im hardhat.exe >nul 2>&1
 timeout /t 2 >nul
-echo ✅ Cleanup completed
+color 0A
+echo    ✅ Environment cleanup completed successfully!
 
 echo.
-echo 📦 STEP 3/7: Installing Dependencies (if needed)
-echo ────────────────────────────────────────
+echo ╔═════════════════════════════════════════════════════════════════════════╗
+echo ║                📦 STEP 3/7: INSTALLING DEPENDENCIES 📦                ║
+echo ║                    Smart Dependency Management                          ║
+echo ╚═════════════════════════════════════════════════════════════════════════╝
 
 REM Install server dependencies
 if not exist "%PROJECT_ROOT%server\node_modules" (
-    echo Installing backend dependencies...
+    echo.
+    echo    📦 Installing backend dependencies...
+    echo    ⏳ This may take a few minutes for first-time setup...
     cd /d "%PROJECT_ROOT%server"
     npm install --silent
     if %errorlevel% neq 0 (
-        echo ❌ Failed to install backend dependencies
+        color 0C
+        echo    ❌ Failed to install backend dependencies
         pause
         exit /b 1
     )
-    echo ✅ Backend dependencies installed
+    color 0A
+    echo    ✅ Backend dependencies installed successfully!
 ) else (
-    echo ✅ Backend dependencies already installed
+    echo    ✅ Backend dependencies already installed
 )
 
 REM Install client dependencies
 if not exist "%PROJECT_ROOT%client\node_modules" (
-    echo Installing frontend dependencies...
+    echo.
+    echo    🎨 Installing frontend dependencies...
+    echo    ⏳ Setting up React development environment...
     cd /d "%PROJECT_ROOT%client"
     npm install --silent
     if %errorlevel% neq 0 (
-        echo ❌ Failed to install frontend dependencies
+        color 0C
+        echo    ❌ Failed to install frontend dependencies
         pause
         exit /b 1
     )
-    echo ✅ Frontend dependencies installed
+    color 0A
+    echo    ✅ Frontend dependencies installed successfully!
 ) else (
-    echo ✅ Frontend dependencies already installed
+    echo    ✅ Frontend dependencies already installed
 )
 
 REM Install Python dependencies
-echo Installing AI service dependencies...
+echo.
+echo    🧠 Installing AI service dependencies...
 cd /d "%PROJECT_ROOT%ai-service"
 if exist requirements.txt (
     "%PYTHON_PATH%" -m pip install -r requirements.txt --quiet
     if %errorlevel% neq 0 (
-        echo ⚠️  AI service dependencies installation had warnings (will continue)
+        color 0E
+        echo    ⚠️  AI service dependencies installation had warnings (will continue)
     ) else (
-        echo ✅ AI service dependencies installed
+        color 0A
+        echo    ✅ AI service dependencies installed successfully!
     )
 ) else (
-    echo ⚠️  AI service requirements.txt not found (will use system packages)
+    color 0E
+    echo    ⚠️  AI service requirements.txt not found (will use system packages)
 )
 
 echo.
