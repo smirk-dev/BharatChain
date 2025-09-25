@@ -49,6 +49,7 @@ function App() {
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [showWelcome, setShowWelcome] = useState(false);
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
 
   // Show welcome message when first connected
   useEffect(() => {
@@ -70,6 +71,18 @@ function App() {
       clearError();
     }
   }, [web3Error, clearError]);
+
+  // Update year in real-time (checks every minute)
+  useEffect(() => {
+    const yearUpdateInterval = setInterval(() => {
+      const newYear = new Date().getFullYear();
+      if (newYear !== currentYear) {
+        setCurrentYear(newYear);
+      }
+    }, 60000); // Check every minute
+
+    return () => clearInterval(yearUpdateInterval);
+  }, [currentYear]);
 
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -598,7 +611,7 @@ function App() {
                 </Box>
               </Box>
               <Typography variant="body2" sx={{ color: '#7B3F00', fontWeight: 500 }}>
-                © 2024 BharatChain. सभी अधिकार सुरक्षित • All rights reserved.
+                © {currentYear} BharatChain. सभी अधिकार सुरक्षित • All rights reserved.
               </Typography>
             </Grid>
             <Grid item xs={12} md={6} sx={{ textAlign: { xs: 'center', md: 'right' } }}>
