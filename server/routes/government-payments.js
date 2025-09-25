@@ -377,12 +377,6 @@ router.get('/stats', verifyToken, async (req, res) => {
 });
 
 module.exports = router;
-        next();
-
-// Initiate payment
-router.post('/initiate', validateCitizenId, rateLimit(5, 300000), async (req, res) => {
-    try {
-        const {
             service_type,
             service_name,
             amount,
