@@ -98,24 +98,8 @@ router.get('/profile',
       message: 'Citizen profile retrieved successfully from blockchain',
       data: profile
     });
-
-  } catch (error) {
-    console.error('Get profile error:', error);
-    
-    if (error.message.includes('Citizen not registered')) {
-      return res.status(404).json({
-        error: 'Not Found',
-        message: 'Citizen not registered'
-      });
-    }
-    
-    res.status(500).json({
-      error: 'Internal Server Error',
-      message: 'Failed to retrieve citizen profile',
-      details: error.message
-    });
-  }
-});
+  })
+);
 
 /**
  * @route POST /api/citizens/register
