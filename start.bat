@@ -160,12 +160,13 @@ echo ⚙️  STEP 6/7: Starting Backend API (Port 3001)
 echo ────────────────────────────────────────
 cd /d "%PROJECT_ROOT%server"
 if exist "server.js" (
-    start "⚙️ BharatChain Backend" cmd /k "echo [BACKEND] Starting Express Server and APIs... && echo [BACKEND] Port: 3001 && echo [BACKEND] Database: SQLite && echo [BACKEND] JWT Authentication Enabled && echo. && npm start"
+    REM Use full path to ensure server.js is found correctly
+    start "⚙️ BharatChain Backend" cmd /k "echo [BACKEND] Starting Express Server and APIs... && echo [BACKEND] Port: 3001 && echo [BACKEND] Database: SQLite && echo [BACKEND] JWT Authentication Enabled && echo [BACKEND] Web3 Integration: Ready && echo. && node "%PROJECT_ROOT%server\server.js""
     echo ✅ Backend API starting on port 3001
 ) else (
-    echo ❌ Backend server file not found
+    echo ❌ Backend server file not found at %PROJECT_ROOT%server\server.js
 )
-timeout /t 4 >nul
+timeout /t 5 >nul
 
 echo.
 echo 🎨 STEP 7/7: Starting Frontend React App (Port 3000)
