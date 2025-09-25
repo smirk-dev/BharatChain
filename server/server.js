@@ -2,10 +2,18 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
-const rateLimit = require('express-rate-limit');
 const path = require('path');
 const http = require('http');
 require('dotenv').config();
+
+// Import middleware
+const { 
+  errorHandler, 
+  notFoundHandler, 
+  timeoutHandler,
+  asyncHandler 
+} = require('./middleware/error');
+const { verifyToken, optionalAuth, rateLimit } = require('./middleware/auth');
 
 // Import blockchain and real-time services
 const blockchainService = require('./services/blockchain-simple');
