@@ -3,6 +3,8 @@ const router = express.Router();
 const { body, validationResult } = require('express-validator');
 const crypto = require('crypto');
 const blockchainService = require('../services/blockchain');
+const { verifyToken, attachUserContext, requireVerification } = require('../middleware/auth');
+const { asyncHandler, ValidationError } = require('../middleware/error');
 
 // Initialize blockchain service on first load
 let isBlockchainInitialized = false;
