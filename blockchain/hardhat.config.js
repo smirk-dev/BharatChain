@@ -31,9 +31,9 @@ module.exports = {
     apiKey: process.env.POLYGONSCAN_API_KEY
   },
   paths: {
-    sources: "./contracts",
+    sources: "./blockchain/contracts",
     tests: "./tests/contracts",
-    cache: "./cache",
-    artifacts: "./artifacts"
+    cache: "./blockchain/cache",
+    artifacts: "./blockchain/artifacts"
   }
 };
