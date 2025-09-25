@@ -228,6 +228,12 @@ echo  ║                                                                      �
 echo  ║  All services are running in separate windows.                       ║
 echo  ║  You can minimize this window - services will continue running.      ║
 echo  ║                                                                      ║
+echo  ║  🔧 TROUBLESHOOTING:                                                 ║
+echo  ║  • If frontend shows errors, wait 30 seconds for backend to start   ║
+echo  ║  • Check service windows for any startup errors                     ║
+echo  ║  • Backend must be on port 3001, Frontend on 3000                   ║
+echo  ║  • MetaMask required for Web3 features                              ║
+echo  ║                                                                      ║
 echo  ║  To stop all services: Close all terminal windows or run stop.bat   ║
 echo  ╚══════════════════════════════════════════════════════════════════════╝
 echo.
