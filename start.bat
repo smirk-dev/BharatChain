@@ -297,16 +297,20 @@ echo.
 color 0A
 echo    ✅ All services should now be operational!
 
-REM Try to open browser automatically
+REM Wait for frontend to be ready and open browser
 echo.
 echo ╔═════════════════════════════════════════════════════════════════════════╗
 echo ║                      🌐 OPENING WEB BROWSER 🌐                        ║
 echo ╚═════════════════════════════════════════════════════════════════════════╝
 echo.
-echo    🌐 Launching BharatChain Platform in your default browser...
+echo    ⏳ Waiting for frontend to be fully ready... (10 seconds)
+echo    🌐 This ensures the browser opens to a working application
+timeout /t 10 >nul
+echo    🚀 Launching BharatChain Platform in your default browser...
 echo    📱 URL: http://localhost:3000
-timeout /t 3 >nul
-start "BharatChain Platform" http://localhost:3000
+start "BharatChain Platform - Digital India" http://localhost:3000
+echo    ✅ Browser opened successfully!
+echo.
 
 echo.
 echo  ╔══════════════════════════════════════════════════════════════════════╗
@@ -353,15 +357,22 @@ echo    This launcher will remain open to monitor your services.
 echo    You can safely minimize this window - all services will continue running.
 echo.
 echo    Available Actions:
+echo    [B] Open BharatChain in browser
 echo    [M] Minimize this launcher window
-echo    [O] Open BharatChain in browser again  
+echo    [O] Open BharatChain in browser again (backup method)
 echo    [S] Show service status
 echo    [Q] Quit launcher (services will keep running)
 echo    [X] Stop all services and exit
 echo.
 
 :MENU
-set /p "choice=    Enter your choice (M/O/S/Q/X): "
+set /p "choice=    Enter your choice (B/M/O/S/Q/X): "
+
+if /i "%choice%"=="B" (
+    echo    🌐 Opening BharatChain Platform...
+    start "BharatChain Platform" http://localhost:3000
+    goto MENU
+)
 
 if /i "%choice%"=="M" (
     echo    🗕 Minimizing launcher window...
@@ -370,8 +381,8 @@ if /i "%choice%"=="M" (
 )
 
 if /i "%choice%"=="O" (
-    echo    🌐 Opening BharatChain Platform...
-    start "BharatChain Platform" http://localhost:3000
+    echo    🌐 Opening BharatChain Platform (backup method)...
+    powershell -command "Start-Process 'http://localhost:3000'"
     goto MENU
 )
 
