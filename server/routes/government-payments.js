@@ -375,19 +375,8 @@ router.get('/stats', verifyToken, async (req, res) => {
         });
     }
 });
-        
-        const requestTimes = requests.get(key).filter(time => time > windowStart);
-        
-        if (requestTimes.length >= maxRequests) {
-            return res.status(429).json({
-                success: false,
-                error: 'Rate limit exceeded. Please try again later.',
-                retry_after: Math.ceil((requestTimes[0] + windowMs - now) / 1000)
-            });
-        }
-        
-        requestTimes.push(now);
-        requests.set(key, requestTimes);
+
+module.exports = router;
         next();
 
 // Initiate payment
