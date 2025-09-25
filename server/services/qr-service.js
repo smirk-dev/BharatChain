@@ -153,8 +153,7 @@ class QRCodeService {
      */
     encryptData(data) {
         const iv = crypto.randomBytes(16);
-        const cipher = crypto.createCipher(this.algorithm, this.secret);
-        cipher.setAutoPadding(true);
+        const cipher = crypto.createCipherGCM(this.algorithm, this.secret, iv);
 
         let encrypted = cipher.update(data, 'utf8', 'hex');
         encrypted += cipher.final('hex');
@@ -175,8 +174,7 @@ class QRCodeService {
         const authTag = buffer.slice(16, 32);
         const encrypted = buffer.slice(32);
 
-        const decipher = crypto.createDecipher(this.algorithm, this.secret);
-        decipher.setAutoPadding(true);
+        const decipher = crypto.createDecipherGCM(this.algorithm, this.secret, iv);
         decipher.setAuthTag(authTag);
 
         let decrypted = decipher.update(encrypted, null, 'utf8');
