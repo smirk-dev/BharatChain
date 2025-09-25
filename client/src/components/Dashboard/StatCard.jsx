@@ -118,8 +118,9 @@ const StatCard = ({
                     }} 
                   />
                 </IconButton>
-              )}
-            </Box>
+              </Tooltip>
+            )}
+          </Box>
           )}
           
           {/* Value */}
