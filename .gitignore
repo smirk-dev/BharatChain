@@ -37,6 +37,8 @@ server/database/*.sqlite3
 bharatchain.db
 database/bharatchain.db
 database/*.db
+server/database/bharatchain.db
+server/database/*.db
 # Environment Variables
 .env
 .env.local
