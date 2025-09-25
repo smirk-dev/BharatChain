@@ -13,6 +13,15 @@ const {
   timeoutHandler,
   asyncHandler 
 } = require('./middleware/error');
+
+// Enhanced Error Handling
+const {
+  errorHandler: enhancedErrorHandler,
+  notFoundHandler: enhancedNotFoundHandler,
+  asyncHandler: enhancedAsyncHandler,
+  sendResponse,
+  healthCheck
+} = require('./middleware/enhanced-error');
 const { verifyToken, optionalAuth, rateLimit } = require('./middleware/auth');
 
 // Import blockchain and real-time services
@@ -160,10 +169,10 @@ app.get('/api/websocket/status', asyncHandler(async (req, res) => {
 }));
 
 // 404 handler for unmatched routes
-app.use(notFoundHandler);
+app.use(enhancedNotFoundHandler);
 
-// Global error handler (must be last middleware)
-app.use(errorHandler);
+// Global error handler (must be last middleware)  
+app.use(enhancedErrorHandler);
 
 // Database connection and server startup
 async function startServer() {
