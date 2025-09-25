@@ -6,31 +6,375 @@ const db = require('../../database/bharatchain.db');
 
 const paymentGateway = new PaymentGatewayService();
 
-// Middleware for request validation
-const validateCitizenId = (req, res, next) => {
-    const citizenId = req.body.citizen_id || req.query.citizen_id || req.headers['x-citizen-id'];
-    if (!citizenId) {
-        return res.status(400).json({
+/**
+ * @route POST /api/payments/create-order
+ * @desc Create payment order for government service
+ * @access Private
+ */
+router.post('/create-order', verifyToken, async (req, res) => {
+    try {
+        const { serviceType, amount, description, metadata = {} } = req.body;
+        
+        if (!serviceType) {
+            return res.status(400).json({
+                success: false,
+                error: 'Service type is required'
+            });
+        }
+
+        // Get service fees
+        const serviceFees = paymentGateway.getServiceFees();
+        const serviceAmount = amount || serviceFees[serviceType]?.amount;
+
+        if (serviceAmount === undefined) {
+            return res.status(400).json({
+                success: false,
+                error: 'Invalid service type or amount not specified'
+            });
+        }
+
+        // Create payment order
+        const orderResult = await paymentGateway.createPaymentOrder({
+            amount: serviceAmount,
+            serviceType,
+            citizenId: req.user.id,
+            description: description || serviceFees[serviceType]?.description,
+            metadata: {
+                user_id: req.user.id,
+                user_email: req.user.email,
+                ...metadata
+            }
+        });
+
+        if (!orderResult.success) {
+            return res.status(500).json({
+                success: false,
+                error: orderResult.error
+            });
+        }
+
+        // Store payment record in database
+        await new Promise((resolve, reject) => {
+            db.run(
+                `INSERT INTO payments (citizen_id, service_type, amount, currency, order_id, receipt_id, status, created_at)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+                [
+                    req.user.id,
+                    serviceType,
+                    orderResult.data.amount,
+                    orderResult.data.currency,
+                    orderResult.data.orderId,
+                    orderResult.data.receipt,
+                    'created',
+                    new Date()
+                ],
+                function(err) {
+                    if (err) reject(err);
+                    else resolve(this.lastID);
+                }
+            );
+        });
+
+        res.json({
+            success: true,
+            data: orderResult.data
+        });
+
+    } catch (error) {
+        console.error('Create payment order error:', error);
+        res.status(500).json({
             success: false,
-            error: 'Citizen ID is required'
+            error: 'Failed to create payment order'
         });
     }
-    req.citizenId = citizenId;
-    next();
-};
+});
 
-// Rate limiting middleware
-const rateLimit = (maxRequests = 10, windowMs = 60000) => {
-    const requests = new Map();
-    
-    return (req, res, next) => {
-        const key = req.ip + req.route.path;
-        const now = Date.now();
-        const windowStart = now - windowMs;
-        
-        if (!requests.has(key)) {
-            requests.set(key, []);
+/**
+ * @route POST /api/payments/verify
+ * @desc Verify payment after successful payment
+ * @access Private
+ */
+router.post('/verify', verifyToken, async (req, res) => {
+    try {
+        const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = req.body;
+
+        if (!razorpay_payment_id || !razorpay_order_id || !razorpay_signature) {
+            return res.status(400).json({
+                success: false,
+                error: 'Payment verification data is incomplete'
+            });
         }
+
+        // Verify payment signature
+        const verification = paymentGateway.verifyPaymentSignature({
+            razorpay_payment_id,
+            razorpay_order_id,
+            razorpay_signature
+        });
+
+        if (!verification.verified) {
+            return res.status(400).json({
+                success: false,
+                error: 'Payment verification failed'
+            });
+        }
+
+        // Update payment status in database
+        await new Promise((resolve, reject) => {
+            db.run(
+                `UPDATE payments SET payment_id = ?, status = 'completed', verified_at = ?, signature = ?
+                 WHERE order_id = ? AND citizen_id = ?`,
+                [
+                    razorpay_payment_id,
+                    new Date(),
+                    razorpay_signature,
+                    razorpay_order_id,
+                    req.user.id
+                ],
+                function(err) {
+                    if (err) reject(err);
+                    else resolve(this.changes);
+                }
+            );
+        });
+
+        res.json({
+            success: true,
+            data: {
+                payment_verified: true,
+                payment_id: razorpay_payment_id,
+                order_id: razorpay_order_id,
+                status: 'completed'
+            }
+        });
+
+    } catch (error) {
+        console.error('Payment verification error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Payment verification failed'
+        });
+    }
+});
+
+/**
+ * @route GET /api/payments/fees
+ * @desc Get service fees for all government services
+ * @access Public
+ */
+router.get('/fees', (req, res) => {
+    try {
+        const serviceFees = paymentGateway.getServiceFees();
+        
+        res.json({
+            success: true,
+            data: serviceFees
+        });
+
+    } catch (error) {
+        console.error('Get service fees error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to fetch service fees'
+        });
+    }
+});
+
+/**
+ * @route GET /api/payments/history
+ * @desc Get payment history for the authenticated user
+ * @access Private
+ */
+router.get('/history', verifyToken, async (req, res) => {
+    try {
+        const { page = 1, limit = 10, status } = req.query;
+        const offset = (page - 1) * limit;
+
+        let query = `SELECT * FROM payments WHERE citizen_id = ?`;
+        let params = [req.user.id];
+
+        if (status) {
+            query += ` AND status = ?`;
+            params.push(status);
+        }
+
+        query += ` ORDER BY created_at DESC LIMIT ? OFFSET ?`;
+        params.push(parseInt(limit), offset);
+
+        const payments = await new Promise((resolve, reject) => {
+            db.all(query, params, (err, rows) => {
+                if (err) reject(err);
+                else resolve(rows);
+            });
+        });
+
+        // Get total count
+        const totalCount = await new Promise((resolve, reject) => {
+            let countQuery = `SELECT COUNT(*) as count FROM payments WHERE citizen_id = ?`;
+            let countParams = [req.user.id];
+
+            if (status) {
+                countQuery += ` AND status = ?`;
+                countParams.push(status);
+            }
+
+            db.get(countQuery, countParams, (err, row) => {
+                if (err) reject(err);
+                else resolve(row.count);
+            });
+        });
+
+        res.json({
+            success: true,
+            data: {
+                payments,
+                pagination: {
+                    page: parseInt(page),
+                    limit: parseInt(limit),
+                    total: totalCount,
+                    pages: Math.ceil(totalCount / limit)
+                }
+            }
+        });
+
+    } catch (error) {
+        console.error('Get payment history error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to fetch payment history'
+        });
+    }
+});
+
+/**
+ * @route POST /api/payments/refund
+ * @desc Process refund for a payment
+ * @access Private
+ */
+router.post('/refund', verifyToken, async (req, res) => {
+    try {
+        const { payment_id, amount, reason } = req.body;
+
+        if (!payment_id) {
+            return res.status(400).json({
+                success: false,
+                error: 'Payment ID is required'
+            });
+        }
+
+        // Verify payment belongs to user
+        const payment = await new Promise((resolve, reject) => {
+            db.get(
+                'SELECT * FROM payments WHERE payment_id = ? AND citizen_id = ?',
+                [payment_id, req.user.id],
+                (err, row) => {
+                    if (err) reject(err);
+                    else resolve(row);
+                }
+            );
+        });
+
+        if (!payment) {
+            return res.status(404).json({
+                success: false,
+                error: 'Payment not found'
+            });
+        }
+
+        if (payment.status !== 'completed') {
+            return res.status(400).json({
+                success: false,
+                error: 'Only completed payments can be refunded'
+            });
+        }
+
+        // Process refund
+        const refundResult = await paymentGateway.processRefund({
+            paymentId: payment_id,
+            amount: amount,
+            reason: reason || 'User requested refund',
+            metadata: {
+                user_id: req.user.id,
+                original_order_id: payment.order_id
+            }
+        });
+
+        if (!refundResult.success) {
+            return res.status(500).json({
+                success: false,
+                error: refundResult.error
+            });
+        }
+
+        // Update payment record
+        await new Promise((resolve, reject) => {
+            db.run(
+                `UPDATE payments SET status = 'refunded', refund_id = ?, refunded_at = ?
+                 WHERE payment_id = ?`,
+                [refundResult.data.refund_id, new Date(), payment_id],
+                function(err) {
+                    if (err) reject(err);
+                    else resolve(this.changes);
+                }
+            );
+        });
+
+        res.json({
+            success: true,
+            data: refundResult.data
+        });
+
+    } catch (error) {
+        console.error('Refund processing error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to process refund'
+        });
+    }
+});
+
+/**
+ * @route GET /api/payments/stats
+ * @desc Get payment gateway statistics
+ * @access Private
+ */
+router.get('/stats', verifyToken, async (req, res) => {
+    try {
+        const gatewayStats = paymentGateway.getPaymentStats();
+
+        // Get user payment statistics
+        const userStats = await new Promise((resolve, reject) => {
+            db.all(`
+                SELECT 
+                    COUNT(*) as total_payments,
+                    SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) as total_spent,
+                    COUNT(CASE WHEN status = 'completed' THEN 1 END) as successful_payments,
+                    COUNT(CASE WHEN status = 'failed' THEN 1 END) as failed_payments,
+                    COUNT(CASE WHEN status = 'refunded' THEN 1 END) as refunded_payments
+                FROM payments 
+                WHERE citizen_id = ?
+            `, [req.user.id], (err, rows) => {
+                if (err) reject(err);
+                else resolve(rows[0] || {});
+            });
+        });
+
+        res.json({
+            success: true,
+            data: {
+                gateway: gatewayStats,
+                user_stats: userStats
+            }
+        });
+
+    } catch (error) {
+        console.error('Get payment stats error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to get payment statistics'
+        });
+    }
+});
         
         const requestTimes = requests.get(key).filter(time => time > windowStart);
         
