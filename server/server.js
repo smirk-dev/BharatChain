@@ -113,27 +113,9 @@ app.use('/api/secure-exchange', secureExchangeRoutes);
 app.use('/api/compliance', complianceAuditRoutes);
 // app.use('/api/blockchain', blockchainRoutes);
 
-// WebSocket status endpoint
-app.get('/api/websocket/status', (req, res) => {
-  try {
-    const stats = realtimeEventService.getStatistics();
-    
-    res.json({
-      success: true,
-      message: 'WebSocket service status',
-      data: stats
-    });
-  } catch (error) {
-    res.status(500).json({
-      error: 'Internal Server Error',
-      message: 'Failed to get WebSocket status'
-    });
-  }
-});
-
-// Root endpoint
-app.get('/', (req, res) => {
-  res.json({
+// Root endpoint - wrapped with asyncHandler to prevent crashes
+app.get('/', asyncHandler(async (req, res) => {
+  const stats = {
     message: 'BharatChain Governance Platform API',
     version: '2.0.0',
     status: 'running',
@@ -145,7 +127,8 @@ app.get('/', (req, res) => {
     },
     realtime: {
       enabled: true,
-      connections: realtimeEventService.getStatistics().totalClients
+      connections: realtimeEventService.isInitialized ? 
+        realtimeEventService.getStatistics().totalClients : 0
     },
     endpoints: {
       health: '/api/health',
@@ -154,74 +137,31 @@ app.get('/', (req, res) => {
       documents: '/api/documents',
       grievances: '/api/grievances',
       ai_analysis: '/api/ai',
-      blockchain_status: '/api/blockchain/status',
       websocket_status: '/api/websocket/status'
     }
+  };
+  
+  res.json(stats);
+}));
+
+// WebSocket status endpoint - wrapped with asyncHandler
+app.get('/api/websocket/status', asyncHandler(async (req, res) => {
+  const stats = realtimeEventService.isInitialized ? 
+    realtimeEventService.getStatistics() : 
+    { status: 'offline', totalClients: 0 };
+  
+  res.json({
+    success: true,
+    message: 'WebSocket service status',
+    data: stats
   });
-});
+}));
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error('Error:', err);
+// 404 handler for unmatched routes
+app.use(notFoundHandler);
 
-  // Handle specific error types
-  if (err.name === 'ValidationError') {
-    return res.status(400).json({
-      error: 'Validation Error',
-      message: err.message,
-      details: err.errors
-    });
-  }
-
-  if (err.name === 'UnauthorizedError') {
-    return res.status(401).json({
-      error: 'Unauthorized',
-      message: 'Invalid or expired token'
-    });
-  }
-
-  if (err.code === 'LIMIT_FILE_SIZE') {
-    return res.status(413).json({
-      error: 'File Too Large',
-      message: 'File size exceeds the maximum limit'
-    });
-  }
-
-  if (err.code === 'LIMIT_UNEXPECTED_FILE') {
-    return res.status(400).json({
-      error: 'Invalid File',
-      message: 'Unexpected file type or field name'
-    });
-  }
-
-  // Default error response
-  res.status(err.status || 500).json({
-    error: process.env.NODE_ENV === 'production' ? 'Internal Server Error' : err.message,
-    ...(process.env.NODE_ENV !== 'production' && { stack: err.stack })
-  });
-});
-
-// 404 handler
-app.use('*', (req, res) => {
-  res.status(404).json({
-    error: 'Not Found',
-    message: `Cannot ${req.method} ${req.originalUrl}`,
-    availableEndpoints: [
-      'GET /',
-      'GET /api/health',
-      'POST /api/auth/message',
-      'POST /api/auth/connect',
-      'GET /api/citizens/profile',
-      'POST /api/citizens/register',
-      'GET /api/documents',
-      'POST /api/documents/upload',
-      'GET /api/grievances',
-      'POST /api/grievances',
-      'POST /api/ai/analyze/document',
-      'POST /api/ai/analyze/grievance'
-    ]
-  });
-});
+// Global error handler (must be last middleware)
+app.use(errorHandler);
 
 // Database connection and server startup
 async function startServer() {
