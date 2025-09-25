@@ -352,11 +352,14 @@ def models_status():
     """Check status of loaded AI models"""
     try:
         doc_status = document_processor.get_status()
-        grievance_status = grievance_analyzer.get_status()
+        # grievance_analyzer doesn't have get_status method, so provide basic status
+        grievance_status = {'status': 'loaded', 'type': 'lightweight'}
+        ocr_status = ocr_service.get_service_status()
         
         return jsonify({
             'document_processor': doc_status,
             'grievance_analyzer': grievance_status,
+            'ocr_service': ocr_status,
             'timestamp': datetime.now().isoformat()
         })
         
@@ -367,5 +370,12 @@ def models_status():
         }), 500
 
 if __name__ == '__main__':
-    logger.info("Starting BharatChain AI Service...")
-    app.run(host='0.0.0.0', port=5001, debug=True)
+    logger.info("🚀 Starting BharatChain AI Service with Enhanced OCR...")
+    logger.info(f"📁 Upload folder: {os.path.abspath(UPLOAD_FOLDER)}")
+    logger.info(f"🔧 Max file size: {MAX_FILE_SIZE / (1024*1024):.1f}MB")
+    
+    # Check OCR service status
+    ocr_status = ocr_service.get_service_status()
+    logger.info(f"🤖 OCR Service Status: {ocr_status}")
+    
+    app.run(host='0.0.0.0', port=5001, debug=False)
