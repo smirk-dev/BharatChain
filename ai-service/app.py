@@ -23,98 +23,223 @@ from enhanced_ocr import get_ocr_service
 class LightweightGrievanceAnalyzer:
     def __init__(self):
         self.models_loaded = True
-        self.sentiment_keywords = {
-            'positive': ['good', 'great', 'excellent', 'satisfied', 'happy', 'pleased', 'thank', 'wonderful', 'amazing'],
-            'negative': ['bad', 'terrible', 'awful', 'angry', 'frustrated', 'disappointed', 'complaint', 'horrible', 'disgusted', 'furious'],
-            'urgent': ['urgent', 'emergency', 'immediately', 'asap', 'critical', 'serious', 'quick']
-        }
-        self.category_keywords = {
-            'corruption': ['bribe', 'corruption', 'illegal', 'fraud', 'dishonest'],
-            'service_quality': ['service', 'quality', 'staff', 'behavior', 'treatment'],
-            'infrastructure': ['road', 'water', 'electricity', 'sanitation', 'infrastructure'],
-            'healthcare': ['hospital', 'doctor', 'medical', 'health', 'treatment'],
-            'education': ['school', 'teacher', 'education', 'student', 'learning'],
-            'administration': ['office', 'documentation', 'paperwork', 'process', 'delay']
-        }
-    
+        
     def analyze_grievance(self, text):
-        """Lightweight grievance analysis using keyword-based approach"""
+        """Analyze grievance with proper categorization and sentiment"""
+        # Basic sentiment analysis
+        sentiment_keywords = {
+            'positive': ['good', 'excellent', 'satisfied', 'happy', 'resolved', 'helpful'],
+            'negative': ['bad', 'terrible', 'unsatisfied', 'angry', 'frustrated', 'awful', 'horrible'],
+            'urgent': ['urgent', 'emergency', 'immediate', 'asap', 'critical', 'serious']
+        }
+        
         text_lower = text.lower()
+        words = text_lower.split()
         
-        # Sentiment analysis
-        sentiment = self._analyze_sentiment(text_lower)
+        # Calculate sentiment scores
+        positive_score = sum(1 for word in words if word in sentiment_keywords['positive'])
+        negative_score = sum(1 for word in words if word in sentiment_keywords['negative'])
+        urgent_score = sum(1 for word in words if word in sentiment_keywords['urgent'])
         
+        # Determine overall sentiment
+        if negative_score > positive_score:
+            sentiment = 'negative'
+            confidence = min(0.9, negative_score / max(len(words) * 0.1, 1))
+        elif positive_score > negative_score:
+            sentiment = 'positive'
+            confidence = min(0.9, positive_score / max(len(words) * 0.1, 1))
+        else:
+            sentiment = 'neutral'
+            confidence = 0.5
+            
         # Category detection
-        category = self._detect_category(text_lower)
+        category_keywords = {
+            'public_services': ['water', 'electricity', 'road', 'transport', 'hospital', 'school'],
+            'corruption': ['bribe', 'corrupt', 'illegal', 'fraud', 'scam'],
+            'infrastructure': ['road', 'bridge', 'building', 'construction', 'repair'],
+            'healthcare': ['hospital', 'doctor', 'medicine', 'treatment', 'health'],
+            'education': ['school', 'teacher', 'education', 'student', 'college']
+        }
         
-        # Urgency detection
-        urgency = self._detect_urgency(text_lower)
+        detected_categories = []
+        for category, keywords in category_keywords.items():
+            if any(keyword in text_lower for keyword in keywords):
+                detected_categories.append(category)
         
-        # Severity calculation
-        severity = self._calculate_severity(sentiment, urgency, len(text))
+        # Priority calculation
+        priority_score = urgent_score * 0.4 + negative_score * 0.3 + len(detected_categories) * 0.3
+        
+        if priority_score > 2:
+            priority = 'high'
+        elif priority_score > 1:
+            priority = 'medium'
+        else:
+            priority = 'low'
         
         return {
-            'sentiment': sentiment,
-            'category': category,
-            'urgency': urgency,
-            'severity': severity,
-            'summary': f"Lightweight analysis: {category['predicted_category']} grievance with {sentiment['primary_sentiment']} sentiment",
-            'confidence': 0.7,
-            'processing_method': 'keyword_based'
+            'sentiment': {
+                'label': sentiment,
+                'confidence': confidence,
+                'scores': {
+                    'positive': positive_score,
+                    'negative': negative_score,
+                    'neutral': max(0, len(words) - positive_score - negative_score)
+                }
+            },
+            'category': detected_categories[0] if detected_categories else 'general',
+            'all_categories': detected_categories,
+            'priority': priority,
+            'urgency_indicators': urgent_score > 0,
+            'word_count': len(words),
+            'analysis_timestamp': datetime.now().isoformat()
         }
-    
-    def _analyze_sentiment(self, text):
-        positive_score = sum(1 for word in self.sentiment_keywords['positive'] if word in text)
-        negative_score = sum(1 for word in self.sentiment_keywords['negative'] if word in text)
+
+# Configuration
+UPLOAD_FOLDER = 'uploads'
+MAX_FILE_SIZE = 16 * 1024 * 1024  # 16MB
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'doc', 'docx'}
+
+# Initialize services
+document_processor = DocumentProcessor()
+grievance_analyzer = LightweightGrievanceAnalyzer()
+ocr_service = get_ocr_service()
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Initialize Flask app
+app = Flask(__name__)
+CORS(app)
+
+# Ensure upload directory exists
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+def allowed_file(filename):
+    """Check if file extension is allowed"""
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def rate_limit(max_requests=10, per_seconds=60):
+    """Simple rate limiting decorator"""
+    def decorator(func):
+        func.requests = {}
         
-        if positive_score > negative_score:
-            return {'primary_sentiment': 'positive', 'confidence': min(0.8, 0.5 + positive_score * 0.1)}
-        elif negative_score > positive_score:
-            return {'primary_sentiment': 'negative', 'confidence': min(0.8, 0.5 + negative_score * 0.1)}
-        else:
-            return {'primary_sentiment': 'neutral', 'confidence': 0.5}
-    
-    def _detect_category(self, text):
-        scores = {}
-        for category, keywords in self.category_keywords.items():
-            score = sum(1 for keyword in keywords if keyword in text)
-            if score > 0:
-                scores[category] = score
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            client_ip = request.environ.get('HTTP_X_FORWARDED_FOR', request.remote_addr)
+            now = time.time()
+            
+            # Clean old requests
+            func.requests = {ip: times for ip, times in func.requests.items() 
+                           if any(now - t < per_seconds for t in times)}
+            
+            # Check current IP
+            if client_ip in func.requests:
+                recent_requests = [t for t in func.requests[client_ip] if now - t < per_seconds]
+                if len(recent_requests) >= max_requests:
+                    return jsonify({"error": "Rate limit exceeded"}), 429
+                func.requests[client_ip] = recent_requests + [now]
+            else:
+                func.requests[client_ip] = [now]
+            
+            return func(*args, **kwargs)
+        return wrapper
+    return decorator
+
+@app.route('/health', methods=['GET'])
+def health_check():
+    """Health check endpoint"""
+    ocr_status = ocr_service.get_service_status()
+    return jsonify({
+        "status": "healthy",
+        "timestamp": datetime.now().isoformat(),
+        "services": {
+            "document_processor": "available",
+            "grievance_analyzer": "available", 
+            "ocr_service": ocr_status
+        }
+    })
+
+@app.route('/api/ocr/status', methods=['GET'])
+def get_ocr_status():
+    """Get OCR service status"""
+    try:
+        status = ocr_service.get_service_status()
+        return jsonify({
+            "success": True,
+            "data": status,
+            "timestamp": datetime.now().isoformat()
+        })
+    except Exception as e:
+        logger.error(f"Error getting OCR status: {e}")
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+
+@app.route('/api/ocr/extract', methods=['POST'])
+@rate_limit(max_requests=20, per_seconds=300)
+def extract_text():
+    """Extract text from uploaded file using OCR"""
+    try:
+        if 'file' not in request.files:
+            return jsonify({
+                "success": False,
+                "error": "No file uploaded"
+            }), 400
         
-        if scores:
-            best_category = max(scores.keys(), key=lambda x: scores[x])
-            confidence = min(scores[best_category] * 0.2, 1.0)
-        else:
-            best_category = 'general'
-            confidence = 0.3
+        file = request.files['file']
+        if file.filename == '':
+            return jsonify({
+                "success": False,
+                "error": "No file selected"
+            }), 400
         
-        return {'predicted_category': best_category, 'confidence': confidence, 'all_scores': scores}
-    
-    def _detect_urgency(self, text):
-        urgency_score = sum(1 for word in self.sentiment_keywords['urgent'] if word in text)
+        if not allowed_file(file.filename):
+            return jsonify({
+                "success": False,
+                "error": f"File type not supported"
+            }), 400
         
-        if urgency_score >= 2:
-            return {'level': 'high', 'score': 0.8}
-        elif urgency_score == 1:
-            return {'level': 'medium', 'score': 0.6}
-        else:
-            return {'level': 'low', 'score': 0.3}
-    
-    def _calculate_severity(self, sentiment, urgency, text_length):
-        base_score = 0.5
+        # Save file securely
+        filename = secure_filename(file.filename)
+        timestamp = str(int(time.time()))
+        filename = f"{timestamp}_{filename}"
+        filepath = os.path.join(UPLOAD_FOLDER, filename)
+        file.save(filepath)
         
-        if sentiment['primary_sentiment'] == 'negative':
-            base_score += 0.3
-        if urgency['level'] == 'high':
-            base_score += 0.2
-        elif urgency['level'] == 'medium':
-            base_score += 0.1
+        # Extract text using OCR service
+        logger.info(f"Extracting text from: {filename}")
+        start_time = time.time()
         
-        # Longer text might indicate more detailed complaint
-        if text_length > 500:
-            base_score += 0.1
+        ocr_result = ocr_service.extract_text(filepath)
+        processing_time = time.time() - start_time
         
-        severity_score = min(base_score, 1.0)
+        # Clean up uploaded file
+        try:
+            os.unlink(filepath)
+        except:
+            pass
+        
+        return jsonify({
+            "success": True,
+            "data": {
+                "text": ocr_result.get("text", ""),
+                "confidence": ocr_result.get("confidence", 0.0),
+                "engine": ocr_result.get("best_engine", "unknown"),
+                "processing_time": round(processing_time, 2),
+                "file_name": file.filename,
+                "extracted_at": datetime.now().isoformat()
+            }
+        })
+        
+    except Exception as e:
+        logger.error(f"OCR extraction error: {e}")
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
         
         if severity_score >= 0.7:
             return {'level': 'high', 'score': severity_score}
