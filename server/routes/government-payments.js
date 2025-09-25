@@ -1,8 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const GovernmentPaymentService = require('../services/government-payments');
+const PaymentGatewayService = require('../services/payment-gateway');
+const { verifyToken } = require('../middleware/auth');
+const db = require('../../database/bharatchain.db');
 
-const paymentService = new GovernmentPaymentService();
+const paymentGateway = new PaymentGatewayService();
 
 // Middleware for request validation
 const validateCitizenId = (req, res, next) => {
