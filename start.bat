@@ -185,27 +185,33 @@ echo  ║                    🎉 BHARATCHAIN LAUNCHED! 🎉                    
 echo  ╚══════════════════════════════════════════════════════════════════════╝
 echo.
 echo 🚀 All services are starting up in separate windows...
-echo ⏱️  Please wait 15-30 seconds for complete initialization
+echo ⏱️  Please wait 20-35 seconds for complete initialization
 echo.
 echo 📍 SERVICE ENDPOINTS:
 echo    🌐 Frontend (React):       http://localhost:3000
-echo    🔧 Backend API:            http://localhost:3001
-echo    🧠 AI Service:             http://localhost:5001
+echo    🔧 Backend API:            http://localhost:3001/api/health
+echo    🧠 AI Service:             http://localhost:5001/health
 echo    ⛓️  Blockchain Network:     http://localhost:8545
 echo.
 echo 📋 FEATURES AVAILABLE:
 echo    ✅ Citizen Registration ^& Authentication
 echo    ✅ Document Upload ^& OCR Processing
-echo    ✅ Blockchain Verification ^& QR Codes
+echo    ✅ Blockchain Verification ^& QR Codes  
 echo    ✅ Grievance Management System
 echo    ✅ Government Payment Processing
 echo    ✅ MetaMask Web3 Integration
 echo    ✅ Multi-language Support (Hindi/English)
+echo    ✅ Real-time WebSocket Events
+echo    ✅ JWT Authentication ^& Security
 echo.
 
 REM Wait for services to initialize
-echo ⏳ Waiting for services to initialize...
-timeout /t 12 >nul
+echo ⏳ Waiting for services to initialize completely...
+echo    🔗 Blockchain: ~5 seconds
+echo    🧠 AI Service: ~8 seconds  
+echo    ⚙️  Backend API: ~10 seconds
+echo    🎨 Frontend: ~15 seconds
+timeout /t 18 >nul
 
 REM Try to open browser automatically
 echo 🌐 Opening BharatChain in your default browser...
