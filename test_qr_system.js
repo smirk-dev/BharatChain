@@ -7,6 +7,7 @@ console.log('='.repeat(50));
 
 // Initialize QR service with a test secret
 const testSecret = config.QR_CODE_SECRET || 'test-secret-key-for-qr-codes-12345';
+const qrService = new QRCodeService(testSecret);
 
 async function testQRSystem() {
     try {
