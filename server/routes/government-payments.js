@@ -377,47 +377,6 @@ router.get('/stats', verifyToken, async (req, res) => {
 });
 
 module.exports = router;
-            service_type,
-            service_name,
-            amount,
-            payment_method,
-            description,
-            callback_url,
-            success_url,
-            failure_url,
-            metadata
-        } = req.body;
-        
-        // Validate required fields
-        if (!service_type || !service_name || !amount || !payment_method) {
-            return res.status(400).json({
-                success: false,
-                error: 'Service type, service name, amount, and payment method are required'
-            });
-        }
-        
-        // Validate amount
-        if (amount <= 0 || amount > 500000) {
-            return res.status(400).json({
-                success: false,
-                error: 'Amount must be between ₹1 and ₹5,00,000'
-            });
-        }
-        
-        // Validate payment method
-        const validMethods = ['upi', 'netbanking', 'wallet', 'card'];
-        if (!validMethods.includes(payment_method)) {
-            return res.status(400).json({
-                success: false,
-                error: 'Invalid payment method. Supported methods: ' + validMethods.join(', ')
-            });
-        }
-        
-        const paymentRequest = {
-            service_type,
-            service_name,
-            amount,
-            payment_method,
             description,
             callback_url,
             success_url,
