@@ -162,10 +162,12 @@ echo.
 echo    🧠 Installing AI service dependencies...
 cd /d "%PROJECT_ROOT%ai-service"
 if exist requirements.txt (
-    "%PYTHON_PATH%" -m pip install -r requirements.txt --quiet
+    echo    📦 Installing Python packages... (this may take a moment)
+    "%PYTHON_PATH%" -m pip install -r requirements.txt --quiet --no-warn-script-location
     if %errorlevel% neq 0 (
         color 0E
-        echo    ⚠️  AI service dependencies installation had warnings (will continue)
+        echo    ⚠️  AI service dependencies had some warnings (will continue with available packages)
+        echo    💡 Note: Some advanced features may be limited, but basic functionality will work
     ) else (
         color 0A
         echo    ✅ AI service dependencies installed successfully!
