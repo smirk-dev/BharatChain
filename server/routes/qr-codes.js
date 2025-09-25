@@ -2,7 +2,12 @@ const express = require('express');
 const router = express.Router();
 const QRCodeService = require('../services/qr-service');
 const { verifyToken } = require('../middleware/auth');
-const db = require('../../database/bharatchain.db');
+const Database = require('better-sqlite3');
+const path = require('path');
+
+// Initialize database connection
+const dbPath = path.join(__dirname, '../../database/bharatchain.db');
+const db = new Database(dbPath);
 
 // Get QR service secret from config
 const config = require('../../config/env-config');
