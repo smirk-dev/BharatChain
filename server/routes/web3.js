@@ -102,7 +102,7 @@ router.get('/citizen/:address', verifyToken, async (req, res) => {
  * POST /api/web3/register-citizen
  * Register citizen on blockchain
  */
-router.post('/register-citizen', auth, async (req, res) => {
+router.post('/register-citizen', verifyToken, async (req, res) => {
     try {
         const { name, aadhaar, phone, walletAddress, signature } = req.body;
         
@@ -151,7 +151,7 @@ router.post('/register-citizen', auth, async (req, res) => {
  * POST /api/web3/store-document
  * Store document hash on blockchain
  */
-router.post('/store-document', auth, async (req, res) => {
+router.post('/store-document', verifyToken, async (req, res) => {
     try {
         const { documentHash, documentType, citizenAddress, signerAddress } = req.body;
         
